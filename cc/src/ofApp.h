@@ -24,8 +24,8 @@ public:
 
     bool getPixels(ofPixels &frame);
 
-    int getWidth();
-    int getHeight();
+    int getWidth() const;
+    int getHeight() const;
 };
 
 

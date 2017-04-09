@@ -21,12 +21,12 @@ bool ofGrabber::getPixels(ofPixels &frame)
     return false;
 }
 
-int ofGrabber::getWidth()
+int ofGrabber::getWidth() const
 {
     return vidGrabber.getWidth();
 }
 
-int ofGrabber::getHeight()
+int ofGrabber::getHeight() const
 {
     return vidGrabber.getHeight();
 }
