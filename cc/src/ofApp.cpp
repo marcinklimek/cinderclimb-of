@@ -1,49 +1,74 @@
 #include "ofApp.h"
 
 
-constexpr int image_size_W = 640;
-constexpr int image_size_H = 480;
 
-//--------------------------------------------------------------
-void ofApp::setup()
+
+ofGrabber::ofGrabber()
 {
     vidGrabber.setVerbose(true);
     vidGrabber.setup(image_size_W, image_size_H);
-    colorImg.allocate(image_size_W, image_size_H);
-    grayImage.allocate(image_size_W, image_size_H);
-    grayBg.allocate(image_size_W, image_size_H);
-    grayDiff.allocate(image_size_W, image_size_H);
-
-    bLearnBakground = true;
-    threshold = 80;
-
-    setupGui();
 }
 
-//--------------------------------------------------------------
-void ofApp::setupGui()
+bool ofGrabber::getPixels(ofPixels &frame)
 {
-    parameters.setName("parameters");
-    parameters.add(radius.set("radius", 50, 1, 100));
-    parameters.add(color.set("color", 100, ofColor(0, 0), 255));
-    gui.setup(parameters);
-    ofSetBackgroundColor(0);
+    vidGrabber.update();
+    if (vidGrabber.isFrameNew())
+    {
+        frame = vidGrabber.getPixels();
+        return true;
+    }
 
+    return false;
+}
+
+int ofGrabber::getWidth()
+{
+    return vidGrabber.getWidth();
+}
+
+int ofGrabber::getHeight()
+{
+    return vidGrabber.getHeight();
+}
+
+ofRecorder::ofRecorder(): bRecording(false), lastTimeCheck(0)
+{
     vidRecorder.setVideoCodec("mpeg4");
     vidRecorder.setVideoBitrate("2500k");
-    vidRecorder.setFfmpegLocation("c:/workspace/climbing/ffmpeg/bin/ffmpeg.exe");
-
-    bRecording = false;
-    ofEnableAlphaBlending();
+    vidRecorder.setFfmpegLocation("ffmpeg/bin/ffmpeg.exe");
 }
 
-//--------------------------------------------------------------
-void ofApp::exit()
+void ofRecorder::start(int w, int h, float fps)
 {
+    stop();
+    
+    if (bRecording && !vidRecorder.isInitialized())
+    {
+        cout << fileName + ofGetTimestampString() + fileExt << " " << w << " " << h << endl;
+        vidRecorder.setup(fileName + ofGetTimestampString() + fileExt, w, h, fps);
+
+        // Start recording
+        vidRecorder.start();
+        bRecording = true;
+    }
+    else if (!bRecording && vidRecorder.isInitialized())
+    {
+        vidRecorder.setPaused(true);
+    }
+    else if (bRecording && vidRecorder.isInitialized())
+    {
+        vidRecorder.setPaused(false);
+    }
+}
+
+
+void ofRecorder::stop()
+{
+    bRecording = false;
     vidRecorder.close();
 }
 
-void ofApp::updateRecorder()
+void ofRecorder::update(ofPixels& frame)
 {
     int millisNow = ofGetElapsedTimeMillis();
     int millisSinceLastCheck = millisNow - lastTimeCheck;
@@ -53,13 +78,68 @@ void ofApp::updateRecorder()
 
         if (vidRecorder.isInitialized())
         {
-            bool success = vidRecorder.addFrame(grayImage.getPixels());
+            bool success = vidRecorder.addFrame(frame);
             if (!success)
             {
                 ofLogWarning("This frame was not added!");
             }
         }
     }
+}
+
+ofSettings::ofSettings()
+{
+    parameters.setName("Parameters");
+
+    parameters.add(threshold.set("threshold", 80, 0, 255));
+    parameters.add(blur_amount.set("blur amount", 10, 1, 30));
+    parameters.add(erosion_size.set("erosion size", 3, 1, 1000));
+    parameters.add(circle_size.set("circle size", 30, 1, 100));
+    parameters.add(area_min.set("area min", 1000.0f, 1.0f, 500000.0f));
+    parameters.add(area_max.set("area max", 100000.0f, 1.0f, 500000.0f));
+}
+
+ofParameterGroup& ofSettings::get_gui_parameters()
+{
+    return parameters;
+}
+
+//--------------------------------------------------------------
+void ofApp::setup()
+{
+    colorImg.allocate(image_size_W, image_size_H);
+    grayImage.allocate(image_size_W, image_size_H);
+    grayBg.allocate(image_size_W, image_size_H);
+    grayDiff.allocate(image_size_W, image_size_H);
+
+    bLearnBakground = true;
+
+
+    setupGui();
+}
+
+//--------------------------------------------------------------
+void ofApp::setupGui()
+{
+
+    gui.setup(_settings.get_gui_parameters());
+    gui.setPosition(spacing + preview_W + spacing, spacing);
+
+    ofSetBackgroundColor(0);
+
+
+    ofEnableAlphaBlending();
+}
+
+//--------------------------------------------------------------
+void ofApp::exit()
+{
+    recorder.stop();
+}
+
+void ofApp::updateRecorder()
+{
+    recorder.update(colorImg.getPixels());
 }
 
 void ofApp::updateFrame(ofPixels& frame)
@@ -75,10 +155,12 @@ void ofApp::updateFrame(ofPixels& frame)
 
     // take the abs value of the difference between background and incoming and then threshold:
     grayDiff.absDiff(grayBg, grayImage);
-    grayDiff.threshold(threshold);
+
+    grayDiff.blur(_settings.blur_amount);
+    grayDiff.threshold(_settings.threshold);
 
     //
-    grayDiff.blurHeavily();
+    
     grayDiff.erode();
     grayDiff.dilate();
     grayDiff.dilate();
@@ -93,15 +175,13 @@ void ofApp::updateFrame(ofPixels& frame)
 void ofApp::update()
 {
     ofBackground(100, 100, 100);
-
-    vidGrabber.update();
-    if (vidGrabber.isFrameNew())
-    {
-        auto frame = vidGrabber.getPixels();
+    
+    ofPixels frame;
+    if ( grabber.getPixels(frame) )
+    { 
         updateFrame(frame);
+        updateRecorder();
     }
- 
-    updateRecorder();
 }
 
 //--------------------------------------------------------------
@@ -112,20 +192,10 @@ void ofApp::draw()
 
     ofRectangle rect;
 
-    constexpr int preview_W = 320;
-    constexpr int preview_H = 240;
-    constexpr int spacing = 10;
-
     rect.set(spacing, spacing, preview_W, preview_H);
     colorImg.draw(rect);
 
     rect.set(spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-    grayImage.draw(rect);
-    
-    rect.set(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
-    grayBg.draw(rect);
-
-    rect.set(spacing, spacing + (preview_H + spacing) * 3, preview_W, preview_H);
     grayDiff.draw(rect);
 
     // then draw the contours:
@@ -149,10 +219,9 @@ void ofApp::draw()
     stringstream reportStr;
     reportStr << "bg subtraction and blob detection" << endl
             << "press ' ' to capture bg" << endl
-            << "threshold " << threshold << " (press: +/-)" << endl
             << "num blobs found " << contourFinder.nBlobs << ", fps: " << ofGetFrameRate();
     
-    ofDrawBitmapString(reportStr.str(), rect.getX(), rect.getY());
+    ofDrawBitmapString(reportStr.str(), rect.getX()+ spacing, rect.getY()+ spacing);
 }
 
 //--------------------------------------------------------------
@@ -169,42 +238,19 @@ void ofApp::keyPressed(int key)
         case ' ':
             bLearnBakground = true;
             break;
-        case '+':
-            threshold++;
-            if (threshold > 255) threshold = 255;
-            break;
-        case '-':
-            threshold--;
-            if (threshold < 0) threshold = 0;
-            break;
 
         case 'v':
         {
-            bRecording = !bRecording;
-            if (bRecording && !vidRecorder.isInitialized())
-            {
-                cout << fileName + ofGetTimestampString() + fileExt << " " << vidGrabber.getWidth() << " " << vidGrabber.getHeight() << endl;
-                vidRecorder.setup(fileName + ofGetTimestampString() + fileExt, vidGrabber.getWidth(), vidGrabber.getHeight(), 30.0f);
-                // Start recording
-                vidRecorder.start();
-            }
-            else if (!bRecording && vidRecorder.isInitialized())
-            {
-                vidRecorder.setPaused(true);
-            }
-            else if (bRecording && vidRecorder.isInitialized())
-            {
-                vidRecorder.setPaused(false);
-            }
+            recorder.start(grabber.getWidth(), grabber.getHeight(), 30.0f);
+
             break;
         }
         case 'c':
-
         {
-            bRecording = false;
-            vidRecorder.close();
+            recorder.stop();
             break;
         }
+        default: break;
     }
 }
 
