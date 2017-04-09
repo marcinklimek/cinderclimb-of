@@ -1,0 +1,14 @@
+ofxBackground
+ofxBGS
+ofxContourUtil
+ofxGui
+ofxKinectV2
+ofxOpenCv2
+ofxOpenCv_x64
+ofxOsc
+ofxPostProcessing
+ofxStateMachine
+ofxThreadedImageLoader
+ofxThreadedVideo
+ofxTimeMeasurements
+ofxVideoRecorder
