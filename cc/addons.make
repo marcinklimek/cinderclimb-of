@@ -2,6 +2,7 @@ ofxGui
 ofxOsc
 ofxThreadedImageLoader
 ofxContourUtil
+ofxCv
 ofxKinectV2
 ofxOpenCv_x64
 ofxPostProcessing
