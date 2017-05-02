@@ -4,6 +4,7 @@
 #include "ofxOpenCv.h"
 #include "ofxPanel.h"
 #include "ofxVideoRecorder/src/ofxVideoRecorder.h"
+#include <background_segm.hpp>
 
 constexpr int image_size_W = 640;
 constexpr int image_size_H = 480;
@@ -98,9 +99,13 @@ public:
 
     ofxCvColorImage colorImg;
     ofxCvGrayscaleImage grayImage;
-    ofxCvGrayscaleImage grayBg;
-    ofxCvGrayscaleImage grayDiff;
-    //cv::BackgroundSubtractorMOG2 mog;
+
+    ofxCvGrayscaleImage grayMask;
+
+    //bkg removal
+    cv::Ptr<cv::BackgroundSubtractorMOG2> mog;
+    cv::Mat fgMaskMOG2;
+
 
     ofxCvContourFinder contourFinder;
 

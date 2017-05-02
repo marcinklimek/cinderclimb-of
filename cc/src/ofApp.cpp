@@ -1,7 +1,6 @@
 #include "ofApp.h"
-
-
-
+#include <imgproc.hpp>
+#include "ofxCv/Utilities.h"
 
 ofGrabber::ofGrabber()
 {
@@ -109,11 +108,11 @@ void ofApp::setup()
 {
     colorImg.allocate(image_size_W, image_size_H);
     grayImage.allocate(image_size_W, image_size_H);
-    grayBg.allocate(image_size_W, image_size_H);
-    grayDiff.allocate(image_size_W, image_size_H);
 
+    grayMask.allocate(image_size_W, image_size_H);
     bLearnBakground = true;
 
+    mog = cv::createBackgroundSubtractorMOG2(100, 16, false);
 
     setupGui();
 }
@@ -147,28 +146,28 @@ void ofApp::updateFrame(ofPixels& frame)
     colorImg.ofxCvImage::setFromPixels(frame);
 
     grayImage = colorImg;
-    if (bLearnBakground == true)
-    {
-        grayBg = grayImage; // the = sign copys the pixels from grayImage into grayBg (operator overloading)
-        bLearnBakground = false;
-    }
 
-    // take the abs value of the difference between background and incoming and then threshold:
-    grayDiff.absDiff(grayBg, grayImage);
+    // bkg removal
+    cv::Mat img, fgimg;
+    img = ofxCv::toCv(colorImg.getPixels());
 
-    grayDiff.blur(_settings.blur_amount);
-    grayDiff.threshold(_settings.threshold);
+    mog->apply(img, fgMaskMOG2);
 
-    //
-    
-    grayDiff.erode();
-    grayDiff.dilate();
-    grayDiff.dilate();
-    grayDiff.erode();
+    ofImage foregroundImg;
+    ofxCv::toOf(fgMaskMOG2, foregroundImg);
+    grayMask = foregroundImg.getPixels();
+
+    grayMask.blur(_settings.blur_amount);
+    grayMask.threshold(_settings.threshold);
+    grayMask.erode();
+    grayMask.dilate();
+    grayMask.dilate();
+    grayMask.erode();
+
 
     // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
     // also, find holes is set to true so we will get interior contours as well....
-    contourFinder.findContours(grayDiff, 20, (640 * 480) / 3, 10, true); // find holes
+    contourFinder.findContours(grayMask, 20, (640 * 480) / 3, 10, true); // find holes
 }
 
 //--------------------------------------------------------------
@@ -196,7 +195,12 @@ void ofApp::draw()
     colorImg.draw(rect);
 
     rect.set(spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-    grayDiff.draw(rect);
+    grayMask.draw(rect);
+
+    rect.set(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
+    grayImage.draw(rect);
+
+    
 
     // then draw the contours:
     rect.set(spacing + preview_W + spacing, spacing, image_size_W, image_size_H);
@@ -217,9 +221,7 @@ void ofApp::draw()
     // finally, a report:
     ofSetHexColor(0xffffff);
     stringstream reportStr;
-    reportStr << "bg subtraction and blob detection" << endl
-            << "press ' ' to capture bg" << endl
-            << "num blobs found " << contourFinder.nBlobs << ", fps: " << ofGetFrameRate();
+    reportStr << "num blobs found " << contourFinder.nBlobs << ", fps: " << ofGetFrameRate();
     
     ofDrawBitmapString(reportStr.str(), rect.getX()+ spacing, rect.getY()+ spacing);
 }
