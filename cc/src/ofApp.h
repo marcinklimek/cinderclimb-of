@@ -100,6 +100,7 @@ public:
     ofxCvGrayscaleImage grayImage;
     ofxCvGrayscaleImage grayBg;
     ofxCvGrayscaleImage grayDiff;
+    cv::BackgroundSubtractorMOG2 mog;
 
     ofxCvContourFinder contourFinder;
 
