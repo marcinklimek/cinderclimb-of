@@ -133,3 +133,51 @@ void AnalysisThread::draw()
 
     ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
 }
+
+
+void AnalysisThread::drawBlobs(float x, float y, float w, float h) const {
+
+    float scalex = 0.0f;
+    float scaley = 0.0f;
+    if (_width != 0) { scalex = w / _width; }
+    else { scalex = 1.0f; }
+    if (_height != 0) { scaley = h / _height; }
+    else { scaley = 1.0f; }
+
+    if (bAnchorIsPct) {
+        x -= anchor.x * w;
+        y -= anchor.y * h;
+    }
+    else {
+        x -= anchor.x;
+        y -= anchor.y;
+    }
+
+    ofPushStyle();
+    // ---------------------------- draw the bounding rectangle
+    ofSetHexColor(0xDD00CC);
+    ofPushMatrix();
+    ofTranslate(x, y, 0.0);
+    ofScale(scalex, scaley, 0.0);
+
+    ofNoFill();
+    for (int i = 0; i<(int)blobs.size(); i++) {
+        ofDrawRectangle(blobs[i].boundingRect.x, blobs[i].boundingRect.y,
+            blobs[i].boundingRect.width, blobs[i].boundingRect.height);
+    }
+
+    // ---------------------------- draw the blobs
+    ofSetHexColor(0x00FFFF);
+
+    for (int i = 0; i<(int)blobs.size(); i++) {
+        ofNoFill();
+        ofBeginShape();
+        for (int j = 0; j<blobs[i].nPts; j++) {
+            ofVertex(blobs[i].pts[j].x, blobs[i].pts[j].y);
+        }
+        ofEndShape();
+
+    }
+    ofPopMatrix();
+    ofPopStyle();
+}

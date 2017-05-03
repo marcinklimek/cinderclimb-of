@@ -7,7 +7,7 @@
 void ofApp::setup()
 {
     analysis = new AnalysisThread(_settings);
-
+    analysis->setup();
     setupGui();
 }
 
