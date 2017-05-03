@@ -5,17 +5,9 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -71,19 +63,7 @@
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_debug</TargetName>
-    <LinkIncremental>true</LinkIncremental>
-    <GenerateManifest>true</GenerateManifest>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
@@ -102,29 +82,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);ippicvmt.lib;libwebp.lib;opencv_calib3d310.lib;opencv_core310.lib;opencv_features2d310.lib;opencv_flann310.lib;opencv_highgui310.lib;opencv_imgcodecs310.lib;opencv_imgproc310.lib;opencv_ml310.lib;opencv_objdetect310.lib;opencv_photo310.lib;opencv_shape310.lib;opencv_stitching310.lib;opencv_superres310.lib;opencv_video310.lib;opencv_videoio310.lib;opencv_videostab310.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\ippicv\lib\vs\Win32;..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release</AdditionalLibraryDirectories>
-    </Link>
-    <PostBuildEvent />
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;$(OF_ROOT)addons\ofxOpenCv\libs;$(OF_ROOT)addons\ofxOpenCv\libs\ippicv;$(OF_ROOT)addons\ofxOpenCv\libs\ippicv\include;$(OF_ROOT)addons\ofxOpenCv\libs\opencv;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core\cuda;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core\cuda\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core\hal;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\flann;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\imgcodecs;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\ml;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\photo;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\shape;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\stitching;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\superres;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\ts;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\video;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\videoio;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\videostab;$(OF_ROOT)addons\ofxOpenCv\src;$(OF_ROOT)addons\ofxContourUtil\src;$(OF_ROOT)addons\ofxGui\src;$(OF_ROOT)addons\ofxOsc\libs;$(OF_ROOT)addons\ofxOsc\libs\oscpack;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\ip;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\ip\posix;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\ip\win32;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\osc;$(OF_ROOT)addons\ofxOsc\src;$(OF_ROOT)addons\ofxStateMachine\src;$(OF_ROOT)addons\ofxCv\src;$(OF_ROOT)addons\ofxCv\libs\ofxCv\include\;$(OF_ROOT)addons\ofxCv\libs\CLD\include\CLD</AdditionalIncludeDirectories>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);ippicvmt.lib;libwebp.lib;opencv_calib3d310.lib;opencv_core310.lib;opencv_features2d310.lib;opencv_flann310.lib;opencv_highgui310.lib;opencv_imgcodecs310.lib;opencv_imgproc310.lib;opencv_ml310.lib;opencv_objdetect310.lib;opencv_photo310.lib;opencv_shape310.lib;opencv_stitching310.lib;opencv_superres310.lib;opencv_video310.lib;opencv_videoio310.lib;opencv_videostab310.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\ippicv\lib\vs\Win32;..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release</AdditionalLibraryDirectories>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalDependencies>%(AdditionalDependencies);ippicvmt.lib;libwebpd.lib;opencv_calib3d310d.lib;opencv_core310d.lib;opencv_features2d310d.lib;opencv_flann310d.lib;opencv_highgui310d.lib;opencv_imgcodecs310d.lib;opencv_imgproc310d.lib;opencv_ml310d.lib;opencv_objdetect310d.lib;opencv_photo310d.lib;opencv_shape310d.lib;opencv_stitching310d.lib;opencv_superres310d.lib;opencv_video310d.lib;opencv_videoio310d.lib;opencv_videostab310d.lib;zlibd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\ippicv\lib\vs\Win32;..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Debug</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
@@ -150,28 +109,6 @@
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;$(OF_ROOT)addons\ofxOpenCv\libs;$(OF_ROOT)addons\ofxOpenCv\libs\ippicv;$(OF_ROOT)addons\ofxOpenCv\libs\ippicv\include;$(OF_ROOT)addons\ofxOpenCv\libs\opencv;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core\cuda;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core\cuda\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\core\hal;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\flann;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\imgcodecs;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\ml;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\photo;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\shape;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\stitching;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\superres;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\ts;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\video;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\videoio;$(OF_ROOT)addons\ofxOpenCv\libs\opencv\include\opencv2\videostab;$(OF_ROOT)addons\ofxOpenCv\src;$(OF_ROOT)addons\ofxContourUtil\src;$(OF_ROOT)addons\ofxGui\src;$(OF_ROOT)addons\ofxOsc\libs;$(OF_ROOT)addons\ofxOsc\libs\oscpack;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\ip;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\ip\posix;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\ip\win32;$(OF_ROOT)addons\ofxOsc\libs\oscpack\src\osc;$(OF_ROOT)addons\ofxOsc\src;$(OF_ROOT)addons\ofxStateMachine\src;$(OF_ROOT)addons\ofxCv\src;$(OF_ROOT)addons\ofxCv\libs\ofxCv\include\;$(OF_ROOT)addons\ofxCv\libs\CLD\include\CLD\</AdditionalIncludeDirectories>
-      <CompileAs>CompileAsCpp</CompileAs>
-    </ClCompile>
-    <Link>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);ippicvmt.lib;libwebp.lib;opencv_calib3d310.lib;opencv_core310.lib;opencv_features2d310.lib;opencv_flann310.lib;opencv_highgui310.lib;opencv_imgcodecs310.lib;opencv_imgproc310.lib;opencv_ml310.lib;opencv_objdetect310.lib;opencv_photo310.lib;opencv_shape310.lib;opencv_stitching310.lib;opencv_superres310.lib;opencv_video310.lib;opencv_videoio310.lib;opencv_videostab310.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\ippicv\lib\vs\Win32;..\..\..\Libs\openFrameworks\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release</AdditionalLibraryDirectories>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-    </Link>
-    <PostBuildEvent />
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxCv\libs\CLD\src\ETF.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxCv\libs\CLD\src\fdog.cpp" />
@@ -193,7 +130,9 @@
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvHaarFinder.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvImage.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
+    <ClCompile Include="src\Analysis.cpp" />
     <ClCompile Include="src\Calibrator.cpp" />
+    <ClCompile Include="src\Grabber.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxGui\src\ofxBaseGui.cpp" />
@@ -218,6 +157,8 @@
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxVideoRecorder\src\ofxVideoRecorder.cpp" />
+    <ClCompile Include="src\Recorder.cpp" />
+    <ClCompile Include="src\Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxCv\libs\CLD\include\CLD\ETF.h" />
@@ -246,7 +187,9 @@
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvImage.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvShortImage.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxOpenCv.h" />
+    <ClInclude Include="src\Analysis.h" />
     <ClInclude Include="src\Calibrator.h" />
+    <ClInclude Include="src\Grabber.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxContourUtil\src\ofxContourUtil.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxContourUtil\src\ofxCvContourSimplify.h" />
@@ -283,6 +226,8 @@
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxVideoRecorder\src\ofxVideoRecorder.h" />
+    <ClInclude Include="src\Recorder.h" />
+    <ClInclude Include="src\Settings.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">

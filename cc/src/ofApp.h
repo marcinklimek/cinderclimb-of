@@ -6,70 +6,10 @@
 #include "ofxVideoRecorder/src/ofxVideoRecorder.h"
 #include <background_segm.hpp>
 
-constexpr int image_size_W = 640;
-constexpr int image_size_H = 480;
-constexpr int preview_W = 320;
-constexpr int preview_H = 240;
-constexpr int spacing = 10;
-
-
-class ofxVideoRecorderOutputFileCompleteEventArgs;
-
-class ofGrabber
-{
-    ofVideoGrabber vidGrabber;
-
-public:
-
-    ofGrabber();
-
-    bool getPixels(ofPixels &frame);
-
-    int getWidth() const;
-    int getHeight() const;
-};
-
-
-class ofRecorder
-{
-    ofxVideoRecorder vidRecorder;
-
-    bool bRecording;
-    string fileName;
-    string fileExt;
-    int lastTimeCheck;
-
-public:
-
-    void start(int w, int h, float fps);
-    void stop();
-    void update(ofPixels& frame);
-    ofRecorder();
-
-
-};
-
-class ofSettings
-{
-public:
-
-    ofSettings();
-
-    ofParameterGroup parameters;
-    ofParameter<float> radius;
-    ofParameter<ofColor> color;
-
-    ofParameter<float> threshold;
-
-    ofParameter<int> blur_amount;
-    ofParameter<int> erosion_size;
-    ofParameter<int> circle_size;
-
-    ofParameter<float> area_min;
-    ofParameter<float>  area_max;
-    
-    ofParameterGroup& get_gui_parameters();
-};
+#include "Grabber.h"
+#include "Recorder.h"
+#include "Settings.h"
+#include "Analysis.h"
 
 class ofApp : public ofBaseApp
 {
@@ -78,7 +18,7 @@ public:
     void setupGui();
     void exit() override;
     void updateRecorder();
-    void updateFrame(ofPixels& frame);
+
     void update() override;
     void draw() override;
     void drawGui(ofEventArgs& args);
@@ -96,20 +36,7 @@ public:
     
     ofGrabber grabber;
     ofRecorder recorder;
-
-    ofxCvColorImage colorImg;
-    ofxCvGrayscaleImage grayImage;
-
-    ofxCvGrayscaleImage grayMask;
-
-    //bkg removal
-    cv::Ptr<cv::BackgroundSubtractorMOG2> mog;
-    cv::Mat fgMaskMOG2;
-
-
-    ofxCvContourFinder contourFinder;
-
-    bool bLearnBakground;
+    cv::Ptr<AnalysisThread> analysis;
 
     ofxPanel gui;
 
