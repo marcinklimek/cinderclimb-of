@@ -29,7 +29,7 @@ public:
 
     ofParameter<float> brightness;
     ofParameter<float>  contrast;
-
+    ofParameter<float>  learingRate;
 
     ofParameterGroup& get_gui_parameters();
 

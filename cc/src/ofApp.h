@@ -34,7 +34,7 @@ public:
     void dragEvent(ofDragInfo dragInfo) override;
     void gotMessage(ofMessage msg) override;
     
-    ofGrabber grabber;
+    
     ofRecorder recorder;
     cv::Ptr<AnalysisThread> analysis;
 
@@ -46,6 +46,7 @@ public:
     int channels;
 
 
+    vector<ofxCvBlob> currentBlobs;
 
     ofFbo recordFbo;
     ofPixels recordPixels;

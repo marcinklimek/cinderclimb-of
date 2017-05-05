@@ -4,6 +4,7 @@
 
 #include "Settings.h"
 #include "ofxCvColorImage.h"
+#include "Grabber.h"
 
 class AnalysisThread : public ofThread {
 public:
@@ -12,9 +13,12 @@ public:
     void setup();
     void analyze(ofPixels & pixels);
 
-    void draw();
+    void draw() const;
+    void drawBlobs(vector<ofxCvBlob>& blobs) const;
+    void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs) const;
+    bool getBlobs(vector<ofxCvBlob>& blobs);
 
-    bool getPixels(ofPixels & pixels);
+    void stop();
 
 private:
     void threadedFunction() override;
@@ -23,14 +27,18 @@ private:
     
     ofSettings& _settings;
 
+    ofGrabber grabber;
+
     ofThreadChannel<ofPixels> toAnalyze;
-    ofThreadChannel<ofPixels> analyzed;
+    ofThreadChannel<vector<ofxCvBlob>> analyzed;
 
 
     ofxCvColorImage colorImg;
+    ofxCvColorImage blurImg;
     ofxCvGrayscaleImage grayImage;
 
     ofxCvGrayscaleImage grayMask;
+    ofxCvGrayscaleImage grayBackground;
 
     //bkg removal
     cv::Ptr<cv::BackgroundSubtractorMOG2> mog;
@@ -38,4 +46,5 @@ private:
 
 
     ofxCvContourFinder contourFinder;
+    bool _quit;
 };

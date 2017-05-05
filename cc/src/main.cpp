@@ -12,8 +12,8 @@ int main()
     projector_window->setVerticalSync(false);
     
 
-    settings.width = 800;
-    settings.height = 800;
+    settings.width = 1000;
+    settings.height = 1000;
     settings.setPosition(ofVec2f(5, 20));
     settings.resizable = true;
     
