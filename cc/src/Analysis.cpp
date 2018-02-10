@@ -1,8 +1,8 @@
 ﻿#include "Analysis.h"
 #include "ofxCvColorImage.h"
 #include "ofxCv/Utilities.h"
-#include <imgproc.hpp>
 #include "ofxCv/Wrappers.h"
+#include "bgsubcnt/bgsubcnt.h"
 
 AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false)
 {
@@ -29,7 +29,8 @@ void AnalysisThread::setup()
 	_maskDraw.allocate(image_size_W, image_size_H);
 	_backgroundDraw.allocate(image_size_W, image_size_H);
 
-    mog = cv::createBackgroundSubtractorMOG2(100, 8, true);
+	mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 4, true);
+    //mog = cv::createBackgroundSubtractorMOG2(100, 8, false);
 }
 
 void AnalysisThread::analyze(ofPixels & pixels)

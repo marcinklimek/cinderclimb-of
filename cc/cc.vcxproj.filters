@@ -148,6 +148,9 @@
     <ClCompile Include="src\Analysis.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\bgsubcnt\bgsubcnt.cpp">
+      <Filter>src\bgsubcnt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -245,6 +248,9 @@
     </Filter>
     <Filter Include="addons\ofxCv\libs\ofxCv\src">
       <UniqueIdentifier>{9da3043c-dcb3-49e0-951b-76ae71dc6ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\bgsubcnt">
+      <UniqueIdentifier>{1408e7b9-4ebf-4ed7-925a-44e003b4eb6e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -448,6 +454,9 @@
     </ClInclude>
     <ClInclude Include="src\Analysis.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bgsubcnt\bgsubcnt.h">
+      <Filter>src\bgsubcnt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

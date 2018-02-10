@@ -34,18 +34,18 @@ private:
     ofThreadChannel<vector<ofxCvBlob>> analyzed;
 
     ofxCvColorImage _inputFrame;
-	ofxCvColorImage _imageProcessed;
+	ofxCvGrayscaleImage _imageProcessed;
     ofxCvGrayscaleImage _mask;
-	ofxCvColorImage _background;
+	ofxCvGrayscaleImage _background;
 
 	// just for drawing purposses
 	ofxCvColorImage _inputFrameDraw;
-	ofxCvColorImage _imageProcessedDraw;
+	ofxCvGrayscaleImage _imageProcessedDraw;
 	ofxCvGrayscaleImage _maskDraw;
-	ofxCvColorImage _backgroundDraw;
+	ofxCvGrayscaleImage _backgroundDraw;
 
     //bkg removal
-    cv::Ptr<cv::BackgroundSubtractorMOG2> mog;
+    cv::Ptr<cv::BackgroundSubtractor> mog;
     cv::Mat fgMaskMOG2;
 
 

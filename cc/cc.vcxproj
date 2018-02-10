@@ -131,6 +131,7 @@
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvImage.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
     <ClCompile Include="src\Analysis.cpp" />
+    <ClCompile Include="src\bgsubcnt\bgsubcnt.cpp" />
     <ClCompile Include="src\Calibrator.cpp" />
     <ClCompile Include="src\Grabber.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxCvShortImage.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOpenCv\src\ofxOpenCv.h" />
     <ClInclude Include="src\Analysis.h" />
+    <ClInclude Include="src\bgsubcnt\bgsubcnt.h" />
     <ClInclude Include="src\Calibrator.h" />
     <ClInclude Include="src\Grabber.h" />
     <ClInclude Include="src\ofApp.h" />
