@@ -41,15 +41,12 @@ void ofApp::updateRecorder()
 void ofApp::update()
 {
     ofBackground(100, 100, 100);
-    
-
 }
 
 //--------------------------------------------------------------
 void ofApp::draw()
 {
     analysis->draw();
-
 
     vector<ofxCvBlob> blobs;
     if (analysis->getBlobs(blobs))

@@ -5,6 +5,7 @@
 #include "Settings.h"
 #include "ofxCvColorImage.h"
 #include "Grabber.h"
+#include "thread"
 
 class AnalysisThread : public ofThread {
 public:
@@ -32,13 +33,16 @@ private:
     ofThreadChannel<ofPixels> toAnalyze;
     ofThreadChannel<vector<ofxCvBlob>> analyzed;
 
+    ofxCvColorImage _inputFrame;
+	ofxCvColorImage _imageProcessed;
+    ofxCvGrayscaleImage _mask;
+	ofxCvColorImage _background;
 
-    ofxCvColorImage colorImg;
-    ofxCvColorImage blurImg;
-    ofxCvGrayscaleImage grayImage;
-
-    ofxCvGrayscaleImage grayMask;
-    ofxCvGrayscaleImage grayBackground;
+	// just for drawing purposses
+	ofxCvColorImage _inputFrameDraw;
+	ofxCvColorImage _imageProcessedDraw;
+	ofxCvGrayscaleImage _maskDraw;
+	ofxCvColorImage _backgroundDraw;
 
     //bkg removal
     cv::Ptr<cv::BackgroundSubtractorMOG2> mog;
@@ -47,4 +51,6 @@ private:
 
     ofxCvContourFinder contourFinder;
     bool _quit;
+
+	mutable std::mutex _drawUpdateMutex;
 };

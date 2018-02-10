@@ -2,6 +2,7 @@
 #include "ofxCvColorImage.h"
 #include "ofxCv/Utilities.h"
 #include <imgproc.hpp>
+#include "ofxCv/Wrappers.h"
 
 AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false)
 {
@@ -18,13 +19,17 @@ AnalysisThread::~AnalysisThread()
 
 void AnalysisThread::setup()
 {
-    colorImg.allocate(image_size_W, image_size_H);
-    grayImage.allocate(image_size_W, image_size_H);
+    _inputFrame.allocate(image_size_W, image_size_H);
+    _imageProcessed.allocate(image_size_W, image_size_H);
+    _mask.allocate(image_size_W, image_size_H);
+    _background.allocate(image_size_W, image_size_H);
 
-    grayMask.allocate(image_size_W, image_size_H);
-    grayBackground.allocate(image_size_W, image_size_H);
+	_inputFrameDraw.allocate(image_size_W, image_size_H);
+	_imageProcessedDraw.allocate(image_size_W, image_size_H);
+	_maskDraw.allocate(image_size_W, image_size_H);
+	_backgroundDraw.allocate(image_size_W, image_size_H);
 
-    mog = cv::createBackgroundSubtractorMOG2(250, 16, false);
+    mog = cv::createBackgroundSubtractorMOG2(100, 8, true);
 }
 
 void AnalysisThread::analyze(ofPixels & pixels)
@@ -64,42 +69,50 @@ void AnalysisThread::threadedFunction()
 
 void AnalysisThread::updateFrame(ofPixels& frame)
 {
-    colorImg.setFromPixels(frame);
+    _inputFrame.setFromPixels(frame);
+	_inputFrame.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
 
-    blurImg = colorImg;
-    blurImg.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
-    
-    grayImage = blurImg;
-    grayImage.brightnessContrast(_settings.brightness, _settings.contrast);
+	_imageProcessed = _inputFrame;
 
     // bkg removal
     cv::Mat img, fgimg;
-    img = ofxCv::toCv(grayImage.getPixels());
+    img = ofxCv::toCv(_imageProcessed.getPixels());
 
     mog->apply(img, fgMaskMOG2, _settings.learingRate);
 
     ofImage foregroundImg;
     ofxCv::toOf(fgMaskMOG2, foregroundImg);
-    grayMask = foregroundImg.getPixels();
+    _mask = foregroundImg.getPixels();
 
-    //grayMask.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
-    grayMask.threshold(_settings.threshold);
+    _mask.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
 
-    grayMask.erode(_settings.erode_count);
-    grayMask.dilate(_settings.dillate_count);
+	for(int i=0; i<_settings.erode_count.get(); i++)
+		_mask.erode(); // _settings.erode_count.get()
 
-    grayMask.dilate(_settings.dillate_count);
-    grayMask.erode(_settings.erode_count);
+	for (int i = 0; i<_settings.dillate_count.get(); i++)
+		_mask.dilate();  //_settings.dillate_count.get()
+
+	for (int i = 0; i<_settings.erode_count.get(); i++)
+		_mask.erode(); // _settings.erode_count.get()
+
+	_mask.threshold(_settings.threshold);
 
     // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
     // also, find holes is set to true so we will get interior contours as well....
-    contourFinder.findContours(grayMask, _settings.area_min, _settings.area_max, 15, false); // find holes
+    contourFinder.findContours(_mask, _settings.area_min, _settings.area_max, 50, false); // find holes
 
     ///
     mog->getBackgroundImage(fgimg);
     ofxCv::toOf(fgimg, foregroundImg);
-    grayBackground = foregroundImg.getPixels();
+    _background = foregroundImg.getPixels();
     ///
+
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+
+	_backgroundDraw = _background;
+	_inputFrameDraw = _inputFrame;
+	_imageProcessedDraw = _imageProcessed;
+	_maskDraw = _mask;
 
     analyzed.send(contourFinder.blobs);
 }
@@ -107,19 +120,29 @@ void AnalysisThread::updateFrame(ofPixels& frame)
 
 void AnalysisThread::draw() const
 {
-    // draw the incoming, the grayscale, the bg and the thresholded difference
     ofSetHexColor(0xffffff);
 
     ofRectangle rect;
 
     rect.set(spacing, spacing, preview_W, preview_H);
-    grayBackground.draw(rect);
+
+	{
+		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+		_imageProcessedDraw.draw(rect);
+	}
 
     rect.set(spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-    grayMask.draw(rect);
+	{
+		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+		_backgroundDraw.draw(rect);
+	}
 
     rect.set(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
-    grayImage.draw(rect);
+
+	{
+		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+		_maskDraw.draw(rect);
+	}
 
     // then draw the contours:
     rect.set(spacing + preview_W + spacing, spacing, image_size_W, image_size_H);
@@ -128,8 +151,7 @@ void AnalysisThread::draw() const
     ofSetHexColor(0x333333);
     ofDrawRectangle(rect);
     ofSetHexColor(0xffffff);
-    colorImg.draw(rect);
-
+    _inputFrameDraw.draw(rect);
 }
 
 
@@ -143,8 +165,6 @@ void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
 
 void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs) const 
 {
-
-
     float x = rect.x;
     float y = rect.y;
     float w = rect.width;
