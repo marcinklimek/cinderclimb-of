@@ -86,13 +86,13 @@ void AnalysisThread::updateFrame(ofPixels& frame)
 
     _mask.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
 
-	for(int i=0; i<_settings.erode_count.get(); i++)
+	for(int i=0; i<_settings.erode_open_count.get(); i++)
 		_mask.erode(); // _settings.erode_count.get()
 
 	for (int i = 0; i<_settings.dillate_count.get(); i++)
 		_mask.dilate();  //_settings.dillate_count.get()
 
-	for (int i = 0; i<_settings.erode_count.get(); i++)
+	for (int i = 0; i<_settings.erode_close_count.get(); i++)
 		_mask.erode(); // _settings.erode_count.get()
 
 	_mask.threshold(_settings.threshold);

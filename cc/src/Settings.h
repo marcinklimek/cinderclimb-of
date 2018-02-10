@@ -20,7 +20,8 @@ public:
     ofParameter<float> threshold;
 
     ofParameter<int> blur_amount;
-    ofParameter<int> erode_count;
+    ofParameter<int> erode_open_count;
+	ofParameter<int> erode_close_count;
     ofParameter<int> dillate_count;
     ofParameter<int> circle_size;
 
