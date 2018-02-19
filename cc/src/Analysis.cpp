@@ -1,8 +1,7 @@
 ﻿#include "Analysis.h"
 #include "ofxCvColorImage.h"
-#include "ofxCv/Utilities.h"
-#include "ofxCv/Wrappers.h"
 #include "bgsubcnt/bgsubcnt.h"
+#include "ofxCv/Utilities.h"
 
 AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false)
 {
@@ -19,17 +18,28 @@ AnalysisThread::~AnalysisThread()
 
 void AnalysisThread::setup()
 {
+    //_inputFrame.setUseTexture(false);
     _inputFrame.allocate(image_size_W, image_size_H);
+
+    //_imageProcessed.setUseTexture(false);
     _imageProcessed.allocate(image_size_W, image_size_H);
+    
+    //_mask.setUseTexture(false);
     _mask.allocate(image_size_W, image_size_H);
+
+    //_background.setUseTexture(false);
     _background.allocate(image_size_W, image_size_H);
 
-	_inputFrameDraw.allocate(image_size_W, image_size_H);
-	_imageProcessedDraw.allocate(image_size_W, image_size_H);
-	_maskDraw.allocate(image_size_W, image_size_H);
-	_backgroundDraw.allocate(image_size_W, image_size_H);
+    
+    _inputFrameDraw.allocate(image_size_W, image_size_H);
 
-	mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 4, true);
+    _imageProcessedDraw.allocate(image_size_W, image_size_H);
+
+    _maskDraw.allocate(image_size_W, image_size_H);
+
+    _backgroundDraw.allocate(image_size_W, image_size_H);
+
+    mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 4, true);
     //mog = cv::createBackgroundSubtractorMOG2(100, 8, false);
 }
 
@@ -71,32 +81,35 @@ void AnalysisThread::threadedFunction()
 void AnalysisThread::updateFrame(ofPixels& frame)
 {
     _inputFrame.setFromPixels(frame);
-	_inputFrame.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
+    //_inputFrame.blurGaussian(_settings.blur_amount.get() + (_settings.blur_amount % 2) + 1);
 
-	_imageProcessed = _inputFrame;
+    _imageProcessed = _inputFrame;
 
     // bkg removal
     cv::Mat img, fgimg;
-    img = ofxCv::toCv(_imageProcessed.getPixels());
 
-    mog->apply(img, fgMaskMOG2, _settings.learingRate);
+    img = ofxCv::toCv(_imageProcessed);
 
-    ofImage foregroundImg;
-    ofxCv::toOf(fgMaskMOG2, foregroundImg);
-    _mask = foregroundImg.getPixels();
+    //mog->apply(img, fgMaskMOG2, _settings.learingRate);
+    
+	//ofImage foregroundImg;
+    //ofxCv::toOf(fgMaskMOG2, foregroundImg);
+	//foregroundImg.update();
 
+    //_mask = foregroundImg;
+		
     _mask.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
 
-	for(int i=0; i<_settings.erode_open_count.get(); i++)
-		_mask.erode(); // _settings.erode_count.get()
+    for(int i=0; i<_settings.erode_open_count.get(); i++)
+        _mask.erode(); // _settings.erode_count.get()
 
-	for (int i = 0; i<_settings.dillate_count.get(); i++)
-		_mask.dilate();  //_settings.dillate_count.get()
+    for (int i = 0; i<_settings.dillate_count.get(); i++)
+        _mask.dilate();  //_settings.dillate_count.get()
 
-	for (int i = 0; i<_settings.erode_close_count.get(); i++)
-		_mask.erode(); // _settings.erode_count.get()
+    for (int i = 0; i<_settings.erode_close_count.get(); i++)
+        _mask.erode(); // _settings.erode_count.get()
 
-	_mask.threshold(_settings.threshold);
+    _mask.threshold(_settings.threshold);
 
     // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
     // also, find holes is set to true so we will get interior contours as well....
@@ -104,16 +117,16 @@ void AnalysisThread::updateFrame(ofPixels& frame)
 
     ///
     mog->getBackgroundImage(fgimg);
-    ofxCv::toOf(fgimg, foregroundImg);
-    _background = foregroundImg.getPixels();
+    //ofxCv::toOf(fgimg, foregroundImg);
+    //_background = foregroundImg.getPixels();
     ///
 
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+    std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
-	_backgroundDraw = _background;
-	_inputFrameDraw = _inputFrame;
-	_imageProcessedDraw = _imageProcessed;
-	_maskDraw = _mask;
+    _backgroundDraw = _background;
+    _inputFrameDraw = _inputFrame;
+    _imageProcessedDraw = _imageProcessed;
+    _maskDraw = _mask;
 
     analyzed.send(contourFinder.blobs);
 }
@@ -127,23 +140,23 @@ void AnalysisThread::draw() const
 
     rect.set(spacing, spacing, preview_W, preview_H);
 
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_imageProcessedDraw.draw(rect);
-	}
+    {
+        std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+        _imageProcessedDraw.draw(rect);
+    }
 
     rect.set(spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_backgroundDraw.draw(rect);
-	}
+    {
+        std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+        _backgroundDraw.draw(rect);
+    }
 
     rect.set(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
 
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_maskDraw.draw(rect);
-	}
+    {
+        std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+        _maskDraw.draw(rect);
+    }
 
     // then draw the contours:
     rect.set(spacing + preview_W + spacing, spacing, image_size_W, image_size_H);

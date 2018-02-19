@@ -5,11 +5,11 @@
 int main()
 {
     ofGLFWWindowSettings settings;
-    settings.width = 800;
-    settings.height = 800;
-    settings.resizable = true;
-    shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
-    projector_window->setVerticalSync(false);
+    //settings.width = 800;
+    //settings.height = 800;
+    //settings.resizable = true;
+    //shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
+    //projector_window->setVerticalSync(false);
     
 
     settings.width = 1000;
@@ -18,7 +18,7 @@ int main()
     settings.resizable = true;
     
     // share main's OpenGL resources with gui
-    settings.shareContextWith = projector_window;	
+    //settings.shareContextWith = projector_window;	
     shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(settings);
     gui_window->setVerticalSync(false);
 

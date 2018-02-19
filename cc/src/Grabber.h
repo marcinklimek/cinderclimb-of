@@ -1,15 +1,15 @@
 ﻿#pragma once
 
 #include "ofPixels.h"
-#include "ofVideoGrabber.h"
+#include "ofDirectShowGrabber.h"
 
 class ofGrabber
 {
-    ofVideoGrabber vidGrabber;
+    ofDirectShowGrabber vidGrabber;
 
 public:
 
-    ofGrabber();
+	ofGrabber();
 
     bool getPixels(ofPixels &frame);
 

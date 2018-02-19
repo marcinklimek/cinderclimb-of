@@ -1,6 +1,4 @@
 #include "ofApp.h"
-#include "ofxCv/Utilities.h"
-
 
 
 //--------------------------------------------------------------
@@ -9,8 +7,6 @@ void ofApp::setup()
     analysis = new AnalysisThread(_settings);
     analysis->setup();
     setupGui();
-
-    
 }
 
 //--------------------------------------------------------------
