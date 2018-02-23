@@ -1,17 +1,23 @@
 ﻿#include "Analysis.h"
+
 #include "ofxCvColorImage.h"
 #include "ofxCv/Utilities.h"
 #include "ofxCv/Wrappers.h"
-#include "bgsubcnt/bgsubcnt.h"
 
-AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false)
+#include "bgsubcnt/bgsubcnt.h"
+#include "convexHull/ofxConvexHull.h"
+
+#define COLOR_WIDTH 1920
+#define COLOR_HEIGHT 1080
+
+AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false), grabber(settings)
 {
+
     startThread();
 }
 
 AnalysisThread::~AnalysisThread()
 {
-    toAnalyze.close();
     analyzed.close();
     stop();
     waitForThread(true);
@@ -19,23 +25,16 @@ AnalysisThread::~AnalysisThread()
 
 void AnalysisThread::setup()
 {
-    _inputFrame.allocate(image_size_W, image_size_H);
-    _imageProcessed.allocate(image_size_W, image_size_H);
-    _mask.allocate(image_size_W, image_size_H);
-    _background.allocate(image_size_W, image_size_H);
+    _inputFrame.allocate(_settings.image_size_W, _settings.image_size_H);
+    _imageProcessed.allocate(_settings.image_size_W, _settings.image_size_H);
+	_imageProcessedGray.allocate(_settings.image_size_W, _settings.image_size_H);
+    _colorFrame.allocate(COLOR_WIDTH, COLOR_HEIGHT);
 
-	_inputFrameDraw.allocate(image_size_W, image_size_H);
-	_imageProcessedDraw.allocate(image_size_W, image_size_H);
-	_maskDraw.allocate(image_size_W, image_size_H);
-	_backgroundDraw.allocate(image_size_W, image_size_H);
+	_inputFrameDraw.allocate(_settings.image_size_W, _settings.image_size_H);
+	_imageProcessedDraw.allocate(_settings.image_size_W, _settings.image_size_H);
 
-	mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 4, true);
-    //mog = cv::createBackgroundSubtractorMOG2(100, 8, false);
-}
-
-void AnalysisThread::analyze(ofPixels & pixels)
-{
-    toAnalyze.send(std::move(pixels));
+	mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 15, true);
+    //mog = cv::createBackgroundSubtractorMOG2(50, 8, false);
 }
 
 bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs)
@@ -60,6 +59,8 @@ void AnalysisThread::threadedFunction()
 {
     while (!_quit)
     {
+		grabber.update();
+		
         ofPixels frame;
         if (grabber.getPixels(frame))
         {
@@ -68,98 +69,71 @@ void AnalysisThread::threadedFunction()
     }
 }
 
+
 void AnalysisThread::updateFrame(ofPixels& frame)
 {
-    _inputFrame.setFromPixels(frame);
-	_inputFrame.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
+	_inputFrame.setFromPixels(frame);
+	_imageProcessed.setFromPixels(frame);
 
-	_imageProcessed = _inputFrame;
+	_imageProcessed.blur(_settings.blur_amount * 2 + 1, CV_MEDIAN);
+	_imageProcessed.erode(_settings.erode_open_count);
+	_imageProcessed.dilate(_settings.dillate_count);
+	_imageProcessed.erode(_settings.erode_close_count);
+	
+	_imageProcessedGray = _imageProcessed;
+    contourFinder.findContours(_imageProcessedGray, _settings.area_min, _settings.area_max, 50, false); // find holes
 
-    // bkg removal
-    cv::Mat img, fgimg;
-    img = ofxCv::toCv(_imageProcessed.getPixels());
-
-    mog->apply(img, fgMaskMOG2, _settings.learingRate);
-
-    ofImage foregroundImg;
-    ofxCv::toOf(fgMaskMOG2, foregroundImg);
-    _mask = foregroundImg.getPixels();
-
-    _mask.blurGaussian(_settings.blur_amount + (_settings.blur_amount % 2) + 1);
-
-	for(int i=0; i<_settings.erode_open_count.get(); i++)
-		_mask.erode(); // _settings.erode_count.get()
-
-	for (int i = 0; i<_settings.dillate_count.get(); i++)
-		_mask.dilate();  //_settings.dillate_count.get()
-
-	for (int i = 0; i<_settings.erode_close_count.get(); i++)
-		_mask.erode(); // _settings.erode_count.get()
-
-	_mask.threshold(_settings.threshold);
-
-    // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
-    // also, find holes is set to true so we will get interior contours as well....
-    contourFinder.findContours(_mask, _settings.area_min, _settings.area_max, 50, false); // find holes
-
-    ///
-    mog->getBackgroundImage(fgimg);
-    ofxCv::toOf(fgimg, foregroundImg);
-    _background = foregroundImg.getPixels();
-    ///
-
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-
-	_backgroundDraw = _background;
-	_inputFrameDraw = _inputFrame;
-	_imageProcessedDraw = _imageProcessed;
-	_maskDraw = _mask;
+	if (_settings.useConvexHull)
+	{
+		for (auto i = 0; i < contourFinder.blobs.size(); i++)
+		{
+			contourFinder.blobs[i].pts = convexHull.getConvexHull(contourFinder.blobs[i].pts);
+			contourFinder.blobs[i].nPts = contourFinder.blobs[i].pts.size();
+		}
+	}
 
     analyzed.send(contourFinder.blobs);
+
+	{
+		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+		auto& pix = grabber.kinect.getColorSource()->getPixels();
+
+		ofPixels rgbPix(pix);
+		rgbPix.setImageType(OF_IMAGE_COLOR);
+		_colorFrame.setFromPixels(rgbPix);
+
+		_inputFrameDraw = _inputFrame;
+		_imageProcessedDraw = _imageProcessed;
+	}
 }
 
 
 void AnalysisThread::draw() const
 {
     ofSetHexColor(0xffffff);
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
     ofRectangle rect;
-
     rect.set(spacing, spacing, preview_W, preview_H);
-
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_imageProcessedDraw.draw(rect);
-	}
+	_imageProcessedDraw.draw(rect);
 
     rect.set(spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_backgroundDraw.draw(rect);
-	}
+	_inputFrameDraw.draw(rect);
 
     rect.set(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
+	_colorFrame.draw(rect);
 
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_maskDraw.draw(rect);
-	}
+	rect.set(spacing + preview_W + spacing, spacing, COLOR_WIDTH/2, COLOR_HEIGHT/2);
+	_colorFrame.draw(rect);
 
-    // then draw the contours:
-    rect.set(spacing + preview_W + spacing, spacing, image_size_W, image_size_H);
-
-    ofFill();
-    ofSetHexColor(0x333333);
-    ofDrawRectangle(rect);
-    ofSetHexColor(0xffffff);
-    _inputFrameDraw.draw(rect);
+	grabber.kinect.getBodySource()->drawProjected(spacing + preview_W + spacing, spacing, COLOR_WIDTH / 2, COLOR_HEIGHT / 2, ofxKFW2::ProjectionCoordinates::ColorCamera);
 }
 
 
 void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
 {
     ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, image_size_W, image_size_H);
+    rect.set(spacing + preview_W + spacing, spacing, COLOR_WIDTH / 2, COLOR_HEIGHT / 2);
 
     drawBlobs(rect, blobs);
 }
@@ -172,8 +146,8 @@ void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs) const
     float h = rect.height;
 
 
-    float scalex = w / image_size_W;
-    float scaley = h / image_size_H;;
+    float scalex = w / (COLOR_WIDTH / 2);
+    float scaley = h / (COLOR_HEIGHT / 2);;
 
 
     ofPushStyle();

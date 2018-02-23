@@ -2,15 +2,12 @@
 #include "ofxCv/Utilities.h"
 
 
-
 //--------------------------------------------------------------
 void ofApp::setup()
 {
     analysis = new AnalysisThread(_settings);
     analysis->setup();
     setupGui();
-
-    
 }
 
 //--------------------------------------------------------------
@@ -55,6 +52,11 @@ void ofApp::draw()
 
     analysis->drawBlobs(currentBlobs);
     
+	for (const auto& blob : currentBlobs)
+	{
+
+	}
+
 
 
     ofSetHexColor(0xffffff);
@@ -62,7 +64,7 @@ void ofApp::draw()
     reportStr << "fps: " << ofGetFrameRate();
 
     ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, image_size_W, image_size_H);
+    rect.set(spacing + preview_W + spacing, spacing, _settings.image_size_W, _settings.image_size_H);
     ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
 }
 
@@ -88,6 +90,10 @@ void ofApp::keyPressed(int key)
             //recorder.stop();
             break;
         }
+		case 'b':
+	    {
+			break;
+	    }
         default: break;
     }
 }

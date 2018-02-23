@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "ofParameter.h"
 
-constexpr int image_size_W = 800;
-constexpr int image_size_H = 600;
+
+
 constexpr int preview_W = 320;
 constexpr int preview_H = 240;
 constexpr int spacing = 10;
@@ -12,6 +12,9 @@ class ofSettings
 public:
 
     ofSettings();
+
+	int image_size_W = 512;
+	int image_size_H = 424;
 
     ofParameterGroup parameters;
     ofParameter<float> radius;
@@ -31,6 +34,10 @@ public:
     ofParameter<float> brightness;
     ofParameter<float>  contrast;
     ofParameter<float>  learingRate;
+
+	ofParameter<bool>  useConvexHull;
+	ofParameter<float> gamma;
+	ofParameter<float> amplify;
 
     ofParameterGroup& get_gui_parameters();
 

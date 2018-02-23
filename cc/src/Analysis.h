@@ -6,13 +6,21 @@
 #include "ofxCvColorImage.h"
 #include "Grabber.h"
 #include "thread"
+#include "convexHull/ofxConvexHull.h"
 
 class AnalysisThread : public ofThread {
 public:
+
+	AnalysisThread() = delete;
+	AnalysisThread(const AnalysisThread&) = delete;
+	AnalysisThread(AnalysisThread&&) = delete;
+	AnalysisThread& operator=(const AnalysisThread&) = delete;
+	AnalysisThread& operator=(AnalysisThread&&) = delete;
+
     explicit AnalysisThread(ofSettings& settings);
     virtual ~AnalysisThread();
+
     void setup();
-    void analyze(ofPixels & pixels);
 
     void draw() const;
     void drawBlobs(vector<ofxCvBlob>& blobs) const;
@@ -24,30 +32,27 @@ public:
 private:
     void threadedFunction() override;
 
-    void updateFrame(ofPixels& frame);
+	void updateFrame(ofPixels& frame);
     
     ofSettings& _settings;
 
     ofGrabber grabber;
+	ofxConvexHull convexHull;
 
-    ofThreadChannel<ofPixels> toAnalyze;
     ofThreadChannel<vector<ofxCvBlob>> analyzed;
 
-    ofxCvColorImage _inputFrame;
-	ofxCvGrayscaleImage _imageProcessed;
-    ofxCvGrayscaleImage _mask;
-	ofxCvGrayscaleImage _background;
+	ofxCvColorImage _inputFrame;
+	ofxCvColorImage _imageProcessed;
+	ofxCvGrayscaleImage _imageProcessedGray;
+    ofxCvColorImage _colorFrame;
 
 	// just for drawing purposses
 	ofxCvColorImage _inputFrameDraw;
-	ofxCvGrayscaleImage _imageProcessedDraw;
-	ofxCvGrayscaleImage _maskDraw;
-	ofxCvGrayscaleImage _backgroundDraw;
+	ofxCvColorImage _imageProcessedDraw;
 
     //bkg removal
     cv::Ptr<cv::BackgroundSubtractor> mog;
     cv::Mat fgMaskMOG2;
-
 
     ofxCvContourFinder contourFinder;
     bool _quit;

@@ -151,6 +151,15 @@
     <ClCompile Include="src\bgsubcnt\bgsubcnt.cpp">
       <Filter>src\bgsubcnt</Filter>
     </ClCompile>
+    <ClCompile Include="src\convexHull\ofxConvexHull.cpp">
+      <Filter>src\convexHull</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kinect2\ofxKinect2.cpp">
+      <Filter>src\kinect2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -251,6 +260,15 @@
     </Filter>
     <Filter Include="src\bgsubcnt">
       <UniqueIdentifier>{1408e7b9-4ebf-4ed7-925a-44e003b4eb6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\convexHull">
+      <UniqueIdentifier>{97a6beef-b6c2-4396-b9f3-fd68402dab9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\kinect2">
+      <UniqueIdentifier>{42e80bd2-b0c3-4ac1-9ba7-418e138e1f39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\kinect2\utils">
+      <UniqueIdentifier>{fc7c2a52-4192-4b95-b4e9-835960e1eb57}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -457,6 +475,27 @@
     </ClInclude>
     <ClInclude Include="src\bgsubcnt\bgsubcnt.h">
       <Filter>src\bgsubcnt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\convexHull\ofxConvexHull.h">
+      <Filter>src\convexHull</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2\ofxKinect2.h">
+      <Filter>src\kinect2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2\ofxKinect2Enums.h">
+      <Filter>src\kinect2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2\ofxKinect2Types.h">
+      <Filter>src\kinect2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2\utils\DepthRemapToRange.h">
+      <Filter>src\kinect2\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2\utils\DoubleBuffer.h">
+      <Filter>src\kinect2\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect2\utils\MeshGenerator.h">
+      <Filter>src\kinect2\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
