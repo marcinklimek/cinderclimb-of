@@ -10,8 +10,9 @@
 #include "Recorder.h"
 #include "Settings.h"
 #include "Analysis.h"
+#include "Calibrator.h"
 
-class ofApp : public ofBaseApp
+class ofAppGui : public ofBaseApp
 {
 public:
     void setup() override;
@@ -21,7 +22,6 @@ public:
 
     void update() override;
     void draw() override;
-    void drawGui(ofEventArgs& args);
     void keyPressed(int key) override;
     void keyReleased(int key) override;
     void mouseMoved(int x, int y) override;
@@ -50,6 +50,7 @@ public:
 
     ofFbo recordFbo;
     ofPixels recordPixels;
+	bool isCalibration;
 
 private:
 

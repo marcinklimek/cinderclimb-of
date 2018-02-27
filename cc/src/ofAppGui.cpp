@@ -1,20 +1,25 @@
-#include "ofApp.h"
+#include "ofAppGui.h"
 #include "ofxCv/Utilities.h"
+#include "Calibrator.h"
+#include "memory"
 
 
 //--------------------------------------------------------------
-void ofApp::setup()
+void ofAppGui::setup()
 {
     analysis = new AnalysisThread(_settings);
     analysis->setup();
-    setupGui();
+    
+	isCalibration = true;
+
+	setupGui();
 }
 
 //--------------------------------------------------------------
-void ofApp::setupGui()
+void ofAppGui::setupGui()
 {
     gui.setup(_settings.get_gui_parameters());
-    gui.setPosition(spacing + preview_W + spacing, spacing);
+    gui.setPosition(spacing + _settings.image_size_W, spacing + _settings.image_size_H);
 
     ofSetBackgroundAuto(false);
     ofSetBackgroundColor(0);
@@ -22,25 +27,33 @@ void ofApp::setupGui()
 }
 
 //--------------------------------------------------------------
-void ofApp::exit()
+void ofAppGui::exit()
 {
     recorder.stop();
 }
 
-void ofApp::updateRecorder()
+void ofAppGui::updateRecorder()
 {
     //recorder.update(colorImg.getPixels());
 }
 
 
 //--------------------------------------------------------------
-void ofApp::update()
+void ofAppGui::update()
 {
-    ofBackground(100, 100, 100);
+	ofBackground(100, 100, 100);
+
+	analysis->mouseX = mouseX;
+	analysis->mouseY = mouseY;
+
+	if (isCalibration)
+	{
+		return;
+	}
 }
 
 //--------------------------------------------------------------
-void ofApp::draw()
+void ofAppGui::draw()
 {
     analysis->draw();
 
@@ -58,7 +71,6 @@ void ofApp::draw()
 	}
 
 
-
     ofSetHexColor(0xffffff);
     stringstream reportStr;
     reportStr << "fps: " << ofGetFrameRate();
@@ -66,16 +78,12 @@ void ofApp::draw()
     ofRectangle rect;
     rect.set(spacing + preview_W + spacing, spacing, _settings.image_size_W, _settings.image_size_H);
     ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
+
+	gui.draw();
 }
 
 //--------------------------------------------------------------
-void ofApp::drawGui(ofEventArgs& args)
-{
-    gui.draw();
-}
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key)
+void ofAppGui::keyPressed(int key)
 {
     switch (key)
     {
@@ -92,6 +100,7 @@ void ofApp::keyPressed(int key)
         }
 		case 'b':
 	    {
+			isCalibration = !isCalibration;
 			break;
 	    }
         default: break;
@@ -99,51 +108,51 @@ void ofApp::keyPressed(int key)
 }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key)
+void ofAppGui::keyReleased(int key)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y)
+void ofAppGui::mouseMoved(int x, int y)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button)
+void ofAppGui::mouseDragged(int x, int y, int button)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button)
+void ofAppGui::mousePressed(int x, int y, int button)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button)
+void ofAppGui::mouseReleased(int x, int y, int button)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y)
+void ofAppGui::mouseEntered(int x, int y)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y)
+void ofAppGui::mouseExited(int x, int y)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h)
+void ofAppGui::windowResized(int w, int h)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg)
+void ofAppGui::gotMessage(ofMessage msg)
 {
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo)
+void ofAppGui::dragEvent(ofDragInfo dragInfo)
 {
 }

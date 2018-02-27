@@ -13,7 +13,7 @@ ofSettings::ofSettings()
     parameters.add(dillate_count.set("dillate", 1, 1, 30));
     parameters.add(circle_size.set("circle size", 5, 1, 100));
     parameters.add(area_min.set("area min", 10.0f, 10.0f, 5000.0f));
-    parameters.add(area_max.set("area max", 500000.0f, 5000.0f, 500000.0f));
+    parameters.add(area_max.set("area max", 5000000.0f, 5000.0f, 5000000.0f));
     parameters.add(learingRate.set("learing rate", 0.99f, -1.0f, 1.0f));
 	parameters.add(gamma.set("gamma", 1.0, 0.0, 2.0));
 	parameters.add(amplify.set("amplify", 1.0, 0.0, 10.0));

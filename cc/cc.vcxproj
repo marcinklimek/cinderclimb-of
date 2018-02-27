@@ -108,7 +108,7 @@
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,7 +146,7 @@
     <ClCompile Include="src\Grabber.cpp" />
     <ClCompile Include="src\kinect2\ofxKinect2.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="src\ofAppGui.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxGui\src\ofxBaseGui.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxGui\src\ofxButton.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxGui\src\ofxGuiGroup.cpp" />
@@ -169,6 +169,7 @@
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.cpp" />
     <ClCompile Include="..\..\..\Libs\openFrameworks\addons\ofxVideoRecorder\src\ofxVideoRecorder.cpp" />
+    <ClCompile Include="src\ofAppProjector.cpp" />
     <ClCompile Include="src\Recorder.cpp" />
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\Utils.cpp" />
@@ -211,7 +212,7 @@
     <ClInclude Include="src\kinect2\utils\DepthRemapToRange.h" />
     <ClInclude Include="src\kinect2\utils\DoubleBuffer.h" />
     <ClInclude Include="src\kinect2\utils\MeshGenerator.h" />
-    <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="src\ofAppGui.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxContourUtil\src\ofxContourUtil.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxContourUtil\src\ofxCvContourSimplify.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxContourUtil\libs\convexHull.h" />
@@ -247,6 +248,7 @@
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxThreadedImageLoader\src\ofxThreadedImageLoader.h" />
     <ClInclude Include="..\..\..\Libs\openFrameworks\addons\ofxVideoRecorder\src\ofxVideoRecorder.h" />
+    <ClInclude Include="src\ofAppProjector.h" />
     <ClInclude Include="src\Recorder.h" />
     <ClInclude Include="src\Settings.h" />
   </ItemGroup>

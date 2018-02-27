@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "ofParameter.h"
 
-
-
 constexpr int preview_W = 320;
 constexpr int preview_H = 240;
 constexpr int spacing = 10;
@@ -13,8 +11,8 @@ public:
 
     ofSettings();
 
-	int image_size_W = 512;
-	int image_size_H = 424;
+	int image_size_W = 1920/2;
+	int image_size_H = 1080/2;
 
     ofParameterGroup parameters;
     ofParameter<float> radius;

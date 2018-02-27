@@ -1,5 +1,4 @@
 ﻿#include "Grabber.h"
-#include "ofApp.h"
 
 #define DEPTH_WIDTH 512
 #define DEPTH_HEIGHT 424
@@ -10,7 +9,6 @@
 
 ofGrabber::ofGrabber(ofSettings& settings) : _settings(settings)
 {
-
 	kinect.open();
 	kinect.initDepthSource();
 	kinect.initColorSource();
@@ -18,33 +16,36 @@ ofGrabber::ofGrabber(ofSettings& settings) : _settings(settings)
 	kinect.initBodySource();
 	kinect.initBodyIndexSource();
 
-	if (kinect.getSensor()->get_CoordinateMapper(&coordinateMapper) < 0) {
+	ICoordinateMapper* cp;
+	if (kinect.getSensor()->get_CoordinateMapper(&cp) < 0) 
+	{
 		ofLogError() << "Could not acquire CoordinateMapper!";
 	}
+	coordinateMapper.reset(cp);
 
 	numBodiesTracked = 0;
-	bHaveAllStreams = false;
+	haveAllStreams = false;
 
-	bodyIndexImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT, OF_IMAGE_COLOR);
-	foregroundImg.allocate(DEPTH_WIDTH, DEPTH_HEIGHT, OF_IMAGE_COLOR);
-
+	bodyIndex.allocate(COLOR_WIDTH, COLOR_HEIGHT);
 	colorCoords.resize(DEPTH_WIDTH * DEPTH_HEIGHT);
 }
 
 ofGrabber::~ofGrabber()
 {
+	kinect.close();
 }
 
-bool ofGrabber::getPixels(ofPixels &frame)
+bool ofGrabber::get(ofxCvColorImage& frame)
 {
-	if ( kinect.isFrameNew() && bHaveAllStreams)
+	if (kinect.isFrameNew() && haveAllStreams)
 	{
-		frame = bodyIndexImg.getPixels();
+		frame.setFromPixels(bodyIndex.getPixels());
 		return true;
 	}
 
-    return false;
+	return false;
 }
+
 
 void ofGrabber::update()
 {
@@ -56,20 +57,21 @@ void ofGrabber::update()
 	auto& colorPix = kinect.getColorSource()->getPixels();
 	
 	// Make sure there's some data here, otherwise the cam probably isn't ready yet
-	if (!depthPix.size() || !bodyIndexPix.size() || !colorPix.size()) {
-		bHaveAllStreams = false;
+	if (!depthPix.size() || !bodyIndexPix.size() || !colorPix.size()) 
+	{
+		haveAllStreams = false;
 		return;
 	}
-	else {
-		bHaveAllStreams = true;
-	}
-
+	
+	haveAllStreams = true;
 
 	// Count number of tracked bodies
 	numBodiesTracked = 0;
 	auto& bodies = kinect.getBodySource()->getBodies();
-	for (auto& body : bodies) {
-		if (body.tracked) {
+	for (auto& body : bodies) 
+	{
+		if (body.tracked) 
+		{
 			numBodiesTracked++;
 		}
 	}
@@ -80,19 +82,19 @@ void ofGrabber::update()
 	// https://msdn.microsoft.com/en-us/library/dn785530.aspx
 	coordinateMapper->MapDepthFrameToColorSpace(DEPTH_SIZE, (UINT16*)depthPix.getPixels(), DEPTH_SIZE, (ColorSpacePoint*)colorCoords.data());
 
+	bodyIndex.set(0);
+
 	// Loop through the depth image
 	for (int y = 0; y < DEPTH_HEIGHT; y++) {
 		for (int x = 0; x < DEPTH_WIDTH; x++) {
 			int index = (y * DEPTH_WIDTH) + x;
-			bodyIndexImg.setColor(x, y, ofColor::black);
-			foregroundImg.setColor(x, y, ofColor::black);
-
+			
 			// This is the check to see if a given pixel is inside a tracked  body or part of the background.
 			// If it's part of a body, the value will be that body's id (0-5), or will > 5 if it's
 			// part of the background
 			// More info here:
 			// https://msdn.microsoft.com/en-us/library/windowspreview.kinect.bodyindexframe.aspx
-			float val = bodyIndexPix[index];
+			const float val = bodyIndexPix[index];
 			if (val >= bodies.size()) {
 				continue;
 			}
@@ -100,7 +102,6 @@ void ofGrabber::update()
 			// Give each tracked body a color value so we can tell
 			// them apart on screen
 			ofColor c = ofColor::fromHsb(val * 255 / bodies.size(), 200, 255);
-			bodyIndexImg.setColor(x, y, c);
 
 			// For a given (x,y) in the depth image, lets look up where that point would be
 			// in the color image
@@ -114,24 +115,18 @@ void ofGrabber::update()
 			mappedCoord.y = floor(mappedCoord.y);
 
 			// Make sure it's within some sane bounds, and skip it otherwise
-			if (mappedCoord.x < 0 || mappedCoord.y < 0 || mappedCoord.x >= COLOR_WIDTH || mappedCoord.y >= COLOR_HEIGHT) {
+			if (mappedCoord.x < 0 || mappedCoord.y < 0 || mappedCoord.x >= COLOR_WIDTH || mappedCoord.y >= COLOR_HEIGHT) 
+			{
 				continue;
 			}
 
 			// Finally, pull the color from the color image based on its coords in
 			// the depth image
-			foregroundImg.setColor(x, y, colorPix.getColor(mappedCoord.x, mappedCoord.y));
+			bodyIndex.getPixels().setColor(mappedCoord.x,     mappedCoord.y,     c);
 		}
 	}
 
-	// Update the images since we manipulated the pixels manually. This uploads to the
-	// pixel data to the texture on the GPU so it can get drawn to screen
-	bodyIndexImg.update();
-	foregroundImg.update();
+	bodyIndex.dilate(2);
+	bodyIndex.erode(2);
 }
 
-
-void ofGrabber::draw() 
-{
-	//foregroundImg.draw(DEPTH_WIDTH, 0);
-}

@@ -6,22 +6,21 @@
 #include "ofVideoGrabber.h"
 #include "Settings.h"
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
+#include "ofxCvColorImage.h"
 
 class ofGrabber
 {
 	ofSettings& _settings;
 
-	ICoordinateMapper* coordinateMapper;
-
-	
+	std::shared_ptr<ICoordinateMapper> coordinateMapper;
 
 	vector<ofVec2f> colorCoords;
 	int numBodiesTracked;
-	bool bHaveAllStreams;
+	bool haveAllStreams;
 
 public:
 
-	ofImage bodyIndexImg, foregroundImg;
+	ofxCvColorImage bodyIndex;
 	ofImage colorImg;
 
 	ofGrabber(ofSettings& settings);
@@ -29,8 +28,11 @@ public:
 
     bool getPixels(ofPixels &frame);
 
+	std::shared_ptr<ICoordinateMapper> getCoordinateMapper() const { return coordinateMapper; }
+
 	void update();
 	void draw();
+	bool get(ofxCvColorImage& frame);
 
 	ofxKFW2::Device kinect;
 };

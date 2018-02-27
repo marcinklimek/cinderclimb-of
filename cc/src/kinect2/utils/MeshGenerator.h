@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "ofxKinect2.h"
+
+#include "kinect2/ofxKinect2.h"
 
 namespace ofxKinect2
 {

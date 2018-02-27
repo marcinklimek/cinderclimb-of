@@ -22,17 +22,20 @@ public:
 
     void setup();
 
-    void draw() const;
-    void drawBlobs(vector<ofxCvBlob>& blobs) const;
-    void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs) const;
+    void draw();
+    void drawBlobs(vector<ofxCvBlob>& blobs);
+    void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs);
     bool getBlobs(vector<ofxCvBlob>& blobs);
 
     void stop();
+	
+	double mouseX;
+	double mouseY;
 
 private:
     void threadedFunction() override;
 
-	void updateFrame(ofPixels& frame);
+	void updateFrame(ofxCvColorImage& frame);
     
     ofSettings& _settings;
 
@@ -50,12 +53,11 @@ private:
 	ofxCvColorImage _inputFrameDraw;
 	ofxCvColorImage _imageProcessedDraw;
 
-    //bkg removal
-    cv::Ptr<cv::BackgroundSubtractor> mog;
-    cv::Mat fgMaskMOG2;
-
     ofxCvContourFinder contourFinder;
     bool _quit;
 
 	mutable std::mutex _drawUpdateMutex;
+	
+	ofxCvGrayscaleImage _imageCanny;
+	ofxCvGrayscaleImage _imageCannyDraw;
 };

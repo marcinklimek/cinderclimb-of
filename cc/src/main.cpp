@@ -1,5 +1,6 @@
 #include "ofMain.h"
-#include "ofApp.h"
+#include "ofAppGui.h"
+#include "ofAppProjector.h"
 
 //========================================================================
 int main()
@@ -9,7 +10,7 @@ int main()
     settings.height = 768;
     settings.resizable = true;
     shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
-    projector_window->setVerticalSync(false);
+    projector_window->setVerticalSync(true);
 
     settings.width = 1200;
     settings.height = 1000;
@@ -17,13 +18,18 @@ int main()
     settings.resizable = true;
     
     // share main's OpenGL resources with gui
-    settings.shareContextWith = projector_window;	
+    //settings.shareContextWith = projector_window;	
     shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(settings);
-    gui_window->setVerticalSync(false);
+    gui_window->setVerticalSync(true);
 
-    shared_ptr<ofApp> mainApp(new ofApp);
+    shared_ptr<ofAppGui> gui_app(new ofAppGui);
+	shared_ptr<ofAppProjector> projector_app(new ofAppProjector);
+	projector_app->gui = gui_app;
 
-    ofAddListener(gui_window->events().draw, mainApp.get(), &ofApp::drawGui);
-    ofRunApp(gui_window, mainApp);
+    ofRunApp(gui_window, gui_app);
+	ofRunApp(projector_window, projector_app);
+	
+	ofSetLogLevel(OF_LOG_VERBOSE);
+
     ofRunMainLoop();
 }
