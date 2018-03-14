@@ -1,5 +1,7 @@
-ofxCv
 ofxGui
-ofxKinectForWindows2
 ofxOpenCv
 ofxOsc
+ofxBox2d
+ofxCv
+ofxKinectForWindows2
+ofxLua
