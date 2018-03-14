@@ -78,8 +78,6 @@ void ofAppGui::draw()
     ofRectangle rect;
     rect.set(spacing + preview_W + spacing, spacing, _settings.image_size_W, _settings.image_size_H);
     ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
-
-    gui.draw();
 }
 
 //--------------------------------------------------------------

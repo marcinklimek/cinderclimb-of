@@ -392,7 +392,6 @@ C:\workspace\climbing\of\addons\ofxLua\libs\lua</AdditionalIncludeDirectories>
     <ClCompile Include="src\convexHull\ofxConvexHull.cpp" />
     <ClCompile Include="src\Grabber.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\ETF.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\fdog.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp" />
@@ -551,7 +550,6 @@ C:\workspace\climbing\of\addons\ofxLua\libs\lua</AdditionalIncludeDirectories>
     <ClInclude Include="src\Calibrator.h" />
     <ClInclude Include="src\convexHull\ofxConvexHull.h" />
     <ClInclude Include="src\Grabber.h" />
-    <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h" />
