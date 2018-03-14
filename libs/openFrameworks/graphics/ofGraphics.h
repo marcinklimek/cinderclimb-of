@@ -677,6 +677,8 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 ///
 /// \sa ofTrueTypeFont
 template<typename T>
+void ofDrawBitmapString(const T & textString, int x, int y);
+template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y);
 template<typename T>
 void ofDrawBitmapString(const T & textString, const glm::vec3 & p);

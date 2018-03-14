@@ -115,3 +115,6 @@ ofInterpolateHermite(float y1, float y2, float pct);
 // ----- ofVectorMath.h-----
 
 // not needed
+
+
+%include "math/ofMathConstants.h"

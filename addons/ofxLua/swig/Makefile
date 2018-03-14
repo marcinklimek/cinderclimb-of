@@ -76,7 +76,7 @@ else
 	ATTRIBUTES_CFLAGS =
 endif
 
-CFLAGS = $(OF_HEADERS) -DMODULE_NAME=$(MODULE_NAME) $(RENAME_CFLAGS) $(DEPRECATED_CFLAGS) $(ATTRIBUTES_CFLAGS)
+CFLAGS = $(OF_HEADERS) -DMODULE_NAME=$(MODULE_NAME) $(RENAME_CFLAGS) $(DEPRECATED_CFLAGS) $(ATTRIBUTES_CFLAGS) -DTARGET_WIN32
 
 .PHONY: all debug clean desktop ios linuxarm
 
@@ -93,6 +93,9 @@ bindings:
 	mv openFrameworks_wrap.cxx $(NAME).cpp
 
 	$(SWIG) -c++ -$(LANG) -external-runtime $(NAME).h
+
+	mv openFrameworks_wrap.cpp ofxLuaBindings.cpp
+	mv openFrameworks_wrap.h ofxLuaBindings.h
 
 # move generated files to DEST_DIR
 move:

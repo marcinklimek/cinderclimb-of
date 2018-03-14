@@ -1240,9 +1240,15 @@ void ofEndShape(bool bClose){
 //--------------------------------------------------
 // text
 //--------------------------------------------------
+
+template<>
+void ofDrawBitmapString(const string & textString, int x, int y){
+	ofGetCurrentRenderer()->drawString(textString, x, y, 0.f);
+}
+
 template<>
 void ofDrawBitmapString(const string & textString, float x, float y, float z){
-	ofGetCurrentRenderer()->drawString(textString,x,y,z);
+	ofGetCurrentRenderer()->drawString(textString, x, y, z);
 }
 
 template<>

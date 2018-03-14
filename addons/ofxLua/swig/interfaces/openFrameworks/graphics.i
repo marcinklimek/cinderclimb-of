@@ -173,6 +173,7 @@ void ofDrawBitmapString(const string & textString, float x, float y, float z);
 
 %include "graphics/of3dGraphics.h"
 
+
 // ----- ofImage.h -----
 
 // handled in main.i
@@ -200,3 +201,4 @@ void ofDrawBitmapString(const string & textString, float x, float y, float z);
 %rename(TTF_MONO) OF_TTF_MONO;
 
 %include "graphics/ofTrueTypeFont.h"
+%include "graphics/ofGraphicsConstants.h"
