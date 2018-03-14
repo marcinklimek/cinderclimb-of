@@ -367,9 +367,6 @@
     <ClCompile Include="..\..\..\addons\ofxLua\src\ofxLuaFileWriter.cpp">
       <Filter>addons\ofxLua\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxLua\src\bindings\desktop\ofxLuaBindings.cpp">
-      <Filter>addons\ofxLua\src\bindings\desktop</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxLua\libs\lua\lapi.c">
       <Filter>addons\ofxLua\libs\lua</Filter>
     </ClCompile>
@@ -468,6 +465,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxLua\libs\lua\lzio.c">
       <Filter>addons\ofxLua\libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxLua\src\bindings\ofxLuaBindings.cpp">
+      <Filter>addons\ofxLua\src\bindings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -611,9 +611,6 @@
     </Filter>
     <Filter Include="addons\ofxLua\src\bindings">
       <UniqueIdentifier>{766d15b9-38a4-4087-ac68-c306cf74114f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxLua\src\bindings\desktop">
-      <UniqueIdentifier>{ea2e39d0-bcca-44c4-94f2-2aff6a248aa7}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxLua\libs">
       <UniqueIdentifier>{80f730bf-9ecf-4ae7-8e67-e07809dd8501}</UniqueIdentifier>
