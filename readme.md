@@ -1,3 +1,13 @@
+Compile under VS
+---------------
+
+* vcpkg install opencv
+* vcpkg install boost
+
+
+https://www.youtube.com/results?search_query=automatic+camera+calibration+geometry
+http://unanancyowen.com/en/kinect-v2-coordinate-system-mapping/
+https://github.com/LightBuzz/Vitruvius
 https://github.com/labatrockwell/openTSPS
 
 https://mediatech.aalto.fi/~rakajast/Publs/kajastila_paper_chi_wip_2014_camera_ready.pdf
