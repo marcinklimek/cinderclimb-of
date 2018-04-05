@@ -39,6 +39,9 @@ bool ofGrabber::get(ofxCvColorImage& frame)
 {
     if (kinect.isFrameNew() && haveAllStreams)
     {
+        if (bodyIndex.getWidth() == 0 || bodyIndex.getHeight() == 0)
+            return false;
+
         frame.setFromPixels(bodyIndex.getPixels());
         return bodyIndex.getPixels().size();
     }
@@ -81,7 +84,6 @@ void ofGrabber::update()
     // https://msdn.microsoft.com/en-us/library/windowspreview.kinect.coordinatemapper.mapdepthframetocolorspace.aspx
     // https://msdn.microsoft.com/en-us/library/dn785530.aspx
     coordinateMapper->MapDepthFrameToColorSpace(DEPTH_SIZE, (UINT16*)depthPix.getData(), DEPTH_SIZE, (ColorSpacePoint*)colorCoords.data());
-
     bodyIndex.set(0);
 
     // Loop through the depth image

@@ -59,6 +59,7 @@ void AnalysisThread::threadedFunction()
         grabber.update();
         
         ofxCvColorImage frame;
+        frame.allocate(1920, 1080);
         if (grabber.get(frame))
         {
             frame.resize(_settings.image_size_W, _settings.image_size_H);
@@ -70,6 +71,9 @@ void AnalysisThread::threadedFunction()
 
 void AnalysisThread::updateFrame(ofxCvColorImage& frame)
 {
+    if (frame.getWidth() == 0 || frame.getHeight() == 0)
+        return;
+    
     _inputFrame = frame;
 
     _imageProcessed = frame;
@@ -128,15 +132,13 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
         
         _inputFrameDraw = _inputFrame;
         _imageProcessedDraw = _imageProcessed;
-        _imageCannyDraw = _imageCanny;
+        _imageCannyDraw = _imageProcessed;
     }
 }
 
 
 void AnalysisThread::draw() 
 {
-    return;
-
     ofSetHexColor(0xffffff);
     std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
