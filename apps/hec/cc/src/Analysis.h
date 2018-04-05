@@ -25,6 +25,8 @@ public:
     void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs);
     bool getBlobs(vector<ofxCvBlob>& blobs);
 
+    shared_ptr<ofxKinectForWindows2::Source::Body> getBody();
+
     void stop();
     
     double mouseX;

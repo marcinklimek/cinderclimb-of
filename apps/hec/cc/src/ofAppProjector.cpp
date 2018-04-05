@@ -15,6 +15,8 @@ void ofAppProjector::setup() {
     scripts.push_back("scripts/boringTests.lua");
     currentScript = 0;
 
+    uberObject.analysis = analysis;
+
     // init the lua state
     lua.init();
 
@@ -139,8 +141,10 @@ void ofAppProjector::errorReceived(string& msg) {
 
 //--------------------------------------------------------------
 void ofAppProjector::reloadScript() {
+    
     // exit, reinit the lua state, and reload the current script
     lua.scriptExit();
+
     lua.init();
     // add Uber object
     luaopen_UberObject(lua);

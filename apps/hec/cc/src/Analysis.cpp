@@ -136,6 +136,17 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     }
 }
 
+shared_ptr<ofxKinectForWindows2::Source::Body> AnalysisThread::getBody()
+{
+    auto& bodies = grabber.kinect.getBodySource()->getBodies();
+
+    for (int i = 0; i < bodies.size(); ++i)
+    {
+        auto x = grabber.kinect.getBodySource()->getProjectedJoints();
+    }
+    
+
+}
 
 void AnalysisThread::draw() 
 {
@@ -162,6 +173,8 @@ void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs)
 
     drawBlobs(rect, blobs);
 }
+
+
 
 
 void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs) 
