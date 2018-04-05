@@ -69,6 +69,8 @@
     <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_debug</TargetName>
+    <IncludePath>$(VCPKGROOT)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VCPKGROOT)\debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
@@ -78,6 +80,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(VCPKGROOT)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VCPKGROOT)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
