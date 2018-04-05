@@ -123,6 +123,7 @@
 %include "interfaces/openFrameworks/utils.i"
 %include "interfaces/openFrameworks/video.i"
 
+
 // ----- Attributes ------
 
 #ifdef OF_SWIG_ATTRIBUTES

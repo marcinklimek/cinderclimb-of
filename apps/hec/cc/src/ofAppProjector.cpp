@@ -1,8 +1,11 @@
 #include "ofAppProjector.h"
+#pragma comment(lib, "LuaBox2D.lib")
+extern "C" __declspec(dllimport) int luaopen_LuaBox2D(lua_State * L);
 
 //--------------------------------------------------------------
 void ofAppProjector::setup() {
     // scripts to run
+    scripts.push_back("scripts/box2d.lua");
     scripts.push_back("scripts/graphicsExample.lua");
     scripts.push_back("scripts/imageLoaderExample.lua");
     scripts.push_back("scripts/polygonExample.lua");
@@ -15,12 +18,17 @@ void ofAppProjector::setup() {
 
     // listen to error events
     lua.addListener(this);
+    
+    // add luabox
+    luaopen_LuaBox2D(lua);
 
     // run a script
     // true = change working directory to the script's parent dir
     // so lua will find scripts with relative paths via require
     // note: changing dir does *not* affect the OF data path
     lua.doScript(scripts[currentScript], true);
+
+    
 
     // call the script's setup() function
     lua.scriptSetup();

@@ -135,6 +135,8 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
 
 void AnalysisThread::draw() 
 {
+    return;
+
     ofSetHexColor(0xffffff);
     std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
@@ -142,7 +144,6 @@ void AnalysisThread::draw()
     _inputFrameDraw.draw(    spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
     _imageProcessedGray.draw(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
     _imageCannyDraw.draw(spacing, spacing + (preview_H + spacing) * 3, preview_W, preview_H);
-
 
     _colorFrame.draw(spacing + preview_W + spacing, spacing, _settings.image_size_W / 2, _settings.image_size_H / 2);
     grabber.kinect.getBodySource()->drawProjected(spacing + preview_W + spacing, spacing, _settings.image_size_W / 2, _settings.image_size_H / 2, ofxKFW2::ProjectionCoordinates::ColorCamera);
@@ -192,7 +193,7 @@ void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs)
     {
         ofFill();
         ofBeginShape();
-        for (int j = 0; j<blobs[i].nPts; j++) 
+        for (int j = 0; j<blobs[i].pts.size(); j++) 
         {
             ofVertex(blobs[i].pts[i].x, blobs[i].pts[i].y);
         }

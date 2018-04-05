@@ -72,7 +72,7 @@
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
     <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(OF_ROOT)libs\openFrameworksCompiled\lib\vs\Win32\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>bin\</OutDir>
@@ -86,7 +86,7 @@
     <IntDir>obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(OF_ROOT)libs\openFrameworksCompiled\lib\vs\Win32\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
@@ -109,8 +109,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);Kinect20.lib;opencv_calib3d340d.lib;opencv_core340d.lib;opencv_features2d340d.lib;opencv_flann340d.lib;opencv_highgui340d.lib;opencv_imgcodecs340d.lib;opencv_imgproc340d.lib;opencv_ml340d.lib;opencv_objdetect340d.lib;opencv_photo340d.lib;opencv_shape340d.lib;opencv_stitching340d.lib;opencv_superres340d.lib;opencv_video340d.lib;opencv_videoio340d.lib;opencv_videostab340d.lib;zlibd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);Kinect20.lib;opencv_calib3d340d.lib;opencv_core340d.lib;opencv_features2d340d.lib;opencv_flann340d.lib;opencv_highgui340d.lib;opencv_imgcodecs340d.lib;opencv_imgproc340d.lib;opencv_ml340d.lib;opencv_objdetect340d.lib;opencv_photo340d.lib;opencv_shape340d.lib;opencv_stitching340d.lib;opencv_superres340d.lib;opencv_video340d.lib;opencv_videoio340d.lib;opencv_videostab340d.lib;zlibd.lib;openframeworksLib_debug.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\$(PlatformTarget);lib\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
@@ -161,8 +161,8 @@ C:\workspace\climbing\of\addons\ofxLua\libs\lua</AdditionalIncludeDirectories>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);Kinect20.lib;opencv_calib3d340.lib;opencv_core340.lib;opencv_features2d340.lib;opencv_flann340.lib;opencv_highgui340.lib;opencv_imgcodecs340.lib;opencv_imgproc340.lib;opencv_ml340.lib;opencv_objdetect340.lib;opencv_photo340.lib;opencv_shape340.lib;opencv_stitching340.lib;opencv_superres340.lib;opencv_video340.lib;opencv_videoio340.lib;opencv_videostab340.lib;zlib.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);Kinect20.lib;opencv_calib3d340.lib;opencv_core340.lib;opencv_features2d340.lib;opencv_flann340.lib;opencv_highgui340.lib;opencv_imgcodecs340.lib;opencv_imgproc340.lib;opencv_ml340.lib;opencv_objdetect340.lib;opencv_photo340.lib;opencv_shape340.lib;opencv_stitching340.lib;opencv_superres340.lib;opencv_video340.lib;opencv_videoio340.lib;opencv_videostab340.lib;zlib.lib;openframeworksLib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\Lib\$(PlatformTarget);lib\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
