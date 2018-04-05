@@ -33,7 +33,8 @@ public:
     void nextScript();
     void prevScript();
 
-    shared_ptr<ofAppGui> gui;
+    std::shared_ptr<ofAppGui> gui;
+    std::shared_ptr<AnalysisThread> analysis;
 
     ofxLua lua;
     vector<string> scripts;

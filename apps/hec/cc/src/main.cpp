@@ -14,7 +14,11 @@ int main()
     settings.setSize(1200, 1000);
     settings.setPosition(ofVec2f(5, 20));
     settings.resizable = true;
+
+
+
     
+
     // share main's OpenGL resources with gui
     //settings.shareContextWith = projector_window;	
     shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(settings);
@@ -22,6 +26,14 @@ int main()
 
     shared_ptr<ofAppGui> gui_app(new ofAppGui);
     shared_ptr<ofAppProjector> projector_app(new ofAppProjector);
+
+
+    shared_ptr<AnalysisThread> analysis = std::make_shared<AnalysisThread>(gui_app->_settings);
+    analysis->setup();
+
+    gui_app->analysis = analysis;
+    projector_app->analysis = analysis;
+
     projector_app->gui = gui_app;
 
     ofRunApp(gui_window, gui_app);

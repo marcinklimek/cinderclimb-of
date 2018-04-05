@@ -7,9 +7,6 @@
 //--------------------------------------------------------------
 void ofAppGui::setup()
 {
-    analysis = new AnalysisThread(_settings);
-    analysis->setup();
-    
     isCalibration = true;
 
     setupGui();

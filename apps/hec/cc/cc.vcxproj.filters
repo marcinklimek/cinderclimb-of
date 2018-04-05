@@ -466,6 +466,9 @@
     <ClCompile Include="..\..\..\addons\ofxLua\src\bindings\ofxLuaBindings.cpp">
       <Filter>addons\ofxLua\src\bindings</Filter>
     </ClCompile>
+    <ClCompile Include="src\Uber.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -614,6 +617,9 @@
     </Filter>
     <Filter Include="addons\ofxLua\libs\lua">
       <UniqueIdentifier>{dcab53fd-e7e5-4082-8ab8-33f4905989f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\luatok2">
+      <UniqueIdentifier>{0ff188ff-bbb7-482c-8c4d-26310806841a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1132,6 +1138,30 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxLua\libs\lua\lua.hpp">
       <Filter>addons\ofxLua\libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\common.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\exceptions.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\lutok2.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\object.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\stack.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\stackdebugger.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lutok2\include\lutok2\state.hpp">
+      <Filter>src\luatok2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Uber.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

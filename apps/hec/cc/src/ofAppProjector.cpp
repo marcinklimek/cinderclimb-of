@@ -2,6 +2,8 @@
 #pragma comment(lib, "LuaBox2D.lib")
 extern "C" __declspec(dllimport) int luaopen_LuaBox2D(lua_State * L);
 
+#include "Uber.h"
+
 //--------------------------------------------------------------
 void ofAppProjector::setup() {
     // scripts to run
@@ -19,16 +21,17 @@ void ofAppProjector::setup() {
     // listen to error events
     lua.addListener(this);
     
-    // add luabox
+    // add luaBox2D
     luaopen_LuaBox2D(lua);
+
+    // add Uber object
+    luaopen_UberObject(lua);
 
     // run a script
     // true = change working directory to the script's parent dir
     // so lua will find scripts with relative paths via require
     // note: changing dir does *not* affect the OF data path
     lua.doScript(scripts[currentScript], true);
-
-    
 
     // call the script's setup() function
     lua.scriptSetup();
@@ -139,6 +142,9 @@ void ofAppProjector::reloadScript() {
     // exit, reinit the lua state, and reload the current script
     lua.scriptExit();
     lua.init();
+    // add Uber object
+    luaopen_UberObject(lua);
+
     lua.doScript(scripts[currentScript], true);
     lua.scriptSetup();
 }

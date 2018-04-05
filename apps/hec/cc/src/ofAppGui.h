@@ -29,7 +29,7 @@ public:
     
     
     //ofRecorder recorder;
-    cv::Ptr<AnalysisThread> analysis;
+    std::shared_ptr<AnalysisThread> analysis;
 
     ofxPanel gui;
 
@@ -44,10 +44,6 @@ public:
     ofFbo recordFbo;
     ofPixels recordPixels;
     bool isCalibration;
-
-private:
-
-
 
     ofSettings _settings;
 };
