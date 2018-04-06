@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxPanel.h"
 #include "Settings.h"
 #include "Analysis.h"
+#include "ofxGui/src/ofxPanel.h"
 
 class ofAppGui : public ofBaseApp
 {

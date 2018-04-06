@@ -5,7 +5,6 @@
 #include "ofxCv/Utilities.h"
 #include "ofxCv/Wrappers.h"
 
-#include "bgsubcnt/bgsubcnt.h"
 #include "convexHull/ofxConvexHull.h"
 
 AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false), grabber(settings)

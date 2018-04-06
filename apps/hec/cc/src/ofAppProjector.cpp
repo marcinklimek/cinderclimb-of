@@ -1,8 +1,7 @@
 #include "ofAppProjector.h"
-#pragma comment(lib, "LuaBox2D.lib")
-extern "C" __declspec(dllimport) int luaopen_LuaBox2D(lua_State * L);
 
 #include "Uber.h"
+#include "luaBox2D/main.hpp"
 
 //--------------------------------------------------------------
 void ofAppProjector::setup() {

@@ -22,6 +22,7 @@
     <ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>cc</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -51,29 +52,38 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\..\..\addons\ofxLua\ofxLua.props" />
+    <Import Project="..\..\..\other\luaBox2D\luaBox2D.props" />
+    <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
     <Import Project="..\..\..\addons\ofxLua\ofxLua.props" />
+    <Import Project="..\..\..\other\luaBox2D\luaBox2D.props" />
+    <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\..\..\addons\ofxLua\ofxLua.props" />
+    <Import Project="..\..\..\other\luaBox2D\luaBox2D.props" />
+    <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
     <Import Project="..\..\..\addons\ofxLua\ofxLua.props" />
+    <Import Project="..\..\..\other\luaBox2D\luaBox2D.props" />
+    <Import Project="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
+    <OutDir>$(OF_ROOT)\build\bin\$(ProjectName)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(OF_ROOT)\build\obj\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_debug</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;$(OF_ROOT)\build\bin\luaBox2DLib_$(Platform)_$(Configuration)\;$(OF_ROOT)\build\bin\ofxKinectForWindows2Lib_$(Platform)_$(Configuration)\;$(OF_ROOT)\build\bin\ofxLuaLib$(Platform)_$(Configuration)\;$(OF_ROOT)\build\bin\openframeworksLib_$(Platform)_$(Configuration)\;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>bin\</OutDir>
@@ -83,9 +93,10 @@
     <GenerateManifest>true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
+    <OutDir>$(OF_ROOT)\build\bin\$(ProjectName)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(OF_ROOT)\build\obj\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;$(OF_ROOT)\build\bin\luaBox2DLib_$(Platform)_$(Configuration)\;$(OF_ROOT)\build\bin\ofxKinectForWindows2Lib_$(Platform)_$(Configuration)\;$(OF_ROOT)\build\bin\ofxLuaLib$(Platform)_$(Configuration)\;$(OF_ROOT)\build\bin\openframeworksLib_$(Platform)_$(Configuration)\;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>bin\</OutDir>
@@ -96,12 +107,15 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LUA_COMPAT_5_1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\inc;..\..\..\addons\ofxLua\libs;..\..\..\addons\ofxLua\libs\lua;..\..\..\addons\ofxLua\src;..\..\..\addons\ofxLua\src\bindings;..\..\..\addons\ofxLua\src\bindings\desktop;..\..\..\addons\ofxLua\src\bindings\ios;..\..\..\addons\ofxLua\src\bindings\linuxarm;..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\photo;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\superres;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\emscripten;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Debug;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Debug;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Release;..\..\..\addons\ofxOpenCv\libs\opencv\license;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;$(OF_ROOT)\addons\ofxCv\libs\ofxCv\include;$(OF_ROOT)\addons\ofxCv\libs\CLD\include\CLD;$(OF_ROOT)\addons\ofxCv\src;$(OF_ROOT)\addons\ofxKinectForWindows2\src;$(OF_ROOT)\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;$(OF_ROOT)\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;$(OF_ROOT)\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\inc;$(OF_ROOT)\addons\ofxLua\libs;$(OF_ROOT)\addons\ofxLua\libs\lua;$(OF_ROOT)\addons\ofxLua\src;$(OF_ROOT)\addons\ofxLua\src\bindings;$(OF_ROOT)\addons\ofxLua\src\bindings\desktop;$(OF_ROOT)\addons\ofxLua\src\bindings\ios;$(OF_ROOT)\addons\ofxLua\src\bindings\linuxarm;$(OF_ROOT)\addons\ofxOpenCv\libs;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\core;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\photo;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\superres;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\video;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\emscripten;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\Win32;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Debug;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\x64;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Debug;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Release;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\license;$(OF_ROOT)\addons\ofxOpenCv\src;$(OF_ROOT)\addons\ofxOsc\libs;$(OF_ROOT)\addons\ofxOsc\libs\oscpack;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\ip;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\ip\posix;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\ip\win32;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\osc;$(OF_ROOT)\addons\ofxOsc\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalOptions>-DLUA_USE_WINDOWS</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -111,6 +125,9 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Debug</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>robocopy "$(OF_ROOT)/export/vs/Win32/" "$(OF_ROOT)build\bin\$(ProjectName)_$(Platform)_$(Configuration)" "*.dll" /njs /njh /np /fp /bytes</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -136,13 +153,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LUA_COMPAT_5_1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxKinectForWindows2\src;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;..\..\..\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\inc;..\..\..\addons\ofxLua\libs;..\..\..\addons\ofxLua\libs\lua;..\..\..\addons\ofxLua\src;..\..\..\addons\ofxLua\src\bindings;..\..\..\addons\ofxLua\src\bindings\desktop;..\..\..\addons\ofxLua\src\bindings\ios;..\..\..\addons\ofxLua\src\bindings\linuxarm;..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\photo;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\superres;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\emscripten;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Debug;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Debug;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Release;..\..\..\addons\ofxOpenCv\libs\opencv\license;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOsc\libs;..\..\..\addons\ofxOsc\libs\oscpack;..\..\..\addons\ofxOsc\libs\oscpack\src;..\..\..\addons\ofxOsc\libs\oscpack\src\ip;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\posix;..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32;..\..\..\addons\ofxOsc\libs\oscpack\src\osc;..\..\..\addons\ofxOsc\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;$(OF_ROOT)\addons\ofxCv\libs\ofxCv\include;$(OF_ROOT)\addons\ofxCv\libs\CLD\include\CLD;$(OF_ROOT)\addons\ofxCv\src;$(OF_ROOT)\addons\ofxKinectForWindows2\src;$(OF_ROOT)\addons\ofxKinectForWindows2\src\ofxKinectForWindows2;$(OF_ROOT)\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Data;$(OF_ROOT)\addons\ofxKinectForWindows2\src\ofxKinectForWindows2\Source;C:\Program Files\Microsoft SDKs\Kinect\v2.0_1409\inc;$(OF_ROOT)\addons\ofxLua\libs;$(OF_ROOT)\addons\ofxLua\libs\lua;$(OF_ROOT)\addons\ofxLua\src;$(OF_ROOT)\addons\ofxLua\src\bindings;$(OF_ROOT)\addons\ofxLua\src\bindings\desktop;$(OF_ROOT)\addons\ofxLua\src\bindings\ios;$(OF_ROOT)\addons\ofxLua\src\bindings\linuxarm;$(OF_ROOT)\addons\ofxOpenCv\libs;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\core;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu\device\detail;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\nonfree;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\photo;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\stitching\detail;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\superres;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\video;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\emscripten;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\Win32;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Debug;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\x64;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Debug;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\lib\vs\x64\Release;$(OF_ROOT)\addons\ofxOpenCv\libs\opencv\license;$(OF_ROOT)\addons\ofxOpenCv\src;$(OF_ROOT)\addons\ofxOsc\libs;$(OF_ROOT)\addons\ofxOsc\libs\oscpack;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\ip;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\ip\posix;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\ip\win32;$(OF_ROOT)\addons\ofxOsc\libs\oscpack\src\osc;$(OF_ROOT)\addons\ofxOsc\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>-DLUA_USE_WINDOWS</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -155,6 +175,9 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs\Win32\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>robocopy "$(OF_ROOT)/export/vs/Win32/" "$(OF_ROOT)build\bin\$(ProjectName)_$(Platform)_$(Configuration)" "*.dll" /njs /njh /np /fp /bytes</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -179,8 +202,19 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxButton.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxLabel.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxPanel.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
+    <ClCompile Include="src\Analysis.cpp" />
+    <ClCompile Include="src\Calibrator.cpp" />
+    <ClCompile Include="src\convexHull\ofxConvexHull.cpp" />
+    <ClCompile Include="src\Grabber.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\ETF.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\fdog.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp" />
@@ -201,9 +235,14 @@
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvHaarFinder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
+    <ClCompile Include="src\ofAppGui.cpp" />
+    <ClCompile Include="src\ofAppProjector.cpp" />
+    <ClCompile Include="src\Recorder.cpp" />
+    <ClCompile Include="src\Settings.cpp" />
+    <ClCompile Include="src\Uber.cpp" />
+    <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h" />
@@ -220,6 +259,15 @@
     <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Tracker.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Utilities.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Wrappers.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGui.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxLabel.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxPanel.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h" />
@@ -389,17 +437,15 @@
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\optical_flow.hpp" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\stabilizer.hpp" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\videostab.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
-      <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
-      <Project>{f6008d6a-6d39-4b68-840e-e7ac8ed855da}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\addons\ofxLua\ofxLuaLib\ofxLuaLib.vcxproj">
-      <Project>{e6cfb1d6-7be9-4459-8a47-a769ba6309ca}</Project>
-    </ProjectReference>
+    <ClInclude Include="src\Analysis.h" />
+    <ClInclude Include="src\Calibrator.h" />
+    <ClInclude Include="src\convexHull\ofxConvexHull.h" />
+    <ClInclude Include="src\Grabber.h" />
+    <ClInclude Include="src\ofAppGui.h" />
+    <ClInclude Include="src\ofAppProjector.h" />
+    <ClInclude Include="src\Recorder.h" />
+    <ClInclude Include="src\Settings.h" />
+    <ClInclude Include="src\Uber.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc">
@@ -407,6 +453,23 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj">
+      <Project>{f6008d6a-6d39-4b68-840e-e7ac8ed855da}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\addons\ofxLua\ofxLuaLib\ofxLuaLib.vcxproj">
+      <Project>{e6cfb1d6-7be9-4459-8a47-a769ba6309ca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\libs\lua51\lua51\lua51.vcxproj">
+      <Project>{25b8ea28-c9bf-4a3e-a396-032beb67e8a3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
+      <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\other\luaBox2D\luaBox2DLib\luaBox2DLib.vcxproj">
+      <Project>{ff5ea14b-3385-49e1-9dc2-9258fb4cb204}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>

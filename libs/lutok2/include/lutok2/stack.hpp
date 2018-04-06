@@ -1,7 +1,7 @@
 #ifndef LUTOK2_STACK_H
 #define LUTOK2_STACK_H
 
-#include "luaconf.h"
+
 #include "lua.h"
 
 namespace lutok2 {

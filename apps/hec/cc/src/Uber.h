@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
+#include <lutok2/lutok2.hpp>
 
-#include "lutok2/lutok2.hpp"
 #include "Analysis.h"
 
 using namespace lutok2;
