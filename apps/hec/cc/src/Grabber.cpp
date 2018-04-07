@@ -7,8 +7,9 @@
 #define COLOR_WIDTH 1920
 #define COLOR_HEIGHT 1080
 
-ofGrabber::ofGrabber(ofSettings& settings) : _settings(settings)
+ofGrabber::ofGrabber(std::shared_ptr<ofSettings> settings) 
 {
+	_settings = settings;
     kinect.open();
     kinect.initDepthSource();
     kinect.initColorSource();
@@ -16,12 +17,10 @@ ofGrabber::ofGrabber(ofSettings& settings) : _settings(settings)
     kinect.initBodySource();
     kinect.initBodyIndexSource();
 
-    ICoordinateMapper* cp;
-    if (kinect.getSensor()->get_CoordinateMapper(&cp) < 0) 
+    if (kinect.getSensor()->get_CoordinateMapper(&coordinateMapper) < 0) 
     {
         ofLogError() << "Could not acquire CoordinateMapper!";
     }
-    coordinateMapper.reset(cp);
 
     numBodiesTracked = 0;
     haveAllStreams = false;
@@ -32,6 +31,7 @@ ofGrabber::ofGrabber(ofSettings& settings) : _settings(settings)
 
 ofGrabber::~ofGrabber()
 {
+	coordinateMapper->Release();
     kinect.close();
 }
 

@@ -10,9 +10,9 @@
 
 class ofGrabber
 {
-	ofSettings& _settings;
+	std::shared_ptr<ofSettings> _settings;
 
-	std::shared_ptr<ICoordinateMapper> coordinateMapper;
+	ICoordinateMapper* coordinateMapper;
 
 	vector<ofVec2f> colorCoords;
 	int numBodiesTracked;
@@ -23,12 +23,12 @@ public:
 	ofxCvColorImage bodyIndex;
 	ofImage colorImg;
 
-	ofGrabber(ofSettings& settings);
+	ofGrabber(std::shared_ptr<ofSettings> settings);
 	~ofGrabber();
 
     bool getPixels(ofPixels &frame);
 
-	std::shared_ptr<ICoordinateMapper> getCoordinateMapper() const { return coordinateMapper; }
+	ICoordinateMapper* getCoordinateMapper() const { return coordinateMapper; }
 
 	void update();
 	void draw();

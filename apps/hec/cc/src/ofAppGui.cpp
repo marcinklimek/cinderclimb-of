@@ -15,8 +15,8 @@ void ofAppGui::setup()
 //--------------------------------------------------------------
 void ofAppGui::setupGui()
 {
-    gui.setup(_settings.get_gui_parameters());
-    gui.setPosition(spacing + _settings.image_size_W, spacing + _settings.image_size_H);
+    gui.setup(_settings->get_gui_parameters());
+    gui.setPosition(spacing + _settings->image_size_W, spacing + _settings->image_size_H);
 
     ofSetBackgroundAuto(false);
     ofSetBackgroundColor(0);
@@ -26,6 +26,7 @@ void ofAppGui::setupGui()
 //--------------------------------------------------------------
 void ofAppGui::exit()
 {
+	analysis->stop();
     //recorder.stop();
 }
 
@@ -73,7 +74,7 @@ void ofAppGui::draw()
     reportStr << "fps: " << ofGetFrameRate();
 
     ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, _settings.image_size_W, _settings.image_size_H);
+    rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W, _settings->image_size_H);
     ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
 }
 

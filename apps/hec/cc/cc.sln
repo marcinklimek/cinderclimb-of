@@ -3,16 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cc", "cc.vcxproj", "{7FD42DF7-442E-479A-BA76-D0022F99702A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FF5EA14B-3385-49E1-9DC2-9258FB4CB204} = {FF5EA14B-3385-49E1-9DC2-9258FB4CB204}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openframeworksLib", "..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj", "{5837595D-ACA9-485C-8E76-729040CE4B0B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxKinectForWindows2Lib", "..\..\..\addons\ofxKinectForWindows2\ofxKinectForWindows2Lib\ofxKinectForWindows2Lib.vcxproj", "{F6008D6A-6D39-4B68-840E-E7AC8ED855DA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5837595D-ACA9-485C-8E76-729040CE4B0B} = {5837595D-ACA9-485C-8E76-729040CE4B0B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ofxLuaLib", "..\..\..\addons\ofxLua\ofxLuaLib\ofxLuaLib.vcxproj", "{E6CFB1D6-7BE9-4459-8A47-A769BA6309CA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{25B8EA28-C9BF-4A3E-A396-032BEB67E8A3} = {25B8EA28-C9BF-4A3E-A396-032BEB67E8A3}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua51", "..\..\..\libs\lua51\lua51\lua51.vcxproj", "{25B8EA28-C9BF-4A3E-A396-032BEB67E8A3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaBox2DLib", "..\..\..\other\luaBox2D\luaBox2DLib\luaBox2DLib.vcxproj", "{FF5EA14B-3385-49E1-9DC2-9258FB4CB204}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaBox2D", "..\..\..\other\luaBox2D\luaBox2DLib\luaBox2DLib.vcxproj", "{FF5EA14B-3385-49E1-9DC2-9258FB4CB204}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

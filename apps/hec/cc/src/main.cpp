@@ -2,10 +2,14 @@
 #include "ofAppGui.h"
 #include "ofAppProjector.h"
 
+ofGLFWWindowSettings settings;
+std::shared_ptr<ofSettings> app_settings;
+
 //========================================================================
 int main()
 {
-    ofGLFWWindowSettings settings;
+	app_settings = std::make_shared<ofSettings>();
+
 	settings.width = 1024;
 	settings.height = 768;
     
@@ -18,7 +22,6 @@ int main()
     settings.setPosition(ofVec2f(5, 20));
     settings.resizable = true;
 
-
     // share main's OpenGL resources with gui
     //settings.shareContextWith = projector_window;	
     shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(settings);
@@ -26,9 +29,9 @@ int main()
 
     shared_ptr<ofAppGui> gui_app(new ofAppGui);
     shared_ptr<ofAppProjector> projector_app(new ofAppProjector);
+	gui_app->_settings = app_settings;
 
-
-    shared_ptr<AnalysisThread> analysis = std::make_shared<AnalysisThread>(gui_app->_settings);
+    shared_ptr<AnalysisThread> analysis = std::make_shared<AnalysisThread>(app_settings);
     analysis->setup();
 
     gui_app->analysis = analysis;

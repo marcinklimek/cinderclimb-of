@@ -7,27 +7,27 @@
 
 #include "convexHull/ofxConvexHull.h"
 
-AnalysisThread::AnalysisThread(ofSettings& settings) : _settings(settings), _quit(false), grabber(settings)
+AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : _quit(false), grabber(settings)
 {
+	_settings = settings;
     startThread();
 }
 
 AnalysisThread::~AnalysisThread()
 {
-    analyzed.close();
     stop();
-    waitForThread(true);
+    analyzed.close();
 }
 
 void AnalysisThread::setup()
 {
-    _inputFrame.allocate(_settings.image_size_W, _settings.image_size_H);
-    _imageProcessed.allocate(_settings.image_size_W, _settings.image_size_H);
-    _imageProcessedGray.allocate(_settings.image_size_W, _settings.image_size_H);
-    _colorFrame.allocate(_settings.image_size_W, _settings.image_size_H);
+    _inputFrame.allocate(_settings->image_size_W, _settings->image_size_H);
+    _imageProcessed.allocate(_settings->image_size_W, _settings->image_size_H);
+    _imageProcessedGray.allocate(_settings->image_size_W, _settings->image_size_H);
+    _colorFrame.allocate(_settings->image_size_W, _settings->image_size_H);
 
-    _inputFrameDraw.allocate(_settings.image_size_W, _settings.image_size_H);
-    _imageProcessedDraw.allocate(_settings.image_size_W, _settings.image_size_H);
+    _inputFrameDraw.allocate(_settings->image_size_W, _settings->image_size_H);
+    _imageProcessedDraw.allocate(_settings->image_size_W, _settings->image_size_H);
 
     //mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 15, true);
     //mog = cv::createBackgroundSubtractorMOG2(50, 8, false);
@@ -49,6 +49,7 @@ bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs)
 void AnalysisThread::stop()
 {
     _quit = true;
+	waitForThread(true);
 }
 
 void AnalysisThread::threadedFunction()
@@ -61,7 +62,7 @@ void AnalysisThread::threadedFunction()
         frame.allocate(1920, 1080);
         if (grabber.get(frame))
         {
-            frame.resize(_settings.image_size_W, _settings.image_size_H);
+            frame.resize(_settings->image_size_W, _settings->image_size_H);
             updateFrame(frame);
         }
     }
@@ -70,27 +71,30 @@ void AnalysisThread::threadedFunction()
 
 void AnalysisThread::updateFrame(ofxCvColorImage& frame)
 {
+	if ( _quit )
+		return;
+
     if (frame.getWidth() == 0 || frame.getHeight() == 0)
         return;
     
     _inputFrame = frame;
 
     _imageProcessed = frame;
-    _imageProcessed.blur(_settings.blur_amount * 2 + 1);
+    _imageProcessed.blur(_settings->blur_amount * 2 + 1);
 
-    for(auto i=0; i<_settings.erode_open_count; i++)
+    for(auto i=0; i<_settings->erode_open_count; i++)
         _imageProcessed.erode();
 
-    for (auto i = 0; i<_settings.dillate_count; i++)
+    for (auto i = 0; i<_settings->dillate_count; i++)
         _imageProcessed.dilate();
     
-    for (auto i = 0; i<_settings.erode_close_count; i++)
+    for (auto i = 0; i<_settings->erode_close_count; i++)
         _imageProcessed.erode();
 
     _imageProcessedGray = _imageProcessed;
-    contourFinder.findContours(_imageProcessedGray, _settings.area_min, _settings.area_max, 50, false); // find holes
+    contourFinder.findContours(_imageProcessedGray, _settings->area_min, _settings->area_max, 50, false); // find holes
 
-    if (_settings.useConvexHull)
+    if (_settings->useConvexHull)
     {
         for (auto i = 0; i < contourFinder.blobs.size(); i++)
         {
@@ -106,12 +110,12 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
 
     ofPixels rgbPix(pix);
     rgbPix.setImageType(OF_IMAGE_COLOR);
-    rgbPix.resize(_settings.image_size_W, _settings.image_size_H);
+    rgbPix.resize(_settings->image_size_W, _settings->image_size_H);
     _colorFrame.setFromPixels(rgbPix);
 
 //	ofPixels grayPix(pix);
 //	grayPix.setImageType(OF_IMAGE_GRAYSCALE);
-//	grayPix.resize(_settings.image_size_W, _settings.image_size_H);
+//	grayPix.resize(_settings->image_size_W, _settings->image_size_H);
 
 //	ofxCvGrayscaleImage input;
 //	input.allocate(grayPix.getWidth(), grayPix.getHeight());
@@ -156,8 +160,8 @@ void AnalysisThread::draw()
     _imageProcessedGray.draw(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
     _imageCannyDraw.draw(spacing, spacing + (preview_H + spacing) * 3, preview_W, preview_H);
 
-    _colorFrame.draw(spacing + preview_W + spacing, spacing, _settings.image_size_W / 2, _settings.image_size_H / 2);
-    grabber.kinect.getBodySource()->drawProjected(spacing + preview_W + spacing, spacing, _settings.image_size_W / 2, _settings.image_size_H / 2, ofxKFW2::ProjectionCoordinates::ColorCamera);
+    _colorFrame.draw(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+    grabber.kinect.getBodySource()->drawProjected(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2, ofxKFW2::ProjectionCoordinates::ColorCamera);
 
     vector<ofxCvBlob> blobs;
     if (getBlobs(blobs))
@@ -167,7 +171,7 @@ void AnalysisThread::draw()
 void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs)
 {
     ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, _settings.image_size_W / 2, _settings.image_size_H / 2);
+    rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
 
     drawBlobs(rect, blobs);
 }
@@ -182,8 +186,8 @@ void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs)
     float w = rect.width;
     float h = rect.height;
 
-    float scale_x = w / _settings.image_size_W;
-    float scale_y = h / _settings.image_size_H ;
+    float scale_x = w / _settings->image_size_W;
+    float scale_y = h / _settings->image_size_H ;
 
     ofPushStyle();
     // ---------------------------- draw the bounding rectangle

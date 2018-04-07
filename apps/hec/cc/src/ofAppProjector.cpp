@@ -1,7 +1,6 @@
 #include "ofAppProjector.h"
 
 #include "Uber.h"
-#include "luaBox2D/main.hpp"
 
 //--------------------------------------------------------------
 void ofAppProjector::setup() {
@@ -22,9 +21,6 @@ void ofAppProjector::setup() {
     // listen to error events
     lua.addListener(this);
     
-    // add luaBox2D
-    luaopen_LuaBox2D(lua);
-
     // add Uber object
     luaopen_UberObject(lua);
 

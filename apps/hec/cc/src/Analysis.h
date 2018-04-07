@@ -15,7 +15,7 @@ public:
     AnalysisThread& operator=(const AnalysisThread&) = delete;
     AnalysisThread& operator=(AnalysisThread&&) = delete;
 
-    explicit AnalysisThread(ofSettings& settings);
+    explicit AnalysisThread(std::shared_ptr<ofSettings> settings);
     virtual ~AnalysisThread();
 
     void setup();
@@ -37,7 +37,7 @@ private:
 
     void updateFrame(ofxCvColorImage& frame);
     
-    ofSettings& _settings;
+    std::shared_ptr<ofSettings> _settings;
 
     ofGrabber grabber;
     ofxConvexHull convexHull;

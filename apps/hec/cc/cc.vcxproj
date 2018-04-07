@@ -126,7 +126,10 @@
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>robocopy "$(OF_ROOT)/export/vs/Win32/" "$(OF_ROOT)build\bin\$(ProjectName)_$(Platform)_$(Configuration)" "*.dll" /njs /njh /np /fp /bytes</Command>
+      <Command>robocopy "$(OF_ROOT)export\vs\$(Platform)" "$(OF_ROOT)build\bin\$(ProjectName)_$(Platform)_$(Configuration)" "*.dll" /njs /njh /np /fp /bytes
+robocopy "data/" "$(OF_ROOT)build/bin/$(ProjectName)_$(Platform)_$(Configuration)/data" "*.*" /njs /njh /np /fp /bytes /E
+robocopy "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)" "$(OF_ROOT)build/bin/$(ProjectName)_$(Platform)_$(Configuration)" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -466,9 +469,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
       <Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\other\luaBox2D\luaBox2DLib\luaBox2DLib.vcxproj">
-      <Project>{ff5ea14b-3385-49e1-9dc2-9258fb4cb204}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

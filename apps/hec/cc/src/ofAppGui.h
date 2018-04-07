@@ -45,5 +45,5 @@ public:
     ofPixels recordPixels;
     bool isCalibration;
 
-    ofSettings _settings;
+    std::shared_ptr<ofSettings> _settings;
 };
