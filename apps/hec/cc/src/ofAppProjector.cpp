@@ -4,6 +4,13 @@
 
 //--------------------------------------------------------------
 void ofAppProjector::setup() {
+
+	//cout << ofGetWindowPositionX() << endl;
+	//cout << ofGetWindowPositionY() << endl;
+
+	ofSetWindowPosition(3600, 0);
+
+
     // scripts to run
     scripts.push_back("scripts/box2d.lua");
     scripts.push_back("scripts/graphicsExample.lua");
@@ -63,6 +70,10 @@ void ofAppProjector::exit()
 void ofAppProjector::keyPressed(int key) {
     switch (key) {
 
+	case 'f':
+
+		ofToggleFullscreen();
+		return;
     case 'r':
         reloadScript();
         break;

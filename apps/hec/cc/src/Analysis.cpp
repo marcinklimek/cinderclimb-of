@@ -196,29 +196,25 @@ void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
 
 void AnalysisThread::drawJoints( vector<ofVec2f>& joints)
 {
-    ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
-	
-    float x = rect.x;
-    float y = rect.y;
-    float w = rect.width;
-    float h = rect.height;
 
-    float scale_x = w / _settings->image_size_W;
-    float scale_y = h / _settings->image_size_H ;
+    float w = _settings->image_size_W / 2;
+    float h = _settings->image_size_H / 2;
+
+    float x = spacing + preview_W + spacing + sensingWindow.x * w;
+    float y = spacing + sensingWindow.y * h;
 
     ofPushStyle();
 
     ofSetHexColor(0xDD00CC);
     ofPushMatrix();
-    ofTranslate(0, 0, 0.0);
+    ofTranslate(x, y, 0.0);
     ofScale(1.0, 1.0, 1.0);
     
     ofFill();
     ofSetColor(250, 250, 250);
 	
     for (const auto joint : joints) 
-        ofDrawCircle(sensingWindow.x*w+ spacing + preview_W + spacing+joint.x*w, sensingWindow.y*h+spacing+joint.y*h, 2);
+        ofDrawCircle(joint.x * w * sensingWindow.width, joint.y * h * sensingWindow.height, 2);
 
     ofPopMatrix();
     ofPopStyle();
@@ -242,10 +238,7 @@ void AnalysisThread::updateJoints()
 			if ( sensingWindow.inside(joint) )
 			{
 				ofVec2f v = joint;
-
-				v -= ofVec2f(sensingWindow.x, sensingWindow.y);
-				//v = v * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
-
+				v = ofxHomography::toScreenCoordinates(v, sensingTrans.homography);
 				filtered.emplace_back(v);
 			}
 		}
@@ -271,7 +264,7 @@ ofVec2f AnalysisThread::getJoint(const int jointIdx) const
 
 	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 	
-	ofVec2f p = (_jointsPublic[jointIdx]*2) * ofVec2f(-1, 1) + ofVec2f(1, 0);
-
+	ofVec2f p = _jointsPublic[jointIdx];
+	p = p * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
 	return p * ofVec2f(1024, 768);
 }

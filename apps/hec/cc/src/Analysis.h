@@ -6,6 +6,8 @@
 #include "Grabber.h"
 #include "convexHull/ofxConvexHull.h"
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
+#include "ofxHomography.h"
+
 
 class AnalysisThread  : public ofThread
 {
@@ -43,6 +45,8 @@ public:
     ofVec2f projectorScreenSize;
 
 	ofRectangle sensingWindow;
+
+	HomoTrans sensingTrans;
 
 private:
 
