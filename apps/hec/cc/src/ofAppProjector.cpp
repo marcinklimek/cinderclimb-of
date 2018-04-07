@@ -42,6 +42,10 @@ void ofAppProjector::update() {
 
 //--------------------------------------------------------------
 void ofAppProjector::draw() {
+
+    ofTranslate(0, 0, 0.0);
+    ofScale(1.0, 1.0, 1.0);
+
     // call the script's draw() function
     lua.scriptDraw();
 }
@@ -115,8 +119,9 @@ void ofAppProjector::mouseExited(int x, int y) {
 }
 
 //--------------------------------------------------------------
-void ofAppProjector::windowResized(int w, int h) {
-
+void ofAppProjector::windowResized(int w, int h) 
+{
+	analysis->projectorScreenSize = ofVec2f(w, h);
 }
 
 //--------------------------------------------------------------

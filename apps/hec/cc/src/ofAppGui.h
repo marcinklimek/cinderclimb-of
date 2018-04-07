@@ -27,6 +27,8 @@ public:
     void dragEvent(ofDragInfo dragInfo) override;
     void gotMessage(ofMessage msg) override;
     
+
+
     
     //ofRecorder recorder;
     std::shared_ptr<AnalysisThread> analysis;

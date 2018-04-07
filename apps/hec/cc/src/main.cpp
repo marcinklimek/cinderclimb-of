@@ -17,6 +17,8 @@ int main()
     shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
     projector_window->setVerticalSync(true);
 
+	
+
 	settings.width = 1200;
 	settings.height = 1000;
     settings.setPosition(ofVec2f(5, 20));
@@ -33,6 +35,8 @@ int main()
 
     shared_ptr<AnalysisThread> analysis = std::make_shared<AnalysisThread>(app_settings);
     analysis->setup();
+
+	analysis->projectorScreenSize = ofVec2f(projector_window->getScreenSize());
 
     gui_app->analysis = analysis;
     projector_app->analysis = analysis;

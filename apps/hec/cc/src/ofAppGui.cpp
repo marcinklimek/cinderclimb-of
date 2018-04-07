@@ -8,6 +8,7 @@
 void ofAppGui::setup()
 {
     isCalibration = true;
+	
 
     setupGui();
 }
@@ -53,6 +54,8 @@ void ofAppGui::update()
 //--------------------------------------------------------------
 void ofAppGui::draw()
 {
+	ofEnableAlphaBlending();
+
     analysis->draw();
 
     ofSetHexColor(0xffffff);
@@ -102,11 +105,37 @@ void ofAppGui::mouseMoved(int x, int y)
 //--------------------------------------------------------------
 void ofAppGui::mouseDragged(int x, int y, int button)
 {
+	// right button
+	if ( button == 2 )
+	{
+		float w =  _settings->image_size_W / 2;
+		float h =  _settings->image_size_H / 2;
+
+		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, w, h);
+		if ( rect.inside(x,y) )
+		{
+			ofVec2f startPoint(analysis->sensingWindow.x * w,  analysis->sensingWindow.y * h);
+
+			analysis->sensingWindow.width  = (x - startPoint.x - rect.x) / w;
+			analysis->sensingWindow.height = (y - startPoint.y - rect.y) / h;
+		}
+	}
 }
 
 //--------------------------------------------------------------
 void ofAppGui::mousePressed(int x, int y, int button)
 {
+	// right button
+	if ( button == 2 )
+	{
+		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+		if ( rect.inside(x,y) )
+		{
+			analysis->sensingWindow.x = (x - rect.x) / (_settings->image_size_W / 2); // przejscie do znormalizowanej przestrzeni
+			analysis->sensingWindow.y = (y - rect.y) / (_settings->image_size_H / 2);
+
+		}
+	}
 }
 
 //--------------------------------------------------------------

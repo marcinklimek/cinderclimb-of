@@ -37,8 +37,12 @@ public:
     
 	void threadedFunction() override;
 
-    double mouseX;
-    double mouseY;
+    float mouseX;
+    float mouseY;
+
+    ofVec2f projectorScreenSize;
+
+	ofRectangle sensingWindow;
 
 private:
 

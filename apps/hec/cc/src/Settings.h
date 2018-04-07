@@ -11,8 +11,8 @@ public:
 
     ofSettings();
 
-	int image_size_W = 1920/2;
-	int image_size_H = 1080/2;
+	float image_size_W = 1920/2;
+	float image_size_H = 1080/2;
 
     ofParameterGroup parameters;
     ofParameter<float> radius;

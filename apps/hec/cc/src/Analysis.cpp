@@ -8,8 +8,9 @@
 #include "convexHull/ofxConvexHull.h"
 
 AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : _quit(false), mouseX(0), mouseY(0), grabber(settings),
-                                                                       convexHull()
+                                                                       convexHull(), sensingWindow(0,0, 1, 1)
 {
+	
 	_settings = settings;
 	startThread();
 }
@@ -65,6 +66,7 @@ void AnalysisThread::threadedFunction()
 		if (grabber.get(frame))
 		{
 			frame.resize(_settings->image_size_W, _settings->image_size_H);
+			//frame.mirror(false, true);
 
 			updateFrame(frame);
 			updateJoints();
@@ -132,10 +134,17 @@ void AnalysisThread::draw()
 
     ofSetHexColor(0xffffff);
 
-    _imageProcessedPublic.draw(    spacing, spacing,							   preview_W, preview_H);
+    _imageProcessedPublic.draw(    spacing, spacing,					         preview_W, preview_H);
     _inputFramePublic.draw(        spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
     _imageProcessedGrayPublic.draw(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
     _colorFramePublic.draw(        spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+
+	float w =  _settings->image_size_W / 2;
+	float h =  _settings->image_size_H / 2;
+
+	ofSetColor(0, 0, 0xcc, 0x80);
+	ofDrawRectangle(spacing + preview_W + spacing + sensingWindow.x * w, spacing + sensingWindow.y * h,
+		            sensingWindow.width * w, spacing + sensingWindow.height * h);
 
 	drawBlobs(_blobsPublic);
 	drawJoints(_jointsPublic);
@@ -189,7 +198,7 @@ void AnalysisThread::drawJoints( vector<ofVec2f>& joints)
 {
     ofRectangle rect;
     rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
-
+	
     float x = rect.x;
     float y = rect.y;
     float w = rect.width;
@@ -202,14 +211,14 @@ void AnalysisThread::drawJoints( vector<ofVec2f>& joints)
 
     ofSetHexColor(0xDD00CC);
     ofPushMatrix();
-    ofTranslate(x, y, 0.0);
-    ofScale(scale_x, scale_y, 0.0);
+    ofTranslate(0, 0, 0.0);
+    ofScale(1.0, 1.0, 1.0);
     
-    ofNoFill();
-    ofSetColor(0, 180, 180);
-
+    ofFill();
+    ofSetColor(250, 250, 250);
+	
     for (const auto joint : joints) 
-        ofDrawCircle(joint.x, joint.y, 15);
+        ofDrawCircle(sensingWindow.x*w+ spacing + preview_W + spacing+joint.x*w, sensingWindow.y*h+spacing+joint.y*h, 2);
 
     ofPopMatrix();
     ofPopStyle();
@@ -224,7 +233,24 @@ void AnalysisThread::updateJoints()
 		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
 		_joints.clear();
-		_joints = grabber.kinect.getBodySource()->getProjectedJointsVector(bodyIndex, ofxKinectForWindows2::ProjectionCoordinates::DepthCamera);	
+		_joints = grabber.kinect.getBodySource()->getProjectedJointsVector(bodyIndex, ofxKinectForWindows2::ProjectionCoordinates::ColorCamera);	
+
+		std::vector<ofVec2f> filtered;
+
+		for( const auto& joint: _joints)
+		{
+			if ( sensingWindow.inside(joint) )
+			{
+				ofVec2f v = joint;
+
+				v -= ofVec2f(sensingWindow.x, sensingWindow.y);
+				//v = v * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
+
+				filtered.emplace_back(v);
+			}
+		}
+
+		_joints = filtered;
 	}
 }
 
@@ -235,7 +261,7 @@ int AnalysisThread::getNumJoints() const
 	if (grabber.numBodies() == 0)
 		return 0;
 
-	return _joints.size();
+	return _jointsPublic.size();
 }
 
 ofVec2f AnalysisThread::getJoint(const int jointIdx) const
@@ -244,5 +270,8 @@ ofVec2f AnalysisThread::getJoint(const int jointIdx) const
 		return {0, 0};
 
 	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-	return _joints[jointIdx];
+	
+	ofVec2f p = (_jointsPublic[jointIdx]*2) * ofVec2f(-1, 1) + ofVec2f(1, 0);
+
+	return p * ofVec2f(1024, 768);
 }

@@ -198,15 +198,29 @@ namespace ofxKinectForWindows2 {
 				if (!body.tracked) 
 					continue;;
 
+				int w, h;
+				switch (proj) 
+				{
+					case ColorCamera: w = 1920; h = 1080; break;
+					case DepthCamera: w = 512; h = 424; break;
+				}
+
 				for (auto & joint : body.joints) 
 				{
+					//if (joint.first != JointType_Head)
+					//	continue;
+
 					TrackingState state = joint.second.getTrackingState();
 					if (state == TrackingState_NotTracked) 
 					{
 						continue;
 					}
+					auto& p = joint.second.getProjected(coordinateMapper, proj);
 
-					result.emplace_back(joint.second.getProjected(coordinateMapper, proj));
+					p.x = p.x / w;
+					p.y = p.y / h;
+
+					result.emplace_back(p);
 				}
 			}
 			return result;
