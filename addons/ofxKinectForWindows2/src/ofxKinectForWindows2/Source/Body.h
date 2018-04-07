@@ -26,6 +26,7 @@ namespace ofxKinectForWindows2 {
 
 			const vector<Data::Body> & getBodies() const;
 			map<JointType, ofVec2f> getProjectedJoints(int bodyIdx, ProjectionCoordinates proj = ColorCamera);
+			std::vector<ofVec2f> getProjectedJointsVector(int bodyIdx, ProjectionCoordinates proj);
 
 			const Vector4 getFloorClipPlane() {
 				return floorClipPlane;

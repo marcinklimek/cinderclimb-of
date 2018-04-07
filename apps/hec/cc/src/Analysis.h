@@ -5,8 +5,10 @@
 #include "ofxCvColorImage.h"
 #include "Grabber.h"
 #include "convexHull/ofxConvexHull.h"
+#include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
 
-class AnalysisThread : public ofThread {
+class AnalysisThread  : public ofThread
+{
 public:
 
     AnalysisThread() = delete;
@@ -19,22 +21,28 @@ public:
     virtual ~AnalysisThread();
 
     void setup();
+	bool update();
+	void stop();
 
-    void draw();
-    void drawBlobs(vector<ofxCvBlob>& blobs);
-    void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs);
+	void draw();
+    void drawBlobs(vector<ofxCvBlob>& blobs) const;
+	void drawJoints(vector<ofVec2f>& joints);
+	void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs);
+	
+	void updateJoints();
+	int getNumJoints() const;
+	ofVec2f getJoint(int jointIdx) const;
+
     bool getBlobs(vector<ofxCvBlob>& blobs);
-
-    void getBody();
-
-    void stop();
     
+	void threadedFunction() override;
+
     double mouseX;
     double mouseY;
 
 private:
-    void threadedFunction() override;
 
+	bool _quit;
     void updateFrame(ofxCvColorImage& frame);
     
     std::shared_ptr<ofSettings> _settings;
@@ -42,22 +50,23 @@ private:
     ofGrabber grabber;
     ofxConvexHull convexHull;
 
-    ofThreadChannel<vector<ofxCvBlob>> analyzed;
-
     ofxCvColorImage _inputFrame;
     ofxCvColorImage _imageProcessed;
     ofxCvGrayscaleImage _imageProcessedGray;
     ofxCvColorImage _colorFrame;
 
-    // just for drawing purposses
-    ofxCvColorImage _inputFrameDraw;
-    ofxCvColorImage _imageProcessedDraw;
-
     ofxCvContourFinder contourFinder;
-    bool _quit;
 
-    mutable std::mutex _drawUpdateMutex;
-    
-    ofxCvGrayscaleImage _imageCanny;
-    ofxCvGrayscaleImage _imageCannyDraw;
+	mutable std::mutex _drawUpdateMutex;
+	
+	std::vector<ofVec2f> _joints;
+	vector<ofxCvBlob> _blobs;
+
+	vector<ofxCvBlob> _blobsPublic;
+	std::vector<ofVec2f> _jointsPublic;
+
+    ofxCvColorImage _inputFramePublic;
+    ofxCvColorImage _imageProcessedPublic;
+    ofxCvGrayscaleImage _imageProcessedGrayPublic;
+    ofxCvColorImage _colorFramePublic;
 };

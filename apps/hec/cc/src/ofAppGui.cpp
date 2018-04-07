@@ -26,7 +26,6 @@ void ofAppGui::setupGui()
 //--------------------------------------------------------------
 void ofAppGui::exit()
 {
-	analysis->stop();
     //recorder.stop();
 }
 
@@ -41,6 +40,7 @@ void ofAppGui::update()
 {
     ofBackground(100, 100, 100);
 
+	analysis->update();
     analysis->mouseX = mouseX;
     analysis->mouseY = mouseY;
 
@@ -54,20 +54,6 @@ void ofAppGui::update()
 void ofAppGui::draw()
 {
     analysis->draw();
-
-    vector<ofxCvBlob> blobs;
-    if (analysis->getBlobs(blobs))
-    {
-        currentBlobs = blobs;
-    }
-
-    analysis->drawBlobs(currentBlobs);
-    
-    for (const auto& blob : currentBlobs)
-    {
-
-    }
-
 
     ofSetHexColor(0xffffff);
     stringstream reportStr;

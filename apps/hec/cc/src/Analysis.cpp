@@ -7,16 +7,22 @@
 
 #include "convexHull/ofxConvexHull.h"
 
-AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : _quit(false), grabber(settings)
+AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : _quit(false), mouseX(0), mouseY(0), grabber(settings),
+                                                                       convexHull()
 {
 	_settings = settings;
-    startThread();
+	startThread();
 }
 
 AnalysisThread::~AnalysisThread()
 {
     stop();
-    analyzed.close();
+}
+
+void AnalysisThread::stop()
+{
+	_quit = true;
+	waitForThread();
 }
 
 void AnalysisThread::setup()
@@ -26,54 +32,55 @@ void AnalysisThread::setup()
     _imageProcessedGray.allocate(_settings->image_size_W, _settings->image_size_H);
     _colorFrame.allocate(_settings->image_size_W, _settings->image_size_H);
 
-    _inputFrameDraw.allocate(_settings->image_size_W, _settings->image_size_H);
-    _imageProcessedDraw.allocate(_settings->image_size_W, _settings->image_size_H);
-
-    //mog = cv::bgsubcnt::createBackgroundSubtractorCNT(3, true, 15, true);
-    //mog = cv::createBackgroundSubtractorMOG2(50, 8, false);
+    _inputFramePublic.allocate(_settings->image_size_W, _settings->image_size_H);
+    _imageProcessedPublic.allocate(_settings->image_size_W, _settings->image_size_H);
+    _imageProcessedGrayPublic.allocate(_settings->image_size_W, _settings->image_size_H);
+    _colorFramePublic.allocate(_settings->image_size_W, _settings->image_size_H);
 }
 
-bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs)
+bool AnalysisThread::update()
 {
-    bool newFrame = false;
-    
-    // get last analized, if consumer-thread is too slow
-    while (analyzed.tryReceive(blobs))
-    {
-        newFrame = true;
-    }
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
-    return newFrame;
+	_jointsPublic = _joints;
+	_blobsPublic = _blobs;
+	
+    _inputFramePublic = _inputFrame;
+    _imageProcessedPublic = _imageProcessed;
+    _imageProcessedGrayPublic = _imageProcessedGray;
+    _colorFramePublic = _colorFrame;
+
+	return false;
 }
 
-void AnalysisThread::stop()
-{
-    _quit = true;
-	waitForThread(true);
-}
 
 void AnalysisThread::threadedFunction()
 {
     while (!_quit)
     {
-        grabber.update();
+		grabber.update();
         
-        ofxCvColorImage frame;
-        frame.allocate(1920, 1080);
-        if (grabber.get(frame))
-        {
-            frame.resize(_settings->image_size_W, _settings->image_size_H);
-            updateFrame(frame);
-        }
-    }
+		ofxCvColorImage frame;
+		frame.allocate(1920, 1080);
+		if (grabber.get(frame))
+		{
+			frame.resize(_settings->image_size_W, _settings->image_size_H);
+
+			updateFrame(frame);
+			updateJoints();
+		}
+	}
 }
 
+bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs)
+{
+	blobs = contourFinder.blobs;
+
+    return true;
+}
 
 void AnalysisThread::updateFrame(ofxCvColorImage& frame)
 {
-	if ( _quit )
-		return;
-
     if (frame.getWidth() == 0 || frame.getHeight() == 0)
         return;
     
@@ -103,8 +110,6 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
         }
     }
 
-    analyzed.send(contourFinder.blobs);
-
     // kinect gives RGBA, in OF we nedd to have RGB
     auto& pix = grabber.kinect.getColorSource()->getPixels();
 
@@ -113,74 +118,34 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     rgbPix.resize(_settings->image_size_W, _settings->image_size_H);
     _colorFrame.setFromPixels(rgbPix);
 
-//	ofPixels grayPix(pix);
-//	grayPix.setImageType(OF_IMAGE_GRAYSCALE);
-//	grayPix.resize(_settings->image_size_W, _settings->image_size_H);
-
-//	ofxCvGrayscaleImage input;
-//	input.allocate(grayPix.getWidth(), grayPix.getHeight());
-//	input.setFromPixels(grayPix);
-//
-//	if (!_imageCanny.bAllocated ||
-//		 _imageCanny.getWidth()  != input.getWidth() ||
-//		 _imageCanny.getHeight() != input.getHeight())
-//	{
-//		_imageCanny.allocate(input.getWidth(), input.getHeight());
-//	}
-//	cvCanny(input.getCvImage(), _imageCanny.getCvImage(), mouseX/5, mouseY/5, 3);
-//	_imageCanny.flagImageChanged();
-
-    {
-        std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-        
-        _inputFrameDraw = _inputFrame;
-        _imageProcessedDraw = _imageProcessed;
-        _imageCannyDraw = _imageProcessed;
-    }
+	{
+		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+		_blobs = contourFinder.blobs;
+	}
 }
 
-void AnalysisThread::getBody()
-{
-    auto& bodies = grabber.kinect.getBodySource()->getBodies();
 
-    for (int i = 0; i < bodies.size(); ++i)
-    {
-        //auto x = grabber.kinect.getBodySource()->getProjectedJoints();
-    }
-    
-}
 
 void AnalysisThread::draw() 
 {
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+
     ofSetHexColor(0xffffff);
-    std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
-    _imageProcessedDraw.draw(spacing, spacing,							   preview_W, preview_H);
-    _inputFrameDraw.draw(    spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-    _imageProcessedGray.draw(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
-    _imageCannyDraw.draw(spacing, spacing + (preview_H + spacing) * 3, preview_W, preview_H);
+    _imageProcessedPublic.draw(    spacing, spacing,							   preview_W, preview_H);
+    _inputFramePublic.draw(        spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
+    _imageProcessedGrayPublic.draw(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
+    _colorFramePublic.draw(        spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
 
-    _colorFrame.draw(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
-    grabber.kinect.getBodySource()->drawProjected(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2, ofxKFW2::ProjectionCoordinates::ColorCamera);
-
-    vector<ofxCvBlob> blobs;
-    if (getBlobs(blobs))
-        drawBlobs(blobs);
+	drawBlobs(_blobsPublic);
+	drawJoints(_jointsPublic);
 }
 
-void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs)
+void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
 {
     ofRectangle rect;
     rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
 
-    drawBlobs(rect, blobs);
-}
-
-
-
-
-void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs) 
-{
     float x = rect.x;
     float y = rect.y;
     float w = rect.width;
@@ -208,15 +173,76 @@ void AnalysisThread::drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs)
 
     for (auto i = 0; i<blobs.size(); i++) 
     {
-        ofFill();
         ofBeginShape();
         for (int j = 0; j<blobs[i].pts.size(); j++) 
         {
-            ofVertex(blobs[i].pts[i].x, blobs[i].pts[i].y);
+            ofVertex(blobs[i].pts[j].x, blobs[i].pts[j].y);
         }
         ofEndShape();
 
     }
     ofPopMatrix();
     ofPopStyle();
+}
+
+void AnalysisThread::drawJoints( vector<ofVec2f>& joints)
+{
+    ofRectangle rect;
+    rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+
+    float x = rect.x;
+    float y = rect.y;
+    float w = rect.width;
+    float h = rect.height;
+
+    float scale_x = w / _settings->image_size_W;
+    float scale_y = h / _settings->image_size_H ;
+
+    ofPushStyle();
+
+    ofSetHexColor(0xDD00CC);
+    ofPushMatrix();
+    ofTranslate(x, y, 0.0);
+    ofScale(scale_x, scale_y, 0.0);
+    
+    ofNoFill();
+    ofSetColor(0, 180, 180);
+
+    for (const auto joint : joints) 
+        ofDrawCircle(joint.x, joint.y, 15);
+
+    ofPopMatrix();
+    ofPopStyle();
+}
+
+void AnalysisThread::updateJoints()
+{
+	int bodyIndex = 0;
+
+	if (grabber.numBodies() > 0)
+	{
+		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+
+		_joints.clear();
+		_joints = grabber.kinect.getBodySource()->getProjectedJointsVector(bodyIndex, ofxKinectForWindows2::ProjectionCoordinates::DepthCamera);	
+	}
+}
+
+int AnalysisThread::getNumJoints() const
+{
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+
+	if (grabber.numBodies() == 0)
+		return 0;
+
+	return _joints.size();
+}
+
+ofVec2f AnalysisThread::getJoint(const int jointIdx) const
+{
+	if (getNumJoints() == 0)
+		return {0, 0};
+
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+	return _joints[jointIdx];
 }

@@ -11,9 +11,9 @@ class Vector3
 public:
     float x;
     float y;
-    float z;
 
-    Vector3(): x(0), y(0), z(0) {}
+    Vector3(): x(0), y(0) {}
+	Vector3(float _x, float _y): x(_x), y(_y) {}
 };
 
 class LVector3 : public Object<Vector3> {
@@ -21,7 +21,6 @@ public:
     explicit LVector3(State * state) : Object<Vector3>(state) {
         LUTOK_PROPERTY("x", &LVector3::getX, &LVector3::nullMethod);
         LUTOK_PROPERTY("y", &LVector3::getY, &LVector3::nullMethod);
-        LUTOK_PROPERTY("z", &LVector3::getZ, &LVector3::nullMethod);
     }
 
     Vector3* constructor(State & state, bool & managed);
@@ -29,12 +28,7 @@ public:
 
     int getX(State & state, Vector3* object);
     int getY(State & state, Vector3* object);
-    int getZ(State & state, Vector3* object);
-
 };
-
-void initVector3(State *);
-
 
 class UberObject
 {
@@ -43,9 +37,10 @@ private:
 public:
     
     UberObject();
+	int updateJoints();
 
-    int getNumJoints();
-    int getJoint();
+	int getNumJoints();
+	Vector3 getJoint(int idx);
 
     std::shared_ptr<AnalysisThread> analysis;
 };
@@ -61,7 +56,8 @@ public:
     UberObject * constructor(State & state, bool & managed);
     void destructor(State & state, UberObject * object);
 
-    int getNumJoints(State & state, UberObject * object);
+	int updateJoints(State& state, UberObject* object);
+	int getNumJoints(State & state, UberObject * object);
     int getJoint(State & state, UberObject * object);
 };
 

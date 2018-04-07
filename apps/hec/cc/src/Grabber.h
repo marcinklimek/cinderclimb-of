@@ -34,5 +34,7 @@ public:
 	void draw();
 	bool get(ofxCvColorImage& frame);
 
+	int numBodies() const { return numBodiesTracked; }
+
 	ofxKFW2::Device kinect;
 };

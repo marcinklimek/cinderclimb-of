@@ -2,9 +2,6 @@
 
 using namespace lutok2;
 
-void initVector3(State * state) {
-    
-}
 
 Vector3* LVector3::constructor(State & state, bool & managed) {
     LUTOK2_NOT_USED(managed);
@@ -31,12 +28,6 @@ int LVector3::getY(State & state, Vector3* object)
     return 1;
 }
 
-int LVector3::getZ(State & state, Vector3* object)
-{
-    state.stack->push<LUA_NUMBER>(object->z);
-    return 1;
-}
-
 
 UberObject uberObject;
 
@@ -44,14 +35,23 @@ UberObject::UberObject()
 {
 }
 
-int UberObject::getNumJoints()
+int UberObject::updateJoints()
 {
-    return 1;
+	analysis->updateJoints();
+
+	return 1;
 }
 
-int UberObject::getJoint()
+int UberObject::getNumJoints()
 {
-    return 0;
+	return analysis->getNumJoints();
+}
+
+Vector3 UberObject::getJoint(int idx)
+{
+    auto data = analysis->getJoint(idx);
+
+	return Vector3(data.x, data.y);
 }
 
 
@@ -59,6 +59,7 @@ int UberObject::getJoint()
 LUberObject::LUberObject(State * state) : Object<UberObject>(state)
 {
     LUTOK_PROPERTY("numJoints", &LUberObject::getNumJoints, &LUberObject::nullMethod);
+	LUTOK_METHOD("updateJoints", &LUberObject::updateJoints);
     LUTOK_METHOD("joint", &LUberObject::getJoint);
 }
 
@@ -73,6 +74,12 @@ void LUberObject::destructor(State & state, UberObject * object)
 }
 
 
+int LUberObject::updateJoints(State & state, UberObject * object) 
+{
+	object->updateJoints();
+    return 1;
+}
+
 int LUberObject::getNumJoints(State & state, UberObject * object) 
 {
     state.stack->push<LUA_NUMBER>(object->getNumJoints());
@@ -81,37 +88,33 @@ int LUberObject::getNumJoints(State & state, UberObject * object)
 
 int LUberObject::getJoint(State & state, UberObject * object)
 {
-    LVector3 * interfaceLVector3 = state.getInterface<LVector3>("Vector3");
+	auto interfaceLVector3 = state.getInterface<LVector3>("Vector3");
 
-    auto v = new Vector3();
-    v->x = 13;
-    v->y = 14;
-    v->z = 15;
+	auto v = state.stack->typeName();
 
-    interfaceLVector3->push(v, true);
-    return 1;
+	if (state.stack->is<LUA_TNUMBER>(1))
+	{
+		const auto index = static_cast<int>(state.stack->to<int>(1) - 1);
+		if (index >= 0 && index < object->getNumJoints())
+		{
+			const auto joint = object->getJoint(index);
+			interfaceLVector3->push(new Vector3(joint), true);
+
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 
 int luaopen_UberObject(lua_State* L)
 {
-    //state->stack->push<Function>([](State & state) -> int {
-    //    state.loadString(
-    //        "print(\"Hello world from lambda function!\") \
-    //        "
-    //    );
-    //    state.stack->call(0, 0);
-    //    return 0;
-    //});
-    //state->stack->setGlobal("testing");
-
-    int t = lua_gettop(L);
     State * state = new State(L);
-    Stack * stack = state->stack;
 
     state->registerInterface<LVector3>("Vector3");
     state->registerInterface<LUberObject>("UberObj");
-    initVector3(state);
     state->stack->setGlobal("UberObj");
+
     return 0;
 }

@@ -190,8 +190,31 @@ namespace ofxKinectForWindows2 {
 			return result;
 		}
 
+		std::vector<ofVec2f> Body::getProjectedJointsVector(int bodyIdx, ProjectionCoordinates proj) {
+			std::vector<ofVec2f> result;
+
+			for(const auto & body : bodies)
+			{
+				if (!body.tracked) 
+					continue;;
+
+				for (auto & joint : body.joints) 
+				{
+					TrackingState state = joint.second.getTrackingState();
+					if (state == TrackingState_NotTracked) 
+					{
+						continue;
+					}
+
+					result.emplace_back(joint.second.getProjected(coordinateMapper, proj));
+				}
+			}
+			return result;
+		}
+
 		//----------
 		void Body::drawProjected(int x, int y, int width, int height, ProjectionCoordinates proj) {
+			
 			ofPushStyle();
 			int w, h;
 			switch (proj) {
