@@ -220,10 +220,7 @@ namespace ofxKinectForWindows2 {
 							joint.first == JointType_HipRight ||
 							joint.first == JointType_KneeRight ||
 							joint.first == JointType_SpineShoulder ||
-							joint.first == JointType_HandTipLeft ||
-							joint.first == JointType_ThumbLeft ||
-							joint.first == JointType_HandTipRight ||
-							joint.first == JointType_ThumbRight 
+						    joint.first == JointType_Head
 						)
 						continue;
 

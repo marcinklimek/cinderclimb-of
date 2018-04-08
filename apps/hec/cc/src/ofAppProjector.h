@@ -40,4 +40,5 @@ public:
     vector<string> scripts;
     size_t currentScript;
 
+	bool isCalibration = true;
 };

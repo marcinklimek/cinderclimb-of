@@ -13,13 +13,7 @@ void ofAppProjector::setup() {
 
     // scripts to run
     scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/test.lua");
     currentScript = 0;
 
     uberObject.analysis = analysis;
@@ -58,9 +52,21 @@ void ofAppProjector::draw() {
 	ofTranslate(0, 0, 0.0);
     ofScale(100.0, 100.0, 100.0);
 
+	if (isCalibration)
+		ofBackground(ofColor::dimGrey);
+	else
+		ofBackground(ofColor::black);
+
+	ofEnableAlphaBlending();
     // call the script's draw() function
     lua.scriptDraw();
 	
+	ofPopMatrix();
+
+	ofPushMatrix();
+	ofTranslate(0, 0, 0.0);
+    ofScale(1.0, 1.0, 1.0);
+	lua.scriptDrawUI();
 	ofPopMatrix();
 }
 
@@ -83,6 +89,10 @@ void ofAppProjector::keyPressed(int key) {
 		return;
     case 'r':
         reloadScript();
+        break;
+
+    case 'c':
+		isCalibration = !isCalibration;
         break;
 
     case OF_KEY_LEFT:
