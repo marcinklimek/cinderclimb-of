@@ -207,8 +207,25 @@ namespace ofxKinectForWindows2 {
 
 				for (auto & joint : body.joints) 
 				{
-					//if (joint.first != JointType_Head)
-					//	continue;
+					if (    
+							joint.first == JointType_SpineBase ||
+							joint.first == JointType_SpineMid ||
+							joint.first == JointType_Neck ||
+							joint.first == JointType_ShoulderLeft ||
+							joint.first == JointType_ElbowLeft ||
+							joint.first == JointType_ShoulderRight ||
+							joint.first == JointType_ElbowRight ||
+							joint.first == JointType_HipLeft ||
+							joint.first == JointType_KneeLeft ||
+							joint.first == JointType_HipRight ||
+							joint.first == JointType_KneeRight ||
+							joint.first == JointType_SpineShoulder ||
+							joint.first == JointType_HandTipLeft ||
+							joint.first == JointType_ThumbLeft ||
+							joint.first == JointType_HandTipRight ||
+							joint.first == JointType_ThumbRight 
+						)
+						continue;
 
 					TrackingState state = joint.second.getTrackingState();
 					if (state == TrackingState_NotTracked) 

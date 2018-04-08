@@ -8,17 +8,18 @@ void ofAppProjector::setup() {
 	//cout << ofGetWindowPositionX() << endl;
 	//cout << ofGetWindowPositionY() << endl;
 
-	ofSetWindowPosition(3600/2+200, 0);
+	ofSetWindowPosition(3600, 0);
 
 
     // scripts to run
-    scripts.push_back("scripts/box2d.lua");
+    scripts.push_back("scripts/game_01.lua");
 	scripts.push_back("scripts/game_01.lua");
-    scripts.push_back("scripts/graphicsExample.lua");
-    scripts.push_back("scripts/imageLoaderExample.lua");
-    scripts.push_back("scripts/polygonExample.lua");
-    scripts.push_back("scripts/fontsExample.lua");
-    scripts.push_back("scripts/boringTests.lua");
+	scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/game_01.lua");
     currentScript = 0;
 
     uberObject.analysis = analysis;
@@ -52,11 +53,15 @@ void ofAppProjector::update() {
 //--------------------------------------------------------------
 void ofAppProjector::draw() {
 
-    ofTranslate(0, 0, 0.0);
-    ofScale(1.0, 1.0, 1.0);
+	ofPushMatrix();
+    
+	ofTranslate(0, 0, 0.0);
+    ofScale(100.0, 100.0, 100.0);
 
     // call the script's draw() function
     lua.scriptDraw();
+	
+	ofPopMatrix();
 }
 
 void ofAppProjector::exit()

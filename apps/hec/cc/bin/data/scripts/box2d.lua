@@ -82,10 +82,17 @@ function setup()
 end
 
 
+player = {}
+
 ----------------------------------------------------
 function update()
 	world.step(timeStep, velocityIterations, positionIterations)
 	world.clearForces()
+
+	for i=1, ub.numJoints do
+		local vtx = ub.joint(i)
+		
+	end
 
 	checkContact()	
 end

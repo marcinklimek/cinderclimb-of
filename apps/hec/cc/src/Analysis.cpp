@@ -89,28 +89,28 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     _inputFrame = frame;
 
     _imageProcessed = frame;
-    _imageProcessed.blur(_settings->blur_amount * 2 + 1);
+    //_imageProcessed.blur(_settings->blur_amount * 2 + 1);
 
-    for(auto i=0; i<_settings->erode_open_count; i++)
-        _imageProcessed.erode();
+    //for(auto i=0; i<_settings->erode_open_count; i++)
+    //    _imageProcessed.erode();
 
-    for (auto i = 0; i<_settings->dillate_count; i++)
-        _imageProcessed.dilate();
-    
-    for (auto i = 0; i<_settings->erode_close_count; i++)
-        _imageProcessed.erode();
+    //for (auto i = 0; i<_settings->dillate_count; i++)
+    //    _imageProcessed.dilate();
+    //
+    //for (auto i = 0; i<_settings->erode_close_count; i++)
+    //    _imageProcessed.erode();
 
     _imageProcessedGray = _imageProcessed;
-    contourFinder.findContours(_imageProcessedGray, _settings->area_min, _settings->area_max, 50, false); // find holes
+    //contourFinder.findContours(_imageProcessedGray, _settings->area_min, _settings->area_max, 50, false); // find holes
 
-    if (_settings->useConvexHull)
-    {
-        for (auto i = 0; i < contourFinder.blobs.size(); i++)
-        {
-            contourFinder.blobs[i].pts = convexHull.getConvexHull(contourFinder.blobs[i].pts);
-            contourFinder.blobs[i].nPts = contourFinder.blobs[i].pts.size();
-        }
-    }
+    //if (_settings->useConvexHull)
+    //{
+    //    for (auto i = 0; i < contourFinder.blobs.size(); i++)
+    //    {
+    //        contourFinder.blobs[i].pts = convexHull.getConvexHull(contourFinder.blobs[i].pts);
+    //        contourFinder.blobs[i].nPts = contourFinder.blobs[i].pts.size();
+    //    }
+    //}
 
     // kinect gives RGBA, in OF we nedd to have RGB
     auto& pix = grabber.kinect.getColorSource()->getPixels();
@@ -120,10 +120,10 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     rgbPix.resize(_settings->image_size_W, _settings->image_size_H);
     _colorFrame.setFromPixels(rgbPix);
 
-	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-		_blobs = contourFinder.blobs;
-	}
+	//{
+	//	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+	//	_blobs = contourFinder.blobs;
+	//}
 }
 
 
@@ -266,5 +266,5 @@ ofVec2f AnalysisThread::getJoint(const int jointIdx) const
 	
 	ofVec2f p = _jointsPublic[jointIdx];
 	p = p * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
-	return p * ofVec2f(1024, 768);
+	return p * ofVec2f(10.24, 7.68);
 }
