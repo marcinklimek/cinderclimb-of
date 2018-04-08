@@ -8,11 +8,12 @@ void ofAppProjector::setup() {
 	//cout << ofGetWindowPositionX() << endl;
 	//cout << ofGetWindowPositionY() << endl;
 
-	ofSetWindowPosition(3600, 0);
+	ofSetWindowPosition(3600/2+200, 0);
 
 
     // scripts to run
     scripts.push_back("scripts/box2d.lua");
+	scripts.push_back("scripts/game_01.lua");
     scripts.push_back("scripts/graphicsExample.lua");
     scripts.push_back("scripts/imageLoaderExample.lua");
     scripts.push_back("scripts/polygonExample.lua");
@@ -44,6 +45,7 @@ void ofAppProjector::setup() {
 //--------------------------------------------------------------
 void ofAppProjector::update() {
     // call the script's update() function
+	lua_gc(lua, LUA_GCCOLLECT, 0);
     lua.scriptUpdate();
 }
 
