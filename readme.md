@@ -1,9 +1,27 @@
+
+MUst read
+---------
+
+https://github.com/luarocks/lua-style-guide
+http://lua-users.org/wiki/LuaStyleGuide
+https://www.lua.org/gems/sample.pdf
+http://notebook.kulchenko.com/programming/lua-good-different-bad-and-ugly-parts
+
+Todo in lua
+-----------
+
+https://github.com/mpeterv/luacheck
+https://github.com/danoli3/ofxTexturePacker
+
+Tools
+-----
+
+https://www.defold.com
+
+
+
 Compile under VS
 ---------------
-
-* vcpkg install opencv
-* vcpkg install boost
-
 
 https://www.youtube.com/results?search_query=automatic+camera+calibration+geometry
 http://unanancyowen.com/en/kinect-v2-coordinate-system-mapping/
