@@ -462,7 +462,9 @@ globalCounter = 0
 
 function setup()
 	print("SETUP\n")
-
+	of.setFrameRate(60)
+	of.setWindowTitle("projektor")
+	of.setWindowPosition(1920,0)
 	scene = Scene()
 	player = Player(scene.world)
 end
