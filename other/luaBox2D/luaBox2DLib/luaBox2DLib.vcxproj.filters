@@ -1,0 +1,684 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="luaBox2D">
+      <UniqueIdentifier>{94e2e731-a421-4d9d-99dc-357a1ec280b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="luaBox2D\objects">
+      <UniqueIdentifier>{c4a022b5-44dd-4e85-ae43-97d287069d9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D">
+      <UniqueIdentifier>{e423889d-ede2-47ac-962d-9e9a7c6bbe19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Collision">
+      <UniqueIdentifier>{b033dd4d-f1f0-41ac-991c-77d9a6dad901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Collision\Shapes">
+      <UniqueIdentifier>{cc35c24b-cd8b-454f-9030-232470e7d582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Common">
+      <UniqueIdentifier>{9e53d1f2-5d0d-4278-b0ff-c4527acc9b0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Dynamics">
+      <UniqueIdentifier>{07dc3a10-7321-4894-8104-3622c1bee612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Dynamics\Contacts">
+      <UniqueIdentifier>{316ab8a5-bbdb-4b7e-8319-d8dd0c7eb5e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Dynamics\Joints">
+      <UniqueIdentifier>{6a0324c3-8d75-4e7e-b624-5050e57fda87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Box2D\Rope">
+      <UniqueIdentifier>{c73f50f6-c349-4811-945e-16860d5a2c72}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\luaBox2D\array.hpp">
+      <Filter>luaBox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\common.hpp">
+      <Filter>luaBox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\main.hpp">
+      <Filter>luaBox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\AABB.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Body.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\BodyDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ChainShape.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\CircleShape.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Contact.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactEdge.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactFeature.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactFilter.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactID.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactImpulse.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactListener.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ContactManager.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\DistanceJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\DistanceJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\EdgeShape.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Filter.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Fixture.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\FixtureDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\FrictionJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\FrictionJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\GearJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\GearJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Joint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\JointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\JointEdge.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Manifold.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\ManifoldPoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\MassData.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\MotorJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\MotorJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\MouseJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\MouseJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\PolygonShape.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\PrismaticJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\PrismaticJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\PulleyJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\PulleyJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\QueryCallback.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RayCastCallback.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RayCastInput.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RayCastOutput.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RevoluteJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RevoluteJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RopeJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\RopeJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Rot.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Shape.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Sweep.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Timer.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Transform.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\Vec2.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\VertexArray.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\WeldJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\WeldJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\WheelJoint.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\WheelJointDef.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\World.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luaBox2D\objects\WorldManifold.hpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Box2D.h">
+      <Filter>Box2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2BroadPhase.h">
+      <Filter>Box2D\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Collision.h">
+      <Filter>Box2D\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Distance.h">
+      <Filter>Box2D\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2DynamicTree.h">
+      <Filter>Box2D\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2TimeOfImpact.h">
+      <Filter>Box2D\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2ChainShape.h">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2CircleShape.h">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2EdgeShape.h">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2PolygonShape.h">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2Shape.h">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2BlockAllocator.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Draw.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2GrowableStack.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Math.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Settings.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2StackAllocator.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Timer.h">
+      <Filter>Box2D\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Body.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2ContactManager.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Fixture.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Island.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2TimeStep.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2World.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2WorldCallbacks.h">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndCircleContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndPolygonContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2CircleContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2Contact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ContactSolver.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndCircleContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndPolygonContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonAndCircleContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonContact.h">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2DistanceJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2FrictionJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2GearJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2Joint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MotorJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MouseJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PrismaticJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PulleyJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RevoluteJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RopeJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WeldJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WheelJoint.h">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Rope\b2Rope.h">
+      <Filter>Box2D\Rope</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\luaBox2D\main.cpp">
+      <Filter>luaBox2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\AABB.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Body.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\BodyDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ChainShape.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\CircleShape.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Contact.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactEdge.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactFeature.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactFilter.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactID.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactImpulse.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactListener.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ContactManager.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\DistanceJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\DistanceJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\EdgeShape.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Filter.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Fixture.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\FixtureDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\FrictionJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\FrictionJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\GearJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\GearJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Joint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\JointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\JointEdge.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Manifold.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\ManifoldPoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\MassData.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\MotorJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\MotorJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\MouseJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\MouseJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\PolygonShape.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\PrismaticJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\PrismaticJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\PulleyJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\PulleyJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\QueryCallback.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RayCastCallback.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RayCastInput.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RayCastOutput.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RevoluteJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RevoluteJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RopeJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\RopeJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Rot.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Shape.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Sweep.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Timer.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Transform.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\Vec2.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\VertexArray.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\WeldJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\WeldJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\WheelJoint.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\WheelJointDef.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\World.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luaBox2D\objects\WorldManifold.cpp">
+      <Filter>luaBox2D\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2BroadPhase.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2CollideCircle.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2CollideEdge.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2CollidePolygon.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Collision.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Distance.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2DynamicTree.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2TimeOfImpact.cpp">
+      <Filter>Box2D\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2ChainShape.cpp">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2CircleShape.cpp">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2EdgeShape.cpp">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2PolygonShape.cpp">
+      <Filter>Box2D\Collision\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2BlockAllocator.cpp">
+      <Filter>Box2D\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Draw.cpp">
+      <Filter>Box2D\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Math.cpp">
+      <Filter>Box2D\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Settings.cpp">
+      <Filter>Box2D\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2StackAllocator.cpp">
+      <Filter>Box2D\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Timer.cpp">
+      <Filter>Box2D\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Body.cpp">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2ContactManager.cpp">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Fixture.cpp">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Island.cpp">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2World.cpp">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2WorldCallbacks.cpp">
+      <Filter>Box2D\Dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndCircleContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndPolygonContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2CircleContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2Contact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ContactSolver.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndCircleContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndPolygonContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonAndCircleContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonContact.cpp">
+      <Filter>Box2D\Dynamics\Contacts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2DistanceJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2FrictionJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2GearJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2Joint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MotorJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MouseJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PrismaticJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PulleyJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RevoluteJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RopeJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WeldJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WheelJoint.cpp">
+      <Filter>Box2D\Dynamics\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Rope\b2Rope.cpp">
+      <Filter>Box2D\Rope</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

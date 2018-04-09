@@ -1,0 +1,392 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FF5EA14B-3385-49E1-9DC2-9258FB4CB204}</ProjectGuid>
+    <RootNamespace>luaBox2DLib</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>luaBox2D</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
+    <Import Project="..\luaBox2D.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
+    <Import Project="..\luaBox2D.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
+    <Import Project="..\luaBox2D.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
+    <Import Project="..\luaBox2D.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(OF_ROOT)\build\bin\$(ProjectName)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(OF_ROOT)\build\obj\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\luaBox2D</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(OF_ROOT)\build\bin\$(ProjectName)_$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(OF_ROOT)\build\obj\$(ProjectName)_$(Platform)_$(Configuration)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\luaBox2D</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <MinimalRebuild>false</MinimalRebuild>
+      <!-- ObjectFileName>$(IntDir)\%(Directory)\</ObjectFileName -->
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>BUILDING_LIBLUABOX2D;;LUA_COMPAT_5_1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <MinimalRebuild>false</MinimalRebuild>
+      <!-- ObjectFileName>$(IntDir)\%(Directory)\</ObjectFileName -->
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <!-- ObjectFileName>$(IntDir)\%(Directory)\</ObjectFileName -->
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>BUILDING_LIBLUABOX2D;LUA_COMPAT_5_1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <!-- ObjectFileName>$(IntDir)\%(Directory)\</ObjectFileName -->
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Box2D.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2BroadPhase.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Collision.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Distance.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2DynamicTree.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2TimeOfImpact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2ChainShape.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2CircleShape.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2EdgeShape.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2PolygonShape.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2Shape.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2BlockAllocator.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Draw.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2GrowableStack.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Math.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Settings.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2StackAllocator.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Timer.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Body.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2ContactManager.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Fixture.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Island.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2TimeStep.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2World.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2WorldCallbacks.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndCircleContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndPolygonContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2CircleContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2Contact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ContactSolver.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndCircleContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndPolygonContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonAndCircleContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonContact.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2DistanceJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2FrictionJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2GearJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2Joint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MotorJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MouseJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PrismaticJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PulleyJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RevoluteJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RopeJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WeldJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WheelJoint.h" />
+    <ClInclude Include="..\..\..\libs\Box2D\Box2D\Box2D\Rope\b2Rope.h" />
+    <ClInclude Include="..\luaBox2D\array.hpp" />
+    <ClInclude Include="..\luaBox2D\common.hpp" />
+    <ClInclude Include="..\luaBox2D\main.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\AABB.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Body.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\BodyDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ChainShape.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\CircleShape.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Contact.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactEdge.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactFeature.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactFilter.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactID.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactImpulse.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactListener.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ContactManager.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\DistanceJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\DistanceJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\EdgeShape.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Filter.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Fixture.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\FixtureDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\FrictionJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\FrictionJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\GearJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\GearJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Joint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\JointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\JointEdge.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Manifold.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\ManifoldPoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\MassData.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\MotorJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\MotorJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\MouseJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\MouseJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\PolygonShape.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\PrismaticJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\PrismaticJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\PulleyJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\PulleyJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\QueryCallback.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RayCastCallback.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RayCastInput.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RayCastOutput.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RevoluteJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RevoluteJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RopeJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\RopeJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Rot.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Shape.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Sweep.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Timer.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Transform.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\Vec2.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\VertexArray.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\WeldJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\WeldJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\WheelJoint.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\WheelJointDef.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\World.hpp" />
+    <ClInclude Include="..\luaBox2D\objects\WorldManifold.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2BroadPhase.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2CollideCircle.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2CollideEdge.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2CollidePolygon.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Collision.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2Distance.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2DynamicTree.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\b2TimeOfImpact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2ChainShape.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2CircleShape.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2EdgeShape.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Collision\Shapes\b2PolygonShape.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2BlockAllocator.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Draw.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Math.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Settings.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2StackAllocator.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Common\b2Timer.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Body.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2ContactManager.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Fixture.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2Island.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2World.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\b2WorldCallbacks.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndCircleContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ChainAndPolygonContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2CircleContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2Contact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2ContactSolver.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndCircleContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2EdgeAndPolygonContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonAndCircleContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Contacts\b2PolygonContact.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2DistanceJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2FrictionJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2GearJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2Joint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MotorJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2MouseJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PrismaticJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2PulleyJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RevoluteJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2RopeJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WeldJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Dynamics\Joints\b2WheelJoint.cpp" />
+    <ClCompile Include="..\..\..\libs\Box2D\Box2D\Box2D\Rope\b2Rope.cpp" />
+    <ClCompile Include="..\luaBox2D\main.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\AABB.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Body.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\BodyDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ChainShape.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\CircleShape.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Contact.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactEdge.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactFeature.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactFilter.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactID.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactImpulse.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactListener.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ContactManager.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\DistanceJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\DistanceJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\EdgeShape.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Filter.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Fixture.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\FixtureDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\FrictionJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\FrictionJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\GearJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\GearJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Joint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\JointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\JointEdge.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Manifold.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\ManifoldPoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\MassData.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\MotorJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\MotorJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\MouseJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\MouseJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\PolygonShape.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\PrismaticJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\PrismaticJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\PulleyJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\PulleyJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\QueryCallback.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RayCastCallback.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RayCastInput.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RayCastOutput.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RevoluteJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RevoluteJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RopeJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\RopeJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Rot.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Shape.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Sweep.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Timer.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Transform.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\Vec2.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\VertexArray.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\WeldJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\WeldJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\WheelJoint.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\WheelJointDef.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\World.cpp" />
+    <ClCompile Include="..\luaBox2D\objects\WorldManifold.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libs\lua51\lua51\lua51.vcxproj">
+      <Project>{25b8ea28-c9bf-4a3e-a396-032beb67e8a3}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
