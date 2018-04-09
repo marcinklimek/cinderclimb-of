@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{0ad20c3d-f8c1-4a93-ab12-257d699f1146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\bindings">
+      <UniqueIdentifier>{145685f8-28a0-4acd-a3aa-697c3df24ac1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\ofxLua.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ofxLuaFileWriter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bindings\desktop\ofxLuaBindings.cpp">
+      <Filter>src\bindings</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\ofxLua.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxLuaFileWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bindings\ofxLuaBindings.h">
+      <Filter>src\bindings</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
