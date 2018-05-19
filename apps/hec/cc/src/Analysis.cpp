@@ -74,12 +74,12 @@ void AnalysisThread::threadedFunction()
 	}
 }
 
-bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs)
-{
-	blobs = contourFinder.blobs;
-
-    return true;
-}
+//bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs) const
+//{
+//	blobs = contourFinder.blobs;
+//
+//    return true;
+//}
 
 void AnalysisThread::updateFrame(ofxCvColorImage& frame)
 {
@@ -101,7 +101,8 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     //    _imageProcessed.erode();
 
     _imageProcessedGray = _imageProcessed;
-    //contourFinder.findContours(_imageProcessedGray, _settings->area_min, _settings->area_max, 50, false); // find holes
+    contourFinder.findContours(_imageProcessedGray, _settings->area_min, _settings->area_max, 50, false); // find holes
+	_blobs = contourFinder.blobs;
 
     //if (_settings->useConvexHull)
     //{
@@ -119,11 +120,6 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     rgbPix.setImageType(OF_IMAGE_COLOR);
     rgbPix.resize(_settings->image_size_W, _settings->image_size_H);
     _colorFrame.setFromPixels(rgbPix);
-
-	//{
-	//	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-	//	_blobs = contourFinder.blobs;
-	//}
 }
 
 
@@ -171,24 +167,23 @@ void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
     ofScale(scale_x, scale_y, 0.0);
     
     ofNoFill();
-    for (auto i = 0; i<blobs.size(); i++) 
+    for (auto& blob : blobs)
     {
-        ofDrawRectangle(blobs[i].boundingRect.x, blobs[i].boundingRect.y,
-            blobs[i].boundingRect.width, blobs[i].boundingRect.height);
+        ofDrawRectangle(blob.boundingRect.x, blob.boundingRect.y,
+                        blob.boundingRect.width, blob.boundingRect.height);
     }
 
     // ---------------------------- draw the blobs
     ofSetColor(0, 180, 180);
 
-    for (auto i = 0; i<blobs.size(); i++) 
+    for (auto& blob : blobs)
     {
         ofBeginShape();
-        for (int j = 0; j<blobs[i].pts.size(); j++) 
+        for (auto& pt : blob.pts)
         {
-            ofVertex(blobs[i].pts[j].x, blobs[i].pts[j].y);
+            ofVertex(pt.x, pt.y);
         }
         ofEndShape();
-
     }
     ofPopMatrix();
     ofPopStyle();
@@ -266,5 +261,33 @@ ofVec2f AnalysisThread::getJoint(const int jointIdx) const
 	
 	ofVec2f p = _jointsPublic[jointIdx];
 	p = p * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
-	return p * ofVec2f(10.24, 7.68);
+	return p;
+}
+
+int AnalysisThread::getNumBlobs() const
+{
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+
+	return _blobsPublic.size();
+}
+
+std::vector<ofVec2f> AnalysisThread::getBlob(size_t idx)
+{
+	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+
+	std::vector<ofVec2f> filtered;
+
+	for( auto& point: _blobsPublic[idx].pts)
+	{
+		point.x = point.x / _settings->image_size_W;
+		point.y = point.y / _settings->image_size_H;
+		if ( sensingWindow.inside(point) )
+		{
+			ofVec2f v = point;
+			v = ofxHomography::toScreenCoordinates(v, sensingTrans.homography);
+			filtered.emplace_back(v);
+		}
+	}
+
+	return filtered;
 }

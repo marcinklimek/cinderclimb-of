@@ -42,6 +42,9 @@ public:
 	int getNumJoints();
 	Vector3 getJoint(int idx);
 
+	int getNumBlobs();
+	vector<Vector3> getBlob(int idx);
+
     std::shared_ptr<AnalysisThread> analysis;
 };
 
@@ -59,6 +62,9 @@ public:
 	int updateJoints(State& state, UberObject* object);
 	int getNumJoints(State & state, UberObject * object);
     int getJoint(State & state, UberObject * object);
+
+	int getNumBlobs(State& state, UberObject* object);
+	int getBlob(State& state, UberObject* object);
 };
 
 int luaopen_UberObject(lua_State * L);

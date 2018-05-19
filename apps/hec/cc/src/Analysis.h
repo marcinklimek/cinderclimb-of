@@ -35,7 +35,11 @@ public:
 	int getNumJoints() const;
 	ofVec2f getJoint(int jointIdx) const;
 
-    bool getBlobs(vector<ofxCvBlob>& blobs);
+	int getNumBlobs() const;
+	std::vector<ofVec2f> getBlob(size_t idx);
+
+
+    //bool getBlobs(vector<ofxCvBlob>& blobs) const;
     
 	void threadedFunction() override;
 

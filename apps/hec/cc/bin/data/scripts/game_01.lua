@@ -30,6 +30,13 @@ explosionAtlas[5]:load("images/explosion_05.png")
 coinSound = of.SoundPlayer()
 coinSound:load("sounds/coin.wav")
 
+
+print("uber.numBlobs ", uber.numBlobs) 
+
+
+
+
+
 function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
@@ -520,6 +527,20 @@ function drawUI()
 		banner:draw(0, 0, 1024, 768)
 		of.enableAlphaBlending()
 	end
+
+
+	for i=1, uber.numBlobs do
+		blob = uber.blob(i)
+		
+		of.beginShape()
+
+		for k, v in pairs(blob) do
+			of.vertex(v.x*100, v.y*100)
+		end
+
+		of.endShape()
+	end
+
 
 end
 
