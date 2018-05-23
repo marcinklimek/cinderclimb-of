@@ -1,40 +1,22 @@
+Sprite = require "SpriteAtlas"
+box2d = require "LuaBox2D"
+uber = UberObj("Kinect")
+
 startCounter = 0
 globalCounter = 0
 game_time = 0
 
 ----------------
-
-box2d = require 'LuaBox2D'
-uber = UberObj("Kinect")
-
 franklinBook = of.TrueTypeFont()
 franklinBook:load("fonts/frabk.ttf", 16)
 
 franklinBookBig = of.TrueTypeFont()
 franklinBookBig:load("fonts/frabk.ttf", 32)
 
-bomb = of.Image()
-bomb:load("images/gold_1.png")
-
-banner = of.Image()
-banner:load("images/banner.jpg")
-
-explosionAtlas = {}
-
-table.insert(explosionAtlas, of.Image())
-table.insert(explosionAtlas, of.Image())
-table.insert(explosionAtlas, of.Image())
-table.insert(explosionAtlas, of.Image())
-table.insert(explosionAtlas, of.Image())
-
-explosionAtlas[1]:load("images/explosion_01.png")
-explosionAtlas[2]:load("images/explosion_02.png")
-explosionAtlas[3]:load("images/explosion_03.png")
-explosionAtlas[4]:load("images/explosion_04.png")
-explosionAtlas[5]:load("images/explosion_05.png")
-
 touchSound = of.SoundPlayer()
 touchSound:load("sounds/balloon.wav")
+
+
 
 score = 0
 score_ground = 0
@@ -42,9 +24,13 @@ level = 1
 
 
 function tablelength(T)
-  local count = 0
-  for _ in pairs(T) do count = count + 1 end
-  return count
+	local count = 0
+	
+	for _ in pairs(T) do 
+		count = count + 1 
+	end
+	
+	return count
 end
 
 local function drawText(str, x, y, big)
@@ -78,15 +64,18 @@ local function Ball(world, _r)
 	local self = {
 		name = "ball",
 	    r = _r,
+		state = 0,
 	}
+
+	self.bomb = of.Image()
+	self.bomb:load("images/gold_1.png")
 
 	self.x = of.random(0.2, 9)
 	self.y = of.random(-2, -0.5)
 
 
-	local w = bomb:getWidth()
-	local h = bomb:getHeight()
-	print(w,h)
+	local w = self.bomb:getWidth()
+	local h = self.bomb:getHeight()
 
 	local bodyDef = box2d.BodyDef()
 	bodyDef.position = box2d.Vec2(self.x, self.y)
@@ -94,7 +83,7 @@ local function Ball(world, _r)
 
 	local body = world.createBody(bodyDef)
 	body.userData = self
-	body.gravityScale = 0.1
+	body.gravityScale = 0.1 * level
 
 	local circleShape = box2d.CircleShape()
 	circleShape.radius = self.r
@@ -102,15 +91,23 @@ local function Ball(world, _r)
 	local fixtureDef = box2d.FixtureDef()
 	fixtureDef.shape = circleShape
 	fixtureDef.density = 1
-	fixtureDef.friction = 0.3
+	fixtureDef.friction = 0.2
 	fixtureDef.restitution = 0.2
 
 	fixture = body.createFixture(fixtureDef)
 
-	self.counter = 0
-	self.state = 0
+
 
 	body.angularVelocity = of.random(-25, 25)
+
+
+	self.ballAnim = Sprite.Atlas(5, false)
+	self.ballAnim.add("images/explosion_01.png")
+	self.ballAnim.add("images/explosion_02.png")
+	self.ballAnim.add("images/explosion_03.png")
+	self.ballAnim.add("images/explosion_04.png")
+	self.ballAnim.add("images/explosion_05.png")
+
 
 	function self.draw()
 	    
@@ -123,57 +120,44 @@ local function Ball(world, _r)
 		local ly = -self.r
 		local lw = 2*self.r
 		local lh = 2*self.r
-
 	    	
 		of.setColor(255, 255, 255)
-		--of.fill()
-		--of.drawCircle(body.position.x, body.position.y, self.r)
 
 		if self.state == 0 then
-			bomb:draw(lx, ly, lw, lh)
-		elseif self.state == 1 then
-			explosionAtlas[1]:draw(lx, ly, lw, lh)
-		elseif self.state == 2 then
-			explosionAtlas[2]:draw(lx, ly, lw, lh)
-		elseif self.state == 3 then
-			explosionAtlas[3]:draw(lx, ly, lw, lh)
-		elseif self.state == 4 then
-			explosionAtlas[4]:draw(lx, ly, lw, lh)
-		elseif self.state == 5 then
-			explosionAtlas[5]:draw(lx, ly, lw, lh)			
-		end	
+			self.bomb:draw(lx, ly, lw, lh)
+		else
+			self.ballAnim.draw(lx, ly, lw, lh)
+		end
 
 		of.popMatrix()
 		of.popStyle()
 	end
 
 	function self.update()
-		self.counter = self.counter + 1
 
 		if self.state == 0 then
 
 			local x = body.position.x / 10.24
 			local y = body.position.y /  7.68
+			local r = 2*self.r
 
-			if uber.insideBlob(x, y) == true then
-				self.counter = 0
+			if uber.insideBlob(x, y, self.r/10.24) == true then
+
+				play()
+
 				self.state = 1
+				self.ballAnim.play()
 
 				if game_time > 0 then
 					score = score + 1	
 				end
 
 			end
-		end
+		else
 
-		if self.state > 0 then
+			self.ballAnim.update()
 
-			if self.counter > 5 then
-				self.state = self.state + 1
-				self.counter = 0
-			end
-
-			if self.state == 6 then
+			if self.ballAnim.finished() == true then
 				self.state = 0
 
 				self.x = of.random(0.2, 9)
@@ -182,24 +166,19 @@ local function Ball(world, _r)
 				body.setTransform( box2d.Vec2(self.x, self.y), 0 )
 				body.gravityScale = 0.1 + level/20
 				body.linearVelocity = box2d.Vec2(0, 0.1)
-				body.angularVelocity = of.random(-15, 15)
-				fixture.filter.maskBits = 0x0
+				body.angularVelocity = of.random(-25, 25)
 			end
+
 		end
 	end
 
 
 	function self.contact(obj)
-		-- print("contact ", self.name, "->", obj.name)
 
 		if obj.name == "ground" then
 
-			-- body.setTransform( box2d.Vec2(self.x, self.y), 0 )
-			-- body.linearVelocity = box2d.Vec2(0, 0)
-			-- body.angularVelocity = 0
 			if self.state == 0 then
-				self.counter = 0
-				self.state = 1	
+				self.state = 1
 
 				if game_time > 0 then
 					score_ground = score_ground + 1
@@ -207,81 +186,7 @@ local function Ball(world, _r)
 			end
 		end
 
-		if obj.name == "player" then
-
-			if self.state == 0 then
-				--body.gravityScale = 0.0
-				body.linearVelocity = box2d.Vec2(0, 0)
-				body.angularVelocity = 0
-				fixture.filter.maskBits = 0xffff
-				self.counter = 0
-				self.state = 1
-				--touchSound:play()
-
-				if game_time > 0 then
-					score = score + 1
-				end
-			end
-		end
-
 		return true
-	end
-
-    return self
-end
-
-
-local function PlayerPoint(world, _x, _y, _r)
-    
-    -- public 
-	local self = {
-		name = "player",
-	    r = _r,
-	    x = _x,
-	    y = _y,
-	}
-
-	local bodyDef = box2d.BodyDef()
-	bodyDef.position = box2d.Vec2(self.x, self.y)
-	bodyDef.type = 'dynamic'
-
-	local body = world.createBody(bodyDef)
-	body.userData = self
-	body.gravityScale = 0
-
-	local circleShape = box2d.CircleShape()
-	circleShape.radius = self.r
-	
-	local fixtureDef = box2d.FixtureDef()
-	fixtureDef.shape = circleShape
-	fixtureDef.density = 1
-	fixtureDef.friction = 1
-	fixtureDef.restitution = 0.0
-	--fixtureDef.sensor = true
-
-	local fixture = body.createFixture(fixtureDef)
-
-	function self.draw()
-		of.setColor(255, 130, 0, 50)
-		of.fill()
-		of.drawCircle(body.position.x, body.position.y, self.r*2)
-	end
-
-	function self.setPos(x, y)
-		self.x = x
-		self.y = y
-
-		body.setTransform( box2d.Vec2(x, y), 0 )
-		body.linearVelocity = box2d.Vec2(0, 0)
-		body.angularVelocity = 0
-	end
-
-	function self.setPosVec(pos)
-		self.setPos(pos.x, pos.y)
-	end
-
-	function self.contact(obj)
-		-- print("contact ", self.name, "->", obj.name)
 	end
 
     return self
@@ -295,98 +200,15 @@ local function Player(world)
     	name = "ground"
 	}
 
-
-	self.joints = {}
-	self.points = {}
-
-	table.insert(self.points, PlayerPoint(world, -100, -10, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -100, -20, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -100, -30, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -100, -40, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -100, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -110, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -120, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -130, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -140, -10, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -150, -20, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -160, -30, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -170, -40, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -180, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -190, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -200, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -210, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -220, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -230, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -240, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -250, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -260, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -270, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -280, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -290, -55, 0.15) )
-	table.insert(self.points, PlayerPoint(world, -290, -65, 0.15) )
-
 	function self.update()
-
-		-- self.joints = {}
-
-		-- local num = uber.numJoints
-
-		-- --if num == 0 then
-
-		-- 	self.points[1].setPos(-100, -10)
-		-- 	self.points[2].setPos(-100, -20)
-		-- 	self.points[3].setPos(-100, -30)
-		-- 	self.points[4].setPos(-100, -40)
-		-- 	self.points[5].setPos(-100, -55)
-		-- 	self.points[6].setPos(-100, -55)
-		-- 	self.points[7].setPos(-100, -65)
-		-- 	self.points[8].setPos(-100, -75)
-		-- 	self.points[9].setPos(-100, -80)
-		-- 	self.points[10].setPos(-100, -90)
-		-- 	self.points[11].setPos(-110, -110)
-		-- 	self.points[12].setPos(-120, -140)
-		-- 	self.points[13].setPos(-130, -155)
-		-- 	self.points[14].setPos(-140, -155)
-		-- 	self.points[15].setPos(-150, -155)
-		-- 	self.points[16].setPos(-160, -155)
-		-- 	self.points[17].setPos(-170, -100)
-		-- 	self.points[18].setPos(-180, -100)
-		-- 	self.points[19].setPos(-190, -140)
-		-- 	self.points[20].setPos(-200, -155)
-		-- 	self.points[21].setPos(-210, -155)
-		-- 	self.points[22].setPos(-220, -155)
-		-- 	self.points[23].setPos(-230, -155)			
-		-- 	self.points[24].setPos(-240, -155)			
-		-- 	self.points[25].setPos(-250, -155)			
-		-- --else
-
-		-- 	local numJoints = uber.numJoints
-		-- 	for i=1, numJoints do
-		-- 		local p = uber.joint(i)
-		-- 		self.points[i].setPosVec(p)
-		-- 	end	
-
-		-- --end	
-
 	end
 
 	function self.draw()
 
-		of.pushStyle()
-
-		-- of.setColor(0, 250, 0, 50)
-		-- of.fill()
-		-- for index, value in ipairs(joints) do
-		--  	of.drawCircle(value.x, value.y, 0.1)
-		-- end
-
-		-- for index, point in ipairs(self.points) do
-		-- 	point.draw()
-		-- end
-
 		of.enableAlphaBlending()
 		of.setColor(0, 200, 50, 90)
 		of.noFill()
+
 		for i=1, uber.numBlobs do
 			blob = uber.blob(i)
 			
@@ -399,11 +221,6 @@ local function Player(world)
 			of.endShape()
 		end
 
-		--of.setHexColor(0x000000)
-		--of.drawBitmapString(("%i"):format(uber.numJoints), 0.10, 1.50)
-		--drawText( ("%i"):format(uber.numJoints), 0.10, 1.50)
-
-		of.popStyle()
 	end
 
 	return self
@@ -531,6 +348,14 @@ local function Scene()
 end
 
 
+function update_game()
+	
+	
+	player.update()
+	scene.update()
+
+end
+
 -- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -539,7 +364,7 @@ function setup()
 	print("SETUP\n")
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
-	of.setWindowPosition(1920 + 1680,0)
+	--of.setWindowPosition(1920 + 1680,0)
 	scene = Scene()
 	player = Player(scene.world)
 end
@@ -558,7 +383,7 @@ function update()
 
 	globalCounter = globalCounter + 1
 
-	if uber.numJoints > 0 then
+	if uber.numBodies > 0 then
 		
 		if clear_score == 1 then
 			
@@ -569,8 +394,7 @@ function update()
 			clear_score = 0
 		end
 
-		scene.update()
-		player.update()
+		update_game()
 
 		if globalCounter > 60 then
 			globalCounter = 0
@@ -585,12 +409,15 @@ function update()
 				level = level + 1
 			end
 
+			if level > 100 then
+				level = 100
+			end
+
 		end
 	
 	else   -- no player
 
 		game_time = 60
-		
 
 		clear_score = 1
 	end
@@ -627,17 +454,10 @@ function draw()
 	end
 
 	if uber.numJoints > 0 then
-		
-
-
 		player.draw()
 		scene.draw()
 	else
 		drawText("BRAK GRACZY",5,4,true)
-
-
-
-
 	end
 
 

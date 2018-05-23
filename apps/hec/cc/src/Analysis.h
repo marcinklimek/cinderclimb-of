@@ -38,7 +38,7 @@ public:
 	int get_num_blobs() const;
 	
 	std::vector<ofVec2f> get_blob(size_t idx) const;
-	bool point_in_blobs(ofVec2f p);
+	bool point_in_blobs(const ofPoint p, float distance);
 
 	void threadedFunction() override;
 	std::vector<ofVec2f> get_joints(const int body_index) const;

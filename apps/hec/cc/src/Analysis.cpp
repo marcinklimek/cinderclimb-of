@@ -271,6 +271,8 @@ void AnalysisThread::update_joints()
 
 int AnalysisThread::get_num_bodies() const
 {
+	std::lock_guard<std::mutex> lock(update_mutex_);
+
 	return grabber_.numBodies();
 }
 
@@ -382,14 +384,22 @@ std::vector<ofVec2f> AnalysisThread::get_blob(const size_t idx) const
 	return points_2d;
 }
 
-bool AnalysisThread::point_in_blobs(const ofVec2f p)
+bool AnalysisThread::point_in_blobs(const ofPoint p, float distance)
 {
 	std::lock_guard<std::mutex> lock(update_mutex_);
 
 	for(const auto& blob: blobs_path_public_)
 	{
+
 		if ( blob.inside(p.x, p.y) )
 			return true;
+
+		auto closest_point = blob.getClosestPoint( p );
+
+		if (  fabsf(closest_point.distance(p)) <= distance )
+		{
+			return true;
+		}
 	}
 
 	return false;

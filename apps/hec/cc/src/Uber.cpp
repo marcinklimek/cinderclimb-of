@@ -216,13 +216,14 @@ int LUberObject::get_blob(State& state, UberObject* object)
 
 int LUberObject::inside_blob(State& state, UberObject* object)
 {
-	if (state.stack->is<LUA_TNUMBER>(1) && state.stack->is<LUA_TNUMBER>(2))
+	if (state.stack->is<LUA_TNUMBER>(1) && state.stack->is<LUA_TNUMBER>(2) && state.stack->is<LUA_TNUMBER>(3))
 	{
 
 		const auto x = static_cast<LUA_NUMBER>(  state.stack->to<LUA_NUMBER>(1));
 		const auto y = static_cast<LUA_NUMBER>(state.stack->to<LUA_NUMBER>(2));
-		//cout << x<< " " << y << endl;
-		state.stack->push<bool>(uber_object.analysis->point_in_blobs( ofVec2f(x,y) ));
+		const auto r = static_cast<LUA_NUMBER>(state.stack->to<LUA_NUMBER>(3));
+
+		state.stack->push<bool>(uber_object.analysis->point_in_blobs( ofPoint(x,y), r ));
 		
 		return 1;
 	}
