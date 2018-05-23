@@ -23,62 +23,71 @@ public:
     virtual ~AnalysisThread();
 
     void setup();
-	bool update();
+
 	void stop();
 
 	void draw();
-    void drawBlobs(vector<ofxCvBlob>& blobs) const;
-	void drawJoints(vector<ofVec2f>& joints);
-	void drawBlobs(ofRectangle& rect, vector<ofxCvBlob> blobs);
+    void draw_blobs(vector<ofPolyline>& blobs) const;
+	void draw_joints(vector<ofVec2f>& joints) const;
 	
-	void updateJoints();
-	int getNumJoints() const;
-	ofVec2f getJoint(int jointIdx) const;
+	void update_joints();
+	int get_num_bodies() const;
+	int get_num_joints() const;
+	ofVec2f get_joint(int joint_idx) const;
 
-	int getNumBlobs() const;
-	std::vector<ofVec2f> getBlob(size_t idx);
+	int get_num_blobs() const;
+	
+	std::vector<ofVec2f> get_blob(size_t idx) const;
+	bool point_in_blobs(ofVec2f p);
 
-
-    //bool getBlobs(vector<ofxCvBlob>& blobs) const;
-    
 	void threadedFunction() override;
+	std::vector<ofVec2f> get_joints(const int body_index) const;
 
-    float mouseX;
-    float mouseY;
+	float mouse_x;
+    float mouse_y;
 
-    ofVec2f projectorScreenSize;
+    ofVec2f projector_screen_size;
 
-	ofRectangle sensingWindow;
+	ofRectangle sensing_window;
 
-	HomoTrans sensingTrans;
+	HomoTrans sensing_trans;
 
 private:
 
-	bool _quit;
-    void updateFrame(ofxCvColorImage& frame);
+	bool quit_;
+    void update_frame(ofxCvColorImage& frame);
     
-    std::shared_ptr<ofSettings> _settings;
+    std::shared_ptr<ofSettings> settings_;
 
-    ofGrabber grabber;
-    ofxConvexHull convexHull;
+    ofGrabber grabber_;
+    ofxConvexHull convex_hull_;
 
-    ofxCvColorImage _inputFrame;
-    ofxCvColorImage _imageProcessed;
-    ofxCvGrayscaleImage _imageProcessedGray;
-    ofxCvColorImage _colorFrame;
+    ofxCvColorImage input_frame_;
+	ofxCvColorImage input_frame_public_;
 
-    ofxCvContourFinder contourFinder;
+    ofxCvColorImage image_processed_;
+	ofxCvColorImage image_processed_public_;
 
-	mutable std::mutex _drawUpdateMutex;
+    ofxCvGrayscaleImage image_processed_gray_;
+	ofxCvGrayscaleImage image_processed_gray_public_;
+
+    ofxCvColorImage color_frame_;
+	ofxCvColorImage color_frame_public_;
+
+    ofxCvContourFinder contour_finder_;
+
+	mutable std::mutex update_mutex_;
 	
-	std::vector<ofVec2f> _joints;
-	vector<ofxCvBlob> _blobs;
+	std::vector<ofVec2f> joints_;
+	std::vector<ofVec2f> joints_public_;
 
-	vector<ofxCvBlob> _blobsPublic;
-	std::vector<ofVec2f> _jointsPublic;
+	vector<ofPolyline> blobs_path_;
+	vector<ofPolyline> blobs_path_public_;
+	
 
-    ofxCvColorImage _inputFramePublic;
-    ofxCvColorImage _imageProcessedPublic;
-    ofxCvGrayscaleImage _imageProcessedGrayPublic;
-    ofxCvColorImage _colorFramePublic;
+	CvMemStorage* cv_mem_storage_;
+
+	void simplify_dp(const vector<ofPoint>& contour_in, vector<ofPoint>& contour_out, float tolerance) const;
+
+	bool update_public();
 };

@@ -1,3 +1,9 @@
+startCounter = 0
+globalCounter = 0
+game_time = 0
+
+----------------
+
 box2d = require 'LuaBox2D'
 uber = UberObj("Kinect")
 
@@ -27,14 +33,12 @@ explosionAtlas[3]:load("images/explosion_03.png")
 explosionAtlas[4]:load("images/explosion_04.png")
 explosionAtlas[5]:load("images/explosion_05.png")
 
-coinSound = of.SoundPlayer()
-coinSound:load("sounds/coin.wav")
+touchSound = of.SoundPlayer()
+touchSound:load("sounds/balloon.wav")
 
-
-print("uber.numBlobs ", uber.numBlobs) 
-
-
-
+score = 0
+score_ground = 0
+level = 1
 
 
 function tablelength(T)
@@ -106,7 +110,7 @@ local function Ball(world, _r)
 	self.counter = 0
 	self.state = 0
 
-	body.angularVelocity = of.random(-15, 15)
+	body.angularVelocity = of.random(-25, 25)
 
 	function self.draw()
 	    
@@ -146,6 +150,22 @@ local function Ball(world, _r)
 	function self.update()
 		self.counter = self.counter + 1
 
+		if self.state == 0 then
+
+			local x = body.position.x / 10.24
+			local y = body.position.y /  7.68
+
+			if uber.insideBlob(x, y) == true then
+				self.counter = 0
+				self.state = 1
+
+				if game_time > 0 then
+					score = score + 1	
+				end
+
+			end
+		end
+
 		if self.state > 0 then
 
 			if self.counter > 5 then
@@ -160,7 +180,7 @@ local function Ball(world, _r)
 				self.y = of.random(-1, -0.5)
 
 				body.setTransform( box2d.Vec2(self.x, self.y), 0 )
-				body.gravityScale = 0.1
+				body.gravityScale = 0.1 + level/20
 				body.linearVelocity = box2d.Vec2(0, 0.1)
 				body.angularVelocity = of.random(-15, 15)
 				fixture.filter.maskBits = 0x0
@@ -179,7 +199,11 @@ local function Ball(world, _r)
 			-- body.angularVelocity = 0
 			if self.state == 0 then
 				self.counter = 0
-				self.state = 1			
+				self.state = 1	
+
+				if game_time > 0 then
+					score_ground = score_ground + 1
+				end
 			end
 		end
 
@@ -192,7 +216,11 @@ local function Ball(world, _r)
 				fixture.filter.maskBits = 0xffff
 				self.counter = 0
 				self.state = 1
-				coinSound:play()
+				--touchSound:play()
+
+				if game_time > 0 then
+					score = score + 1
+				end
 			end
 		end
 
@@ -234,19 +262,22 @@ local function PlayerPoint(world, _x, _y, _r)
 	local fixture = body.createFixture(fixtureDef)
 
 	function self.draw()
-		-- of.setColor(255, 130, 0)
-		-- of.fill()
-		-- of.drawCircle(body.position.x, body.position.y, self.r)
+		of.setColor(255, 130, 0, 50)
+		of.fill()
+		of.drawCircle(body.position.x, body.position.y, self.r*2)
 	end
 
+	function self.setPos(x, y)
+		self.x = x
+		self.y = y
 
-	function self.setPos(pos)
-		self.x = pos.x
-		self.y = pos.y
-
-		body.setTransform( box2d.Vec2(pos.x, pos.y), 0 )
+		body.setTransform( box2d.Vec2(x, y), 0 )
 		body.linearVelocity = box2d.Vec2(0, 0)
-		body.angularVelocity = 0		
+		body.angularVelocity = 0
+	end
+
+	function self.setPosVec(pos)
+		self.setPos(pos.x, pos.y)
 	end
 
 	function self.contact(obj)
@@ -268,50 +299,74 @@ local function Player(world)
 	self.joints = {}
 	self.points = {}
 
-	table.insert(self.points, PlayerPoint(world, -100, -10, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -20, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -30, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -40, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -55, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -55, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -55, 0.3) )
-	table.insert(self.points, PlayerPoint(world, -100, -55, 0.3) )
-
+	table.insert(self.points, PlayerPoint(world, -100, -10, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -100, -20, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -100, -30, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -100, -40, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -100, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -110, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -120, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -130, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -140, -10, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -150, -20, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -160, -30, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -170, -40, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -180, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -190, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -200, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -210, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -220, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -230, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -240, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -250, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -260, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -270, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -280, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -290, -55, 0.15) )
+	table.insert(self.points, PlayerPoint(world, -290, -65, 0.15) )
 
 	function self.update()
 
-		self.joints = {}
+		-- self.joints = {}
 
-		local num = uber.numJoints
+		-- local num = uber.numJoints
 
-		if num == 0 then
+		-- --if num == 0 then
 
-			self.points[1].setPos(-100, -10, 0.3)
-			self.points[2].setPos(-100, -20, 0.3)
-			self.points[3].setPos(-100, -30, 0.3)
-			self.points[4].setPos(-100, -40, 0.3)
-			self.points[5].setPos(-100, -55, 0.3)
-			self.points[6].setPos(-100, -55, 0.3)
-			self.points[7].setPos(-100, -55, 0.3)
-			self.points[8].setPos(-100, -55, 0.3)
+		-- 	self.points[1].setPos(-100, -10)
+		-- 	self.points[2].setPos(-100, -20)
+		-- 	self.points[3].setPos(-100, -30)
+		-- 	self.points[4].setPos(-100, -40)
+		-- 	self.points[5].setPos(-100, -55)
+		-- 	self.points[6].setPos(-100, -55)
+		-- 	self.points[7].setPos(-100, -65)
+		-- 	self.points[8].setPos(-100, -75)
+		-- 	self.points[9].setPos(-100, -80)
+		-- 	self.points[10].setPos(-100, -90)
+		-- 	self.points[11].setPos(-110, -110)
+		-- 	self.points[12].setPos(-120, -140)
+		-- 	self.points[13].setPos(-130, -155)
+		-- 	self.points[14].setPos(-140, -155)
+		-- 	self.points[15].setPos(-150, -155)
+		-- 	self.points[16].setPos(-160, -155)
+		-- 	self.points[17].setPos(-170, -100)
+		-- 	self.points[18].setPos(-180, -100)
+		-- 	self.points[19].setPos(-190, -140)
+		-- 	self.points[20].setPos(-200, -155)
+		-- 	self.points[21].setPos(-210, -155)
+		-- 	self.points[22].setPos(-220, -155)
+		-- 	self.points[23].setPos(-230, -155)			
+		-- 	self.points[24].setPos(-240, -155)			
+		-- 	self.points[25].setPos(-250, -155)			
+		-- --else
 
-		else
+		-- 	local numJoints = uber.numJoints
+		-- 	for i=1, numJoints do
+		-- 		local p = uber.joint(i)
+		-- 		self.points[i].setPosVec(p)
+		-- 	end	
 
-
-			for i=1, uber.numJoints do
-				
-				local p = uber.joint(i)
-				--table.insert(self.joints,  p)
-
-				self.points[i].setPos(p)
-				print(i)
-				
-			end	
-
-		end	
-
-
-
+		-- --end	
 
 	end
 
@@ -319,18 +374,33 @@ local function Player(world)
 
 		of.pushStyle()
 
-		-- of.setColor(0, 130, 0)
+		-- of.setColor(0, 250, 0, 50)
 		-- of.fill()
 		-- for index, value in ipairs(joints) do
-		-- 	of.drawCircle(value.x, value.y, 0.1)
+		--  	of.drawCircle(value.x, value.y, 0.1)
 		-- end
 
-		for index, point in ipairs(self.points) do
-			point.draw()
+		-- for index, point in ipairs(self.points) do
+		-- 	point.draw()
+		-- end
+
+		of.enableAlphaBlending()
+		of.setColor(0, 200, 50, 90)
+		of.noFill()
+		for i=1, uber.numBlobs do
+			blob = uber.blob(i)
+			
+			of.beginShape()
+
+			for k, v in pairs(blob) do
+				of.vertex(v.x, v.y)
+			end
+
+			of.endShape()
 		end
 
-		of.setHexColor(0x000000)
-		of.drawBitmapString(("%i"):format(uber.numJoints), 0.10, 1.50)
+		--of.setHexColor(0x000000)
+		--of.drawBitmapString(("%i"):format(uber.numJoints), 0.10, 1.50)
 		--drawText( ("%i"):format(uber.numJoints), 0.10, 1.50)
 
 		of.popStyle()
@@ -461,23 +531,24 @@ local function Scene()
 end
 
 
-
 -- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-startCounter = 1*60
-globalCounter = 0
+
 
 function setup()
 	print("SETUP\n")
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
-	of.setWindowPosition(1920,0)
+	of.setWindowPosition(1920 + 1680,0)
 	scene = Scene()
 	player = Player(scene.world)
 end
 
 
 ----------------------------------------------------
+
+clear_score = 0
+
 function update()
 	-- print("UPDATE\n")
 	
@@ -488,12 +559,60 @@ function update()
 	globalCounter = globalCounter + 1
 
 	if uber.numJoints > 0 then
+		
+		if clear_score == 1 then
+			
+			level = 0
+			score = 0
+			score_ground = 0
+
+			clear_score = 0
+		end
 
 		scene.update()
 		player.update()
 
+		if globalCounter > 60 then
+			globalCounter = 0
+			
+			game_time = game_time - 1
+
+			if game_time < 0 then
+				game_time = 0
+			end
+
+			if game_time % 5 == 0 then
+				level = level + 1
+			end
+
+		end
+	
+	else   -- no player
+
+		game_time = 60
+		
+
+		clear_score = 1
 	end
 
+end
+
+function keyPressed(key)
+	if key == 357 then  -- up
+		level = level + 1
+		if level > 40 then
+			level = 40
+		end		
+	end
+
+	if key == 359 then  -- dn
+
+		level = level - 1
+		if level < 0 then
+			level = 0
+		end
+
+	end	
 end
 
 
@@ -508,38 +627,46 @@ function draw()
 	end
 
 	if uber.numJoints > 0 then
+		
 
-		scene.draw()
+
 		player.draw()
-
+		scene.draw()
 	else
-
 		drawText("BRAK GRACZY",5,4,true)
+
+
+
+
 	end
+
+
+	of.pushMatrix()
+	of.scale(0.01, 0.01, 0.01)
+	of.setHexColor(0xFFFFFF)
+	
+	str = "Punkty: " .. tostring(score) .. "/" .. tostring(score_ground)
+	franklinBookBig:drawString( str, 30, 690)  
+
+	str = "Poziom: " .. tostring(level) 
+	franklinBook:drawString( str, 32, 650)  
+
+	str = "Czas: " .. tostring(game_time) .. "s"
+	franklinBookBig:drawString( str, 820, 690)  
+
+	of.popMatrix()
 
 end
 
 function drawUI()
 
-	if startCounter > 0 then
-		of.disableAlphaBlending()
-		of.setHexColor(0x808080)
-		banner:draw(0, 0, 1024, 768)
-		of.enableAlphaBlending()
-	end
+	-- if startCounter > 0 then
+	-- 	of.disableAlphaBlending()
+	-- 	of.setHexColor(0x808080)
+	-- 	banner:draw(0, 0, 1024, 768)
+	-- 	of.enableAlphaBlending()
+	-- end
 
-
-	for i=1, uber.numBlobs do
-		blob = uber.blob(i)
-		
-		of.beginShape()
-
-		for k, v in pairs(blob) do
-			of.vertex(v.x*100, v.y*100)
-		end
-
-		of.endShape()
-	end
 
 
 end

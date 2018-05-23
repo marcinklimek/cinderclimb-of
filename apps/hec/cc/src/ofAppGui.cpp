@@ -41,9 +41,9 @@ void ofAppGui::update()
 {
     ofBackground(100, 100, 100);
 
-	analysis->update();
-    analysis->mouseX = mouseX;
-    analysis->mouseY = mouseY;
+	
+    analysis->mouse_x = mouseX;
+    analysis->mouse_y = mouseY;
 
     if (isCalibration)
     {
@@ -111,23 +111,23 @@ void ofAppGui::mouseDragged(int x, int y, int button)
 	// right button
 	if ( button == 2 )
 	{
-		float w =  _settings->image_size_W / 2;
-		float h =  _settings->image_size_H / 2;
+		float w =  _settings->image_size_W;
+		float h =  _settings->image_size_H;
 
 		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, w, h);
 		if ( rect.inside(x,y) )
 		{
-			ofVec2f startPoint(analysis->sensingWindow.x * w,  analysis->sensingWindow.y * h);
+			const ofVec2f start_point(analysis->sensing_window.x * w,  analysis->sensing_window.y * h);
 
-			analysis->sensingWindow.width  = (x - startPoint.x - rect.x) / w;
-			analysis->sensingWindow.height = (y - startPoint.y - rect.y) / h;
+			analysis->sensing_window.width  = (x - start_point.x - rect.x) / w;
+			analysis->sensing_window.height = (y - start_point.y - rect.y) / h;
 
-			analysis->sensingTrans.distortedCorners[0] = analysis->sensingWindow.getTopLeft();
-			analysis->sensingTrans.distortedCorners[1] = analysis->sensingWindow.getTopRight();
-			analysis->sensingTrans.distortedCorners[2] = analysis->sensingWindow.getBottomRight();
-			analysis->sensingTrans.distortedCorners[3] = analysis->sensingWindow.getBottomLeft();
+			analysis->sensing_trans.distortedCorners[0] = analysis->sensing_window.getTopLeft();
+			analysis->sensing_trans.distortedCorners[1] = analysis->sensing_window.getTopRight();
+			analysis->sensing_trans.distortedCorners[2] = analysis->sensing_window.getBottomRight();
+			analysis->sensing_trans.distortedCorners[3] = analysis->sensing_window.getBottomLeft();
 
-			analysis->sensingTrans.update();
+			analysis->sensing_trans.update();
 
 		}
 	}
@@ -139,20 +139,20 @@ void ofAppGui::mousePressed(int x, int y, int button)
 	// right button
 	if ( button == 2 )
 	{
-		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, _settings->image_size_W, _settings->image_size_H);
 		if ( rect.inside(x,y) )
 		{
-			float w =  _settings->image_size_W / 2;
-			float h =  _settings->image_size_H / 2;
+			float w =  _settings->image_size_W;
+			float h =  _settings->image_size_H;
 
-			analysis->sensingWindow.x = (x - rect.x) / w; // przejscie do znormalizowanej przestrzeni
-			analysis->sensingWindow.y = (y - rect.y) / h;
+			analysis->sensing_window.x = (x - rect.x) / w; // przejscie do znormalizowanej przestrzeni
+			analysis->sensing_window.y = (y - rect.y) / h;
 
-			analysis->sensingTrans.distortedCorners[0] = analysis->sensingWindow.getTopLeft();
-			analysis->sensingTrans.distortedCorners[1] = analysis->sensingWindow.getTopRight();
-			analysis->sensingTrans.distortedCorners[2] = analysis->sensingWindow.getBottomRight();
-			analysis->sensingTrans.distortedCorners[3] = analysis->sensingWindow.getBottomLeft();
-			analysis->sensingTrans.update();
+			analysis->sensing_trans.distortedCorners[0] = analysis->sensing_window.getTopLeft();
+			analysis->sensing_trans.distortedCorners[1] = analysis->sensing_window.getTopRight();
+			analysis->sensing_trans.distortedCorners[2] = analysis->sensing_window.getBottomRight();
+			analysis->sensing_trans.distortedCorners[3] = analysis->sensing_window.getBottomLeft();
+			analysis->sensing_trans.update();
 		}
 	}
 }

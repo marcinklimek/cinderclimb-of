@@ -6,28 +6,28 @@
 
 using namespace lutok2;
 
-class Vector3
+class UVector2
 {
 public:
     float x;
     float y;
 
-    Vector3(): x(0), y(0) {}
-	Vector3(float _x, float _y): x(_x), y(_y) {}
+    UVector2(): x(0), y(0) {}
+	UVector2(float _x, float _y): x(_x), y(_y) {}
 };
 
-class LVector3 : public Object<Vector3> {
+class LUVector2 : public Object<UVector2> {
 public:
-    explicit LVector3(State * state) : Object<Vector3>(state) {
-        LUTOK_PROPERTY("x", &LVector3::getX, &LVector3::nullMethod);
-        LUTOK_PROPERTY("y", &LVector3::getY, &LVector3::nullMethod);
+    explicit LUVector2(State * state) : Object<UVector2>(state) {
+        LUTOK_PROPERTY("x", &LUVector2::getX, &LUVector2::nullMethod);
+        LUTOK_PROPERTY("y", &LUVector2::getY, &LUVector2::nullMethod);
     }
 
-    Vector3* constructor(State & state, bool & managed);
-    void destructor(State & state, Vector3 * object);
+    UVector2* constructor(State & state, bool & managed) override;
+    void destructor(State & state, UVector2 * object) override;
 
-    int getX(State & state, Vector3* object);
-    int getY(State & state, Vector3* object);
+    int getX(State & state, UVector2* object);
+    int getY(State & state, UVector2* object);
 };
 
 class UberObject
@@ -37,18 +37,20 @@ private:
 public:
     
     UberObject();
-	int updateJoints();
+	int update_joints() const;
 
-	int getNumJoints();
-	Vector3 getJoint(int idx);
+	int get_num_joints() const;
+	UVector2 get_joint(int idx) const;
 
-	int getNumBlobs();
-	vector<Vector3> getBlob(int idx);
+	int get_num_blobs() const;
+	vector<UVector2> get_blob(int idx) const;
+	int get_num_bodies() const;
+	std::vector<UVector2> get_joints(const int body_index) const;
 
-    std::shared_ptr<AnalysisThread> analysis;
+	std::shared_ptr<AnalysisThread> analysis;
 };
 
-extern UberObject uberObject;
+extern UberObject uber_object;
 
 
 class LUberObject : public Object<UberObject> 
@@ -56,15 +58,17 @@ class LUberObject : public Object<UberObject>
 public:
     explicit LUberObject(State * state);
     
-    UberObject * constructor(State & state, bool & managed);
-    void destructor(State & state, UberObject * object);
+    UberObject * constructor(State & state, bool & managed) override;
+    void destructor(State & state, UberObject * object) override;
 
-	int updateJoints(State& state, UberObject* object);
-	int getNumJoints(State & state, UberObject * object);
-    int getJoint(State & state, UberObject * object);
+	int get_num_joints(State & state, UberObject * object);
+	int get_num_bodies(State& state, UberObject* object);
+	int get_joint(State & state, UberObject * object);
+	int get_joints(State& state, UberObject* object);
 
-	int getNumBlobs(State& state, UberObject* object);
-	int getBlob(State& state, UberObject* object);
+	int get_num_blobs(State& state, UberObject* object);
+	int get_blob(State& state, UberObject* object);
+	int inside_blob(State& state, UberObject* object);
 };
 
 int luaopen_UberObject(lua_State * L);

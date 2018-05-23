@@ -8,15 +8,15 @@ void ofAppProjector::setup() {
 	//cout << ofGetWindowPositionX() << endl;
 	//cout << ofGetWindowPositionY() << endl;
 
-	ofSetWindowPosition(3600, 0);
+	ofSetWindowPosition(1920, 10);
 
 
     // scripts to run
     scripts.push_back("scripts/game_01.lua");
-	scripts.push_back("scripts/test.lua");
+	scripts.push_back("scripts/ue_banner.lua");
     currentScript = 0;
 
-    uberObject.analysis = analysis;
+    uber_object.analysis = analysis;
 
     // init the lua state
     lua.init();
@@ -106,6 +106,8 @@ void ofAppProjector::keyPressed(int key) {
     case ' ':
         lua.doString("print(\"this is a lua string saying you hit the space bar!\")");
         break;
+
+    default: ;
     }
 
     lua.scriptKeyPressed(key);
@@ -149,7 +151,7 @@ void ofAppProjector::mouseExited(int x, int y) {
 //--------------------------------------------------------------
 void ofAppProjector::windowResized(int w, int h) 
 {
-	analysis->projectorScreenSize = ofVec2f(w, h);
+	analysis->projector_screen_size = ofVec2f(w, h);
 }
 
 //--------------------------------------------------------------

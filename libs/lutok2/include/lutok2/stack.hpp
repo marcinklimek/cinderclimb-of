@@ -397,7 +397,10 @@ namespace lutok2 {
 	/*
 		to methods
 	*/
-
+	
+	template<> inline float Stack::to(const int index){
+		return lua_tonumber(*state, index) == 1;
+	}
 	template<> inline bool Stack::to(const int index){
 		return lua_toboolean(*state, index) == 1;
 	}

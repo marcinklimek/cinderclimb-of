@@ -7,49 +7,54 @@
 
 #include "convexHull/ofxConvexHull.h"
 
-AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : _quit(false), mouseX(0), mouseY(0), grabber(settings),
-                                                                       convexHull(), sensingWindow(0,0, 1, 1)
+AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : quit_(false), mouse_x(0), mouse_y(0), grabber_(settings),
+                                                                       convex_hull_(), sensing_window(0,0, 1, 1)
 {
-	
-	_settings = settings;
+	cv_mem_storage_ = cvCreateMemStorage( 1000 );
+
+	settings_ = settings;
 	startThread();
 }
 
 AnalysisThread::~AnalysisThread()
 {
     stop();
+
+	//-- clean up.  
+	if( cv_mem_storage_ != nullptr )  
+		cvReleaseMemStorage( &cv_mem_storage_ );
 }
 
 void AnalysisThread::stop()
 {
-	_quit = true;
+	quit_ = true;
 	waitForThread();
 }
 
 void AnalysisThread::setup()
 {
-    _inputFrame.allocate(_settings->image_size_W, _settings->image_size_H);
-    _imageProcessed.allocate(_settings->image_size_W, _settings->image_size_H);
-    _imageProcessedGray.allocate(_settings->image_size_W, _settings->image_size_H);
-    _colorFrame.allocate(_settings->image_size_W, _settings->image_size_H);
+    input_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
+    image_processed_.allocate(settings_->image_size_W, settings_->image_size_H);
+    image_processed_gray_.allocate(settings_->image_size_W, settings_->image_size_H);
+    color_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
 
-    _inputFramePublic.allocate(_settings->image_size_W, _settings->image_size_H);
-    _imageProcessedPublic.allocate(_settings->image_size_W, _settings->image_size_H);
-    _imageProcessedGrayPublic.allocate(_settings->image_size_W, _settings->image_size_H);
-    _colorFramePublic.allocate(_settings->image_size_W, _settings->image_size_H);
+    input_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
+    image_processed_public_.allocate(settings_->image_size_W, settings_->image_size_H);
+    image_processed_gray_public_.allocate(settings_->image_size_W, settings_->image_size_H);
+    color_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
 }
 
-bool AnalysisThread::update()
+bool AnalysisThread::update_public()
 {
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+	std::lock_guard<std::mutex> lock(update_mutex_);
 
-	_jointsPublic = _joints;
-	_blobsPublic = _blobs;
-	
-    _inputFramePublic = _inputFrame;
-    _imageProcessedPublic = _imageProcessed;
-    _imageProcessedGrayPublic = _imageProcessedGray;
-    _colorFramePublic = _colorFrame;
+	joints_public_ = joints_;
+	blobs_path_public_ = blobs_path_;
+
+    input_frame_public_ = input_frame_;
+    image_processed_public_ = image_processed_;
+    image_processed_gray_public_ = image_processed_gray_;
+    color_frame_public_ = color_frame_;
 
 	return false;
 }
@@ -57,38 +62,35 @@ bool AnalysisThread::update()
 
 void AnalysisThread::threadedFunction()
 {
-    while (!_quit)
+    while (!quit_)
     {
-		grabber.update();
+		grabber_.update();
         
 		ofxCvColorImage frame;
 		frame.allocate(1920, 1080);
-		if (grabber.get(frame))
+		if (grabber_.get(frame))
 		{
-			frame.resize(_settings->image_size_W, _settings->image_size_H);
-			//frame.mirror(false, true);
+			frame.resize(settings_->image_size_W, settings_->image_size_H);
+			frame.mirror(false, true);
 
-			updateFrame(frame);
-			updateJoints();
+			update_frame(frame);
+			update_joints();
+
+			update_public();
 		}
 	}
 }
 
-//bool AnalysisThread::getBlobs(vector<ofxCvBlob>& blobs) const
-//{
-//	blobs = contourFinder.blobs;
-//
-//    return true;
-//}
 
-void AnalysisThread::updateFrame(ofxCvColorImage& frame)
+
+void AnalysisThread::update_frame(ofxCvColorImage& frame)
 {
     if (frame.getWidth() == 0 || frame.getHeight() == 0)
         return;
     
-    _inputFrame = frame;
+    input_frame_ = frame;
+    image_processed_ = frame;
 
-    _imageProcessed = frame;
     //_imageProcessed.blur(_settings->blur_amount * 2 + 1);
 
     //for(auto i=0; i<_settings->erode_open_count; i++)
@@ -100,9 +102,39 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     //for (auto i = 0; i<_settings->erode_close_count; i++)
     //    _imageProcessed.erode();
 
-    _imageProcessedGray = _imageProcessed;
-    contourFinder.findContours(_imageProcessedGray, _settings->area_min, _settings->area_max, 50, false); // find holes
-	_blobs = contourFinder.blobs;
+    image_processed_gray_ = image_processed_;
+    contour_finder_.findContours(image_processed_gray_, settings_->area_min, settings_->area_max, 10, true); // find holes
+	
+	blobs_path_.clear();
+	for (auto& blob : contour_finder_.blobs)
+	{
+		std::vector<ofPoint> filtered;
+
+		for(auto& point: blob.pts)
+		{
+			ofPoint v;
+			v.x = point.x / settings_->image_size_W;
+			v.y = point.y / settings_->image_size_H;
+
+			v = ofxHomography::toScreenCoordinates(v, sensing_trans.homography);
+			filtered.emplace_back(v);
+		}
+		ofPolyline poly( filtered );
+		//poly.simplify();
+		//poly = poly.getSmoothed(3);
+		blobs_path_.emplace_back(poly);
+	}
+
+	 // for (auto& blob : blobs_)
+	 // {
+	 // 	vector<ofPoint> points_out;
+	 // 	simplify_dp(blob.pts, points_out, settings_->tolerance/1000.0f);
+  
+	 // 	blob.pts = points_out;
+	 // 	blob.nPts = points_out.size();
+  
+	 // 	ofPolyline path(blob.pts);
+	 // }
 
     //if (_settings->useConvexHull)
     //{
@@ -114,50 +146,51 @@ void AnalysisThread::updateFrame(ofxCvColorImage& frame)
     //}
 
     // kinect gives RGBA, in OF we nedd to have RGB
-    auto& pix = grabber.kinect.getColorSource()->getPixels();
+    auto& pix = grabber_.kinect.getColorSource()->getPixels();
 
     ofPixels rgbPix(pix);
     rgbPix.setImageType(OF_IMAGE_COLOR);
-    rgbPix.resize(_settings->image_size_W, _settings->image_size_H);
-    _colorFrame.setFromPixels(rgbPix);
+    rgbPix.resize(settings_->image_size_W, settings_->image_size_H);
+    color_frame_.setFromPixels(rgbPix);
+	color_frame_.mirror(false, true);
 }
-
 
 
 void AnalysisThread::draw() 
 {
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+	std::lock_guard<std::mutex> lock(update_mutex_);
 
     ofSetHexColor(0xffffff);
 
-    _imageProcessedPublic.draw(    spacing, spacing,					         preview_W, preview_H);
-    _inputFramePublic.draw(        spacing, spacing + (preview_H + spacing) * 1, preview_W, preview_H);
-    _imageProcessedGrayPublic.draw(spacing, spacing + (preview_H + spacing) * 2, preview_W, preview_H);
-    _colorFramePublic.draw(        spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+    image_processed_public_.draw(     spacing,                       spacing,					           preview_W,                   preview_H);
+    input_frame_public_.draw(         spacing,                       spacing + (preview_H + spacing) * 1,  preview_W,                   preview_H);
+    image_processed_gray_public_.draw(spacing,                       spacing + (preview_H + spacing) * 2,  preview_W,	                preview_H);
+    color_frame_public_.draw(         spacing + preview_W + spacing, spacing,                              settings_->image_size_W, settings_->image_size_H);
 
-	float w =  _settings->image_size_W / 2;
-	float h =  _settings->image_size_H / 2;
+	float w =  settings_->image_size_W;
+	float h =  settings_->image_size_H;
 
 	ofSetColor(0, 0, 0xcc, 0x80);
-	ofDrawRectangle(spacing + preview_W + spacing + sensingWindow.x * w, spacing + sensingWindow.y * h,
-		            sensingWindow.width * w, spacing + sensingWindow.height * h);
+	ofDrawRectangle(spacing + preview_W + spacing + sensing_window.x * w, spacing + sensing_window.y * h,
+		            sensing_window.width * w, spacing + sensing_window.height * h);
 
-	drawBlobs(_blobsPublic);
-	drawJoints(_jointsPublic);
+	draw_blobs(blobs_path_public_);
+	draw_joints(joints_public_);
 }
 
-void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
+void AnalysisThread::draw_blobs( vector<ofPolyline>& blobs) const
 {
     ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W / 2, _settings->image_size_H / 2);
+    rect.set(spacing + preview_W + spacing, spacing, settings_->image_size_W, settings_->image_size_H);
 
-    float x = rect.x;
-    float y = rect.y;
     float w = rect.width;
     float h = rect.height;
 
-    float scale_x = w / _settings->image_size_W;
-    float scale_y = h / _settings->image_size_H ;
+	const auto x = spacing + preview_W + spacing + sensing_window.x * w;
+	const auto y = spacing + sensing_window.y * h;
+
+	const float scale_x = w * sensing_window.width;//settings_->image_size_W;
+	const float scale_y = h * sensing_window.height;//settings_->image_size_H ;
 
     ofPushStyle();
     // ---------------------------- draw the bounding rectangle
@@ -169,8 +202,8 @@ void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
     ofNoFill();
     for (auto& blob : blobs)
     {
-        ofDrawRectangle(blob.boundingRect.x, blob.boundingRect.y,
-                        blob.boundingRect.width, blob.boundingRect.height);
+        ofDrawRectangle(blob.getBoundingBox().x, blob.getBoundingBox().y,
+                        blob.getBoundingBox().width, blob.getBoundingBox().height);
     }
 
     // ---------------------------- draw the blobs
@@ -178,25 +211,20 @@ void AnalysisThread::drawBlobs( vector<ofxCvBlob>& blobs) const
 
     for (auto& blob : blobs)
     {
-        ofBeginShape();
-        for (auto& pt : blob.pts)
-        {
-            ofVertex(pt.x, pt.y);
-        }
-        ofEndShape();
+		blob.draw();
     }
     ofPopMatrix();
     ofPopStyle();
 }
 
-void AnalysisThread::drawJoints( vector<ofVec2f>& joints)
+
+void AnalysisThread::draw_joints( vector<ofVec2f>& joints) const
 {
+	const auto w = settings_->image_size_W;
+	const auto h = settings_->image_size_H;
 
-    float w = _settings->image_size_W / 2;
-    float h = _settings->image_size_H / 2;
-
-    float x = spacing + preview_W + spacing + sensingWindow.x * w;
-    float y = spacing + sensingWindow.y * h;
+	const auto x = spacing + preview_W + spacing + sensing_window.x * w;
+	const auto y = spacing + sensing_window.y * h;
 
     ofPushStyle();
 
@@ -209,85 +237,160 @@ void AnalysisThread::drawJoints( vector<ofVec2f>& joints)
     ofSetColor(250, 250, 250);
 	
     for (const auto joint : joints) 
-        ofDrawCircle(joint.x * w * sensingWindow.width, joint.y * h * sensingWindow.height, 2);
+        ofDrawCircle(joint.x * w * sensing_window.width, joint.y * h * sensing_window.height, 2);
 
     ofPopMatrix();
     ofPopStyle();
 }
 
-void AnalysisThread::updateJoints()
+void AnalysisThread::update_joints()
 {
-	int bodyIndex = 0;
+	const int body_index = 0;
 
-	if (grabber.numBodies() > 0)
+	if (grabber_.numBodies() > 0)
 	{
-		std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-
-		_joints.clear();
-		_joints = grabber.kinect.getBodySource()->getProjectedJointsVector(bodyIndex, ofxKinectForWindows2::ProjectionCoordinates::ColorCamera);	
+		joints_.clear();
+		joints_ = grabber_.kinect.getBodySource()->getProjectedJointsVector(body_index, ofxKinectForWindows2::ProjectionCoordinates::ColorCamera);	
 
 		std::vector<ofVec2f> filtered;
 
-		for( const auto& joint: _joints)
+		for( const auto& joint: joints_)
 		{
-			if ( sensingWindow.inside(joint) )
+			if ( sensing_window.inside(joint) )
 			{
 				ofVec2f v = joint;
-				v = ofxHomography::toScreenCoordinates(v, sensingTrans.homography);
+				v.x = 1.0f + v.x * -1.0f;
+				v = ofxHomography::toScreenCoordinates(v, sensing_trans.homography);
 				filtered.emplace_back(v);
 			}
 		}
 
-		_joints = filtered;
+		joints_ = filtered;
 	}
 }
 
-int AnalysisThread::getNumJoints() const
+int AnalysisThread::get_num_bodies() const
 {
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
-
-	if (grabber.numBodies() == 0)
-		return 0;
-
-	return _jointsPublic.size();
+	return grabber_.numBodies();
 }
 
-ofVec2f AnalysisThread::getJoint(const int jointIdx) const
+int AnalysisThread::get_num_joints() const
 {
-	if (getNumJoints() == 0)
+	std::lock_guard<std::mutex> lock(update_mutex_);
+
+	return joints_public_.size();
+}
+
+ofVec2f AnalysisThread::get_joint(const int jointIdx) const
+{
+	if (get_num_joints() == 0)
 		return {0, 0};
 
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+	std::lock_guard<std::mutex> lock(update_mutex_);
 	
-	ofVec2f p = _jointsPublic[jointIdx];
-	p = p * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
-	return p;
+	//ofVec2f p = joints_public_[jointIdx];
+	//p = p * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
+	return joints_public_[jointIdx];
 }
 
-int AnalysisThread::getNumBlobs() const
+std::vector<ofVec2f> AnalysisThread::get_joints(const int body_index) const
 {
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
+	if (get_num_joints() == 0)
+		return std::vector<ofVec2f>{ {0, 0} };
 
-	return _blobsPublic.size();
+	std::lock_guard<std::mutex> lock(update_mutex_);
+	return joints_public_;
 }
 
-std::vector<ofVec2f> AnalysisThread::getBlob(size_t idx)
-{
-	std::lock_guard<std::mutex> lock(_drawUpdateMutex);
 
-	std::vector<ofVec2f> filtered;
+void AnalysisThread::simplify_dp( const vector<ofPoint>& contour_in, vector<ofPoint>& contour_out, const float tolerance ) const
+{  
+	//-- copy points.  
+	  
+	int numOfPoints;  
+	numOfPoints = contour_in.size();  
+	  
+	CvPoint* cvpoints;  
+	cvpoints = new CvPoint[ numOfPoints ];  
+	  
+	for( int i=0; i<numOfPoints; i++)  
+	{  
+		int j = i % numOfPoints;  
+		  
+		cvpoints[ i ].x = contour_in[ j ].x;  
+		cvpoints[ i ].y = contour_in[ j ].y;  
+	}  
+	  
+	//-- create contour.  
+	  
+	CvContour	contour;  
+	CvSeqBlock	contour_block;  
+	  
+	cvMakeSeqHeaderForArray  
+	(  
+		CV_SEQ_POLYLINE,  
+		sizeof(CvContour),  
+		sizeof(CvPoint),  
+		cvpoints,  
+		numOfPoints,  
+		(CvSeq*)&contour,  
+		&contour_block  
+	);  
 
-	for( auto& point: _blobsPublic[idx].pts)
+	  
+	//-- simplify contour.  
+	CvSeq *result = 0;  
+	result = cvApproxPoly  
+	(  
+		&contour,  
+		sizeof( CvContour ),  
+		cv_mem_storage_,  
+		CV_POLY_APPROX_DP,  
+		cvContourPerimeter( &contour ) * tolerance,  
+		0  
+	);  
+	  
+	//-- contour out points.  
+	  
+	contour_out.clear();  
+	for( int j=0; j<result->total; j++ )  
 	{
-		point.x = point.x / _settings->image_size_W;
-		point.y = point.y / _settings->image_size_H;
-		if ( sensingWindow.inside(point) )
-		{
-			ofVec2f v = point;
-			v = ofxHomography::toScreenCoordinates(v, sensingTrans.homography);
-			filtered.emplace_back(v);
-		}
+		auto* pt = reinterpret_cast<CvPoint*>(cvGetSeqElem(result, j));  
+		  
+		contour_out.emplace_back(static_cast<float>(pt->x), static_cast<float>(pt->y));
+	}  
+	  
+	delete[] cvpoints;  
+}
+
+int AnalysisThread::get_num_blobs() const
+{
+	std::lock_guard<std::mutex> lock(update_mutex_);
+
+	return blobs_path_public_.size();
+}
+
+std::vector<ofVec2f> AnalysisThread::get_blob(const size_t idx) const
+{
+	std::lock_guard<std::mutex> lock(update_mutex_);
+
+	std::vector<ofVec2f> points_2d;
+		
+	for( auto point: blobs_path_public_[idx].getVertices())
+		points_2d.emplace_back(point.x, point.y);
+
+	return points_2d;
+}
+
+bool AnalysisThread::point_in_blobs(const ofVec2f p)
+{
+	std::lock_guard<std::mutex> lock(update_mutex_);
+
+	for(const auto& blob: blobs_path_public_)
+	{
+		if ( blob.inside(p.x, p.y) )
+			return true;
 	}
 
-	return filtered;
+	return false;
 }

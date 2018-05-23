@@ -201,35 +201,42 @@ namespace ofxKinectForWindows2 {
 				int w, h;
 				switch (proj) 
 				{
-					case ColorCamera: w = 1920; h = 1080; break;
-					case DepthCamera: w = 512; h = 424; break;
+					case ColorCamera: 
+						w = 1920; h = 1080; 
+						break;
+					case DepthCamera: 
+						w = 512; h = 424; 
+						break;
+					default:
+						w = 512; h = 424; 
+					break;
 				}
 
 				for (auto & joint : body.joints) 
 				{
-					if (    
-							joint.first == JointType_SpineBase ||
-							joint.first == JointType_SpineMid ||
-							joint.first == JointType_Neck ||
-							joint.first == JointType_ShoulderLeft ||
-							joint.first == JointType_ElbowLeft ||
-							joint.first == JointType_ShoulderRight ||
-							joint.first == JointType_ElbowRight ||
-							joint.first == JointType_HipLeft ||
-							joint.first == JointType_KneeLeft ||
-							joint.first == JointType_HipRight ||
-							joint.first == JointType_KneeRight ||
-							joint.first == JointType_SpineShoulder ||
-						    joint.first == JointType_Head
-						)
-						continue;
+					// if (    
+					// 		joint.first == JointType_SpineBase ||
+					// 		joint.first == JointType_SpineMid ||
+					// 		joint.first == JointType_Neck ||
+					// 		joint.first == JointType_ShoulderLeft ||
+					// 		joint.first == JointType_ElbowLeft ||
+					// 		joint.first == JointType_ShoulderRight ||
+					// 		joint.first == JointType_ElbowRight ||
+					// 		joint.first == JointType_HipLeft ||
+					// 		joint.first == JointType_KneeLeft ||
+					// 		joint.first == JointType_HipRight ||
+					// 		joint.first == JointType_KneeRight ||
+					// 		joint.first == JointType_SpineShoulder ||
+					// 	    joint.first == JointType_Head
+					// 	)
+					// 	continue;
 
 					TrackingState state = joint.second.getTrackingState();
 					if (state == TrackingState_NotTracked) 
 					{
 						continue;
 					}
-					auto& p = joint.second.getProjected(coordinateMapper, proj);
+					auto p = joint.second.getProjected(coordinateMapper, proj);
 
 					p.x = p.x / w;
 					p.y = p.y / h;
