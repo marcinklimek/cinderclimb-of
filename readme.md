@@ -1,5 +1,25 @@
+TODO
+====
 
-MUst read
+Rodzaje aktywności, dla osób niepełnosprawnych:
+- gaszenie punktów w pionie, ruch liniowy jednostronny oraz naprzemienny
+- gaszenie segmentów wyświetlanego obrazu, poruszanie się po całej ścianie
+- porządkowanie elementów wg kategorii (rosnąco, malejąco) – wersja na ekran
+- ćwiczenie zegarowe – podążanie rękami na wzór wskazówek zegara (dodatkowo wersja na ekran)
+
+Rodzaje aktywności, dla osób zdrowych:
+
+- woda i ogień - uciekanie przed zalewająca nas wodą od dołu i/lub ogniem od góry
+- wymazywanie obrazu własnym ciałem
+- łapanie jajeczek, im wyżej tym więcej pkt.
+- rozmazywanie obrazów całym ciałem – efekt rozmazywania farbami plakatowymi, dla dzieci które dopiero zaczynają się wspinać. Pierwsze kroki we wspinaczce, obycie się z chwytami
+- wyświetlenie kształtu na ścianie - musisz się ustawić zgodnie z nim i wytrwać chwilę
+- skacząca żabka - widać tylko jeden chwyt i uczestnik skacze na kolejny chwyt
+
+Other
+=====
+
+Must read
 ---------
 
 https://github.com/luarocks/lua-style-guide
