@@ -7,8 +7,8 @@
 
 #include "convexHull/ofxConvexHull.h"
 
-AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : quit_(false), mouse_x(0), mouse_y(0), grabber_(settings),
-                                                                       convex_hull_(), sensing_window(0,0, 1, 1)
+AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
+                                                                              grabber_(settings), convex_hull_()
 {
 	cv_mem_storage_ = cvCreateMemStorage( 1000 );
 
@@ -59,7 +59,6 @@ bool AnalysisThread::update_public()
 	return false;
 }
 
-
 void AnalysisThread::threadedFunction()
 {
     while (!quit_)
@@ -80,7 +79,6 @@ void AnalysisThread::threadedFunction()
 		}
 	}
 }
-
 
 
 void AnalysisThread::update_frame(ofxCvColorImage& frame)
@@ -308,20 +306,18 @@ std::vector<ofVec2f> AnalysisThread::get_joints(const int body_index) const
 void AnalysisThread::simplify_dp( const vector<ofPoint>& contour_in, vector<ofPoint>& contour_out, const float tolerance ) const
 {  
 	//-- copy points.  
+
+    const int numOfPoints = contour_in.size();
+
+    CvPoint * cvpoints = new CvPoint[ numOfPoints ];  
 	  
-	int numOfPoints;  
-	numOfPoints = contour_in.size();  
-	  
-	CvPoint* cvpoints;  
-	cvpoints = new CvPoint[ numOfPoints ];  
-	  
-	for( int i=0; i<numOfPoints; i++)  
-	{  
-		int j = i % numOfPoints;  
+	for(auto i=0; i<numOfPoints; i++)  
+	{
+	    auto j = i % numOfPoints;  
 		  
 		cvpoints[ i ].x = contour_in[ j ].x;  
 		cvpoints[ i ].y = contour_in[ j ].y;  
-	}  
+	}
 	  
 	//-- create contour.  
 	  
@@ -335,13 +331,13 @@ void AnalysisThread::simplify_dp( const vector<ofPoint>& contour_in, vector<ofPo
 		sizeof(CvPoint),  
 		cvpoints,  
 		numOfPoints,  
-		(CvSeq*)&contour,  
+		reinterpret_cast<CvSeq*>(&contour),  
 		&contour_block  
 	);  
 
 	  
 	//-- simplify contour.  
-	CvSeq *result = 0;  
+	CvSeq *result = nullptr;  
 	result = cvApproxPoly  
 	(  
 		&contour,  
@@ -353,9 +349,8 @@ void AnalysisThread::simplify_dp( const vector<ofPoint>& contour_in, vector<ofPo
 	);  
 	  
 	//-- contour out points.  
-	  
 	contour_out.clear();  
-	for( int j=0; j<result->total; j++ )  
+	for(auto j=0; j<result->total; j++ )  
 	{
 		auto* pt = reinterpret_cast<CvPoint*>(cvGetSeqElem(result, j));  
 		  
@@ -390,7 +385,6 @@ bool AnalysisThread::point_in_blobs(const ofPoint p, float distance)
 
 	for(const auto& blob: blobs_path_public_)
 	{
-
 		if ( blob.inside(p.x, p.y) )
 			return true;
 

@@ -19,7 +19,7 @@ public:
     AnalysisThread& operator=(const AnalysisThread&) = delete;
     AnalysisThread& operator=(AnalysisThread&&) = delete;
 
-    explicit AnalysisThread(std::shared_ptr<ofSettings> settings);
+    explicit AnalysisThread(const std::shared_ptr<ofSettings>& settings);
     virtual ~AnalysisThread();
 
     void setup();
