@@ -7,12 +7,12 @@
 
 #include "convexHull/ofxConvexHull.h"
 
-AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
-                                                                       grabber_(settings), convex_hull_()
+AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
+                                                                       settings_ (settings), grabber_(settings)
+
 {
 	cv_mem_storage_ = cvCreateMemStorage( 1000 );
-
-	settings_ = settings;
+	
 	startThread();
 }
 
@@ -118,8 +118,8 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
 			filtered.emplace_back(v);
 		}
 		ofPolyline poly( filtered );
-		//poly.simplify();
-		poly = poly.getSmoothed(3);
+		poly.simplify( settings_->tolerance  );
+		poly = poly.getSmoothed( 7 );
 		blobs_path_.emplace_back(poly);
 	}
 
@@ -300,6 +300,11 @@ std::vector<ofVec2f> AnalysisThread::get_joints(const int body_index) const
 
 	std::lock_guard<std::mutex> lock(update_mutex_);
 	return joints_public_;
+}
+
+void AnalysisThread::set_fbo_texture(const ofTexture& of_texture)
+{
+	of_texture.readToPixels(fbo_pixels);
 }
 
 

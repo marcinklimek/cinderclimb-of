@@ -259,6 +259,18 @@ void ofxLua::scriptDraw() {
 	}
 }
 
+void ofxLua::scriptDrawFBO() {
+	if(L == NULL || !isFunction("drawFBO")) {
+		return;
+	}
+	lua_getglobal(L, "drawFBO");
+	if(lua_pcall(L, 0, 0, 0) != 0) {			
+		string msg = "Error running drawFBO(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		errorOccurred(msg);
+	}
+}
+
+
 void ofxLua::scriptDrawUI() {
 	if(L == NULL || !isFunction("drawUI")) {
 		return;

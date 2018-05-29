@@ -70,6 +70,8 @@ public:
 	int get_blob(State& state, UberObject* object);
 	int inside_blob(State& state, UberObject* object);
 	int get_blob_min_max(State& state, UberObject* object);
+	int get_fbo(State& state, UberObject* object);
+	int get_fbo_texture(State& state, UberObject* object);
 };
 
 int luaopen_UberObject(lua_State * L);

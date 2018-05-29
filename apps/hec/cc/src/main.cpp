@@ -8,6 +8,8 @@ std::shared_ptr<ofSettings> app_settings;
 //========================================================================
 int main()
 {
+	ofSetLogLevel(OF_LOG_VERBOSE);
+
 	app_settings = std::make_shared<ofSettings>();
 
 	settings.width = 1024;
@@ -16,8 +18,6 @@ int main()
     settings.resizable = false;
     shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
     projector_window->setVerticalSync(true);
-
-	
 
 	settings.width = 1200;
 	settings.height = 1000;
@@ -47,7 +47,7 @@ int main()
     ofRunApp(gui_window, gui_app);
     ofRunApp(projector_window, projector_app);
     
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    
 
     ofRunMainLoop();
 }

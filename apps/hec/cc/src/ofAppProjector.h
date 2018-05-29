@@ -11,6 +11,7 @@ public:
     void setup();
     void update();
     void draw();
+	void draw_fbo();
     void exit();
 
     void keyPressed(int key);
@@ -41,4 +42,9 @@ public:
     size_t currentScript;
 
 	bool isCalibration = false;
+
+
+private:
+
+	ofFbo fbo;
 };

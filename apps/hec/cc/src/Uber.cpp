@@ -1,4 +1,5 @@
 #include "Uber.h"
+#include "ofxLuaBindings.h"
 
 using namespace lutok2;
 
@@ -105,6 +106,9 @@ LUberObject::LUberObject(State * state) : Object<UberObject>(state)
 	LUTOK_METHOD("blobMinMax", &LUberObject::get_blob_min_max);
 
 	LUTOK_METHOD("insideBlob", &LUberObject::inside_blob);
+
+	LUTOK_METHOD("getFBO", &LUberObject::get_fbo);
+	
 }
 
 UberObject * LUberObject::constructor(State & state, bool & managed)
@@ -253,7 +257,7 @@ int LUberObject::get_blob_min_max(State& state, UberObject* object)
 		const auto index = static_cast<int>(state.stack->to<int>(1) - 1);
 
 		auto rect = uber_object.analysis->get_blob_min_max(index);
-
+		
 		state.stack->pushLiteral("min_x");
 		state.stack->push<LUA_NUMBER>(rect.getMinX());
 		state.stack->rawSet();
@@ -274,6 +278,20 @@ int LUberObject::get_blob_min_max(State& state, UberObject* object)
 	}
 
 	return 0;
+}
+
+
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
+int LUberObject::get_fbo(State& state, UberObject* object)
+{
+	if ( state.stack->is<LUA_TUSERDATA>(1) )
+	{
+		auto x = reinterpret_cast<swig_lua_userdata*>( state.stack->to<void*>(1) );
+		auto y = reinterpret_cast<ofImage*>( x->ptr );
+
+		y->setFromPixels(uber_object.analysis->fbo_pixels);
+	}
+	return 1;
 }
 
 

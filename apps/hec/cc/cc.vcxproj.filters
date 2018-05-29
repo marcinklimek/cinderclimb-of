@@ -897,4 +897,12 @@
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(OpenCV_Bin)opencv_core341$(OpenCVDebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_imgproc341$(OpenCVDebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_imgcodecs341$(OpenCVDebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_features2d341$(OpenCVDebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_flann341$(OpenCVDebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_ml341$(OpenCVDebugSuffix).dll" />
+  </ItemGroup>
 </Project>

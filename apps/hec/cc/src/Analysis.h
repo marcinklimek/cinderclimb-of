@@ -43,6 +43,7 @@ public:
 
 	void threadedFunction() override;
 	std::vector<ofVec2f> get_joints(const int body_index) const;
+	void set_fbo_texture(const ofTexture& of_texture);
 
 	float mouse_x;
     float mouse_y;
@@ -52,6 +53,7 @@ public:
 	ofRectangle sensing_window;
 
 	HomoTrans sensing_trans;
+	ofPixels fbo_pixels;
 
 private:
 

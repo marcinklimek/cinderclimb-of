@@ -1,62 +1,23 @@
 Sprite = require "SpriteAtlas"
+Utils = require "Utils"
+
 box2d = require "LuaBox2D"
 uber = UberObj("Kinect")
 
 startCounter = 0
 globalCounter = 0
 game_time = 0
-
-----------------
-franklinBook = of.TrueTypeFont()
-franklinBook:load("fonts/frabk.ttf", 16)
-
-franklinBookBig = of.TrueTypeFont()
-franklinBookBig:load("fonts/frabk.ttf", 32)
-
-touchSound = of.SoundPlayer()
-touchSound:load("sounds/balloon.wav")
-
-
+clear_score = 0
 
 score = 0
 score_ground = 0
 level = 10
 
 
-function tablelength(T)
-	local count = 0
-	
-	for _ in pairs(T) do 
-		count = count + 1 
-	end
-	
-	return count
-end
+touchSound = of.SoundPlayer()
+touchSound:load("sounds/balloon.wav")
 
-local function drawText(str, x, y, big)
-
-	of.pushMatrix()
-	of.translate(x, y)
-	of.scale(0.01, 0.01, 0.01)
-	of.setHexColor(0xFFFFFF)
-
-	if big == true then
-		local rect = franklinBookBig:getStringBoundingBox(str, 0, 0);
-		-- this is the actual midpt (x + w/2, y + h/2);
-		local centerx = rect.x + rect.width / 2
-		local centery = rect.y + rect.height / 2		
-		franklinBookBig:drawString( str, -centerx, -centery)
-	else
-		local rect = franklinBookBig:getStringBoundingBox(str, 0, 0);
-		-- this is the actual midpt (x + w/2, y + h/2);
-		local centerx = rect.x + rect.width / 2
-		local centery = rect.y + rect.height / 2		
-		franklinBook:drawString( str, -centerx, -centery)
-	end
-
-	of.popMatrix()
-end
-
+----------------
 
 local function player_add_score(value)
 
@@ -75,9 +36,10 @@ local function ground_add_score(value)
 end
 
 function generate_pos(ball, bounds)
-	local path = of.random(0, 1)
-	
-	if path > 0.5 then
+
+	--print (bounds.min_x, 1 - bounds.max_x)
+
+	if bounds.min_x > (1-bounds.max_x) then
 		ball.x = of.random(0, bounds.min_x) * 10.24
 		ball.x = ball.x + 2*ball.r
 	else
@@ -99,7 +61,7 @@ local function Ball(world, bounds)
 		y = 0
 	}
 
-	self.ballAnim = Sprite.Atlas(5, false)
+	self.ballAnim = Sprite.Atlas(15, false)
 	self.ballAnim.add("images/explosion_01.png")
 	self.ballAnim.add("images/explosion_02.png")
 	self.ballAnim.add("images/explosion_03.png")
@@ -266,7 +228,7 @@ local function Scene()
 	}
 
 	-- private
-	local timeStep = 1/50
+	local timeStep = 1 / Utils.max_fps
 	local velocityIterations = 8
 	local positionIterations = 3
 
@@ -326,7 +288,6 @@ local function Scene()
 			self.blob_rect.max_y = rect.max_y
 		end	
 
-
 		if self.blob_rect.min_x < 0 then
 			self.blob_rect.min_x = 0
 		end
@@ -374,6 +335,9 @@ local function Scene()
 
 	function self.update()
 
+		-- reset
+		self.blob_rect = {min_x = 0.1, max_x = 0.2, min_y = 0.1, max_y = 0.2}
+
 		for i=1, uber.numBlobs do
 			self.updateBoundingBox(uber.blobMinMax(i))
 		end
@@ -408,7 +372,7 @@ local function Scene()
 
 	function self.addBall()
 
-		if tablelength(self.balls) < 7 then
+		if Utils.table_length(self.balls) < 7 then
 			table.insert(self.balls, Ball(self.world, self.blob_rect) )	
 		end
 
@@ -427,27 +391,20 @@ end
 
 -- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 function setup()
 	
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
-	of.setWindowPosition(1920 + 1680,0)
+	of.setWindowPosition(1920 , 0) -- (1920 + 1680,0)
 
 	scene = Scene()
 	player = Player(scene.world)
-
-
 end
 
 
 ----------------------------------------------------
 
-clear_score = 0
-
 function update()
-	-- print("UPDATE\n")
 	
 	if startCounter > 0 then
 		startCounter = startCounter - 1
@@ -529,41 +486,28 @@ function draw()
 		player.draw()
 		scene.draw()
 	else
-		drawText("BRAK GRACZY",5,4,true)
+		Utils.drawTextCentered("BRAK GRACZY", 5, 4, true)
 	end
-
 
 	of.pushMatrix()
 	of.scale(0.01, 0.01, 0.01)
 	of.setHexColor(0xFFFFFF)
 	
 	str = "Punkty: " .. tostring(score) .. "/" .. tostring(score_ground)
-	franklinBookBig:drawString( str, 30, 690)  
+	Utils.drawText( str, 30, 690, true)
 
 	str = "Poziom: " .. tostring(level) 
-	franklinBook:drawString( str, 32, 650)  
+	Utils.drawText( str, 32, 650, false)  
 
 	str = "Czas: " .. tostring(game_time) .. "s"
-	franklinBookBig:drawString( str, 820, 690)  
+	Utils.drawText( str, 820, 690, true)  
 
 	of.popMatrix()
 
 end
 
-function drawUI()
-
-	-- if startCounter > 0 then
-	-- 	of.disableAlphaBlending()
-	-- 	of.setHexColor(0x808080)
-	-- 	banner:draw(0, 0, 1024, 768)
-	-- 	of.enableAlphaBlending()
-	-- end
-
-
-
-end
-
 ----------------------------------------------------
+
 function exit()
-	print("box2d script finished")
+	print("script finished")
 end

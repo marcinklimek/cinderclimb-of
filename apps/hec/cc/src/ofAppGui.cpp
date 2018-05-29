@@ -67,23 +67,21 @@ void ofAppGui::draw()
 //--------------------------------------------------------------
 void ofAppGui::keyPressed(int key)
 {
-	projector_app->keyPressed(key);
+     switch (key)
+     {
+         case 'f':
+         {
+             //recorder.start(grabber.getWidth(), grabber.getHeight(), 30.0f);
+    
+             return;
+         }
+ 
+     	default: 
+     		break;
+     }
 
-    // switch (key)
-    // {
-    //     case 'v':
-    //     {
-    //         //recorder.start(grabber.getWidth(), grabber.getHeight(), 30.0f);
-    //
-    //         break;
-    //     }
-    //     case 'c':
-    //     {
-    //         //recorder.stop();
-    //         break;
-    //     }
-    //     default: break;
-    // }
+
+	projector_app->keyPressed(key);
 }
 
 //--------------------------------------------------------------

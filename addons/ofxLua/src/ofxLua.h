@@ -110,7 +110,8 @@ class ofxLua {
 		void scriptSetup();
 		void scriptUpdate();
 		void scriptDraw();
-		void scriptDrawUI();
+	void scriptDrawFBO();
+	void scriptDrawUI();
 		void scriptExit();
 	
 		void scriptWindowResized(int w, int h);

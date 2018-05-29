@@ -3,16 +3,22 @@
 #include "Uber.h"
 
 //--------------------------------------------------------------
-void ofAppProjector::setup() {
+void ofAppProjector::setup() 
+{
+	fbo.allocate(1024, 768);
+    fbo.begin();
+		ofClear(0,0,0,255);
+    fbo.end();
+
+	ofSetColor(255,255,255);
+	ofSetBackgroundColor(0,0,0);
 
 	//cout << ofGetWindowPositionX() << endl;
 	//cout << ofGetWindowPositionY() << endl;
 
-	ofSetWindowPosition(1920, 10);
-
-
     // scripts to run
-    scripts.push_back("scripts/game_01.lua");
+	scripts.push_back("scripts/game_03.lua");
+	scripts.push_back("scripts/game_01.lua");
 	scripts.push_back("scripts/ue_banner.lua");
     currentScript = 0;
 
@@ -35,17 +41,36 @@ void ofAppProjector::setup() {
 
     // call the script's setup() function
     lua.scriptSetup();
+	
 }
 
 //--------------------------------------------------------------
-void ofAppProjector::update() {
+void ofAppProjector::update() 
+{
     // call the script's update() function
 	lua_gc(lua, LUA_GCCOLLECT, 0);
     lua.scriptUpdate();
+
+	ofEnableAlphaBlending();
+	fbo.begin();
+
+	ofPushMatrix();
+    
+	ofTranslate(0, 0, 0.0);
+    ofScale(100.0, 100.0, 100.0);
+
+	lua.scriptDrawFBO();
+	
+	ofPopMatrix();
+	fbo.end();
+
+	analysis->set_fbo_texture( fbo.getTexture() );
 }
 
 //--------------------------------------------------------------
-void ofAppProjector::draw() {
+void ofAppProjector::draw() 
+{
+	//draw_fbo();
 
 	ofPushMatrix();
     
@@ -53,21 +78,24 @@ void ofAppProjector::draw() {
     ofScale(100.0, 100.0, 100.0);
 
 	if (isCalibration)
-		ofBackground(ofColor::dimGrey);
-	else
-		ofBackground(ofColor::black);
+		ofBackground(ofColor::floralWhite);
 
-	ofEnableAlphaBlending();
+	
     // call the script's draw() function
     lua.scriptDraw();
 	
 	ofPopMatrix();
+}
 
-	ofPushMatrix();
-	ofTranslate(0, 0, 0.0);
-    ofScale(1.0, 1.0, 1.0);
-	lua.scriptDrawUI();
-	ofPopMatrix();
+void ofAppProjector::draw_fbo()
+{
+
+
+
+	ofPushStyle();
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	fbo.draw(0, 0, 1024, 768);
+	ofPopStyle();
 }
 
 void ofAppProjector::exit()
