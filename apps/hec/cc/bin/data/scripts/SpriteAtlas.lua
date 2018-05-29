@@ -23,7 +23,7 @@ function Sprite.Atlas(r, cyclic)
 	end
 
 	function self.finished()
-		return is_end
+		return self.is_end
 	end
 	
 	function self.play()
@@ -33,38 +33,33 @@ function Sprite.Atlas(r, cyclic)
 
 	function self.update()
 
-		if start == false then
-			return
-		end
+		if self.start == true then
 
-		self.time = self.time + 1
+			self.time = self.time + 1
 
-		if (self.time % self.rate) == 0 then
-			self.time = 1
-			self.index = self.index + 1 
+			if (self.time % self.rate) == 0 then
+				self.time = 1
+				self.index = self.index + 1 
 
-			if self.cyclic == true then
-				self.index = self.index % self.frames
-			else
-
-				if self.index == self.frames then
-					self.start = false
-					self.is_end = true
+				if self.cyclic == true then
+					self.index = self.index % self.frames
+				else
+					--print ("sprite end", self.index, self.frames, self.index >= self.frames)
+					if self.index >= self.frames then
+						self.start = false
+						self.is_end = true
+					end
 				end
-
 			end
 		end
 	end
 
 	function self.draw(x, y, w, h)
 
-		if self.start == false then
-			return
+		if self.start == true then
+			--print(self.index, (self.index % self.frames) + 1)
+			self.atlas[(self.index % self.frames) + 1]:draw(x, y, w, h)
 		end
-
-		self.atlas[self.index+1]:draw(x, y, w, h)
-
-		print (self.index)
 	end
 
     return self

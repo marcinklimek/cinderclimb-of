@@ -109,25 +109,35 @@ CV_INLINE IppiSize ippiSize(int width, int height)
 #  define CV_SSE2 1
 #  if defined __SSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
 #    include "pmmintrin.h"
-#    define CV_SSE3 1
+#    ifndef CV_SSE3 
+#      define CV_SSE3 1
+#    endif
 #  endif
 #  if defined __SSSE3__  || (defined _MSC_VER && _MSC_VER >= 1500)
 #    include "tmmintrin.h"
-#    define CV_SSSE3 1
+#    ifndef CV_SSSE3
+#      define CV_SSSE3 1
+#    endif
 #  endif
 #  if defined __SSE4_1__ || (defined _MSC_VER && _MSC_VER >= 1500)
 #    include <smmintrin.h>
-#    define CV_SSE4_1 1
+#    ifndef CV_SSE4_1
+#      define CV_SSE4_1 1
+#    endif
 #  endif
 #  if defined __SSE4_2__ || (defined _MSC_VER && _MSC_VER >= 1500)
 #    include <nmmintrin.h>
-#    define CV_SSE4_2 1
+#    ifndef CV_SSE4_2
+#      define CV_SSE4_2 1
+#    endif
 #  endif
 #  if defined __AVX__ || (defined _MSC_FULL_VER && _MSC_FULL_VER >= 160040219)
 // MS Visual Studio 2010 (2012?) has no macro pre-defined to identify the use of /arch:AVX
 // See: http://connect.microsoft.com/VisualStudio/feedback/details/605858/arch-avx-should-define-a-predefined-macro-in-x64-and-set-a-unique-value-for-m-ix86-fp-in-win32
 #    include <immintrin.h>
-#    define CV_AVX 1
+#    ifndef CV_AVX
+#      define CV_AVX 1
+#    endif
 #    if defined(_XCR_XFEATURE_ENABLED_MASK)
 #      define __xgetbv() _xgetbv(_XCR_XFEATURE_ENABLED_MASK)
 #    else

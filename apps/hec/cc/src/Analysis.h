@@ -38,6 +38,7 @@ public:
 	int get_num_blobs() const;
 	
 	std::vector<ofVec2f> get_blob(size_t idx) const;
+	ofRectangle get_blob_min_max(size_t idx) const;
 	bool point_in_blobs(const ofPoint p, float distance);
 
 	void threadedFunction() override;

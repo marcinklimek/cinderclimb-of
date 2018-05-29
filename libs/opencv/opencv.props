@@ -2,34 +2,37 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-<!--     <OpenCV_Bin>$(OPENCV_WINRT_INSTALL_DIR)\WS\8.1\$(PlatformTarget)\$(PlatformTarget)\vc12\bin\</OpenCV_Bin>
-    <OpenCV_Lib>$(OPENCV_WINRT_INSTALL_DIR)\WS\8.1\$(PlatformTarget)\$(PlatformTarget)\vc12\lib\</OpenCV_Lib>
-    <OpenCV_Include>$(OPENCV_WINRT_INSTALL_DIR)\WS\8.1\$(PlatformTarget)\include\</OpenCV_Include>
- --> 
+
     <!--debug suffix for OpenCV dlls and libs -->
-    <DebugSuffix Condition="'$(Configuration)'=='Debug'">d</DebugSuffix>
-    <DebugSuffix Condition="'$(Configuration)'!='Debug'"></DebugSuffix>
+    <OpenCVDebugSuffix Condition="'$(Configuration)'=='Debug'">d</OpenCVDebugSuffix>
+    <OpenCVDebugSuffix Condition="'$(Configuration)'!='Debug'"></OpenCVDebugSuffix>
+
+    <OpenCV_Bin>$(OF_ROOT)libs\opencv\bin\</OpenCV_Bin>
+    <OpenCV_Lib>$(OF_ROOT)libs\opencv\lib\</OpenCV_Lib>
+    <OpenCV_Include>$(OF_ROOT)libs\opencv\include\</OpenCV_Include>
+ 
+
   </PropertyGroup>
   <ItemGroup>
     <!--Add required OpenCV dlls here-->
-<!--     <None Include="$(OpenCV_Bin)opencv_core300$(DebugSuffix).dll">
+	 <None Include="$(OpenCV_Bin)opencv_core341$(OpenCVDebugSuffix).dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="$(OpenCV_Bin)opencv_imgproc300$(DebugSuffix).dll">
+    <None Include="$(OpenCV_Bin)opencv_imgproc341$(OpenCVDebugSuffix).dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="$(OpenCV_Bin)opencv_imgcodecs300$(DebugSuffix).dll">
+    <None Include="$(OpenCV_Bin)opencv_imgcodecs341$(OpenCVDebugSuffix).dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="$(OpenCV_Bin)opencv_features2d300$(DebugSuffix).dll">
+    <None Include="$(OpenCV_Bin)opencv_features2d341$(OpenCVDebugSuffix).dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="$(OpenCV_Bin)opencv_flann300$(DebugSuffix).dll">
+    <None Include="$(OpenCV_Bin)opencv_flann341$(OpenCVDebugSuffix).dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="$(OpenCV_Bin)opencv_ml300$(DebugSuffix).dll">
+    <None Include="$(OpenCV_Bin)opencv_ml341$(OpenCVDebugSuffix).dll">
       <DeploymentContent>true</DeploymentContent>
-    </None> -->
+    </None>
   </ItemGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -39,7 +42,7 @@
       <!--Add required OpenCV libs here-->
 
 
-      <AdditionalDependencies>%(AdditionalDependencies);opencv_calib3d340$(DebugSuffix).lib;opencv_core340$(DebugSuffix).lib;opencv_dnn340$(DebugSuffix).lib;opencv_features2d340$(DebugSuffix).lib;opencv_flann340$(DebugSuffix).lib;opencv_highgui340$(DebugSuffix).lib;opencv_imgcodecs340$(DebugSuffix).lib;opencv_imgproc340$(DebugSuffix).lib;opencv_ml340$(DebugSuffix).lib;opencv_objdetect340$(DebugSuffix).lib;opencv_photo340$(DebugSuffix).lib;opencv_shape340$(DebugSuffix).lib;opencv_stitching340$(DebugSuffix).lib;opencv_superres340$(DebugSuffix).lib;opencv_video340$(DebugSuffix).lib;opencv_videoio340$(DebugSuffix).lib;opencv_videostab340$(DebugSuffix).lib;zlib$(DebugSuffix).lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);opencv_calib3d341$(OpenCVDebugSuffix).lib;opencv_core341$(OpenCVDebugSuffix).lib;opencv_features2d341$(OpenCVDebugSuffix).lib;opencv_flann341$(OpenCVDebugSuffix).lib;opencv_highgui341$(OpenCVDebugSuffix).lib;opencv_imgcodecs341$(OpenCVDebugSuffix).lib;opencv_imgproc341$(OpenCVDebugSuffix).lib;opencv_ml341$(OpenCVDebugSuffix).lib;opencv_objdetect341$(OpenCVDebugSuffix).lib;opencv_photo341$(OpenCVDebugSuffix).lib;opencv_shape341$(OpenCVDebugSuffix).lib;opencv_stitching341$(OpenCVDebugSuffix).lib;opencv_superres341$(OpenCVDebugSuffix).lib;opencv_video341$(OpenCVDebugSuffix).lib;opencv_videoio341$(OpenCVDebugSuffix).lib;opencv_videostab341$(OpenCVDebugSuffix).lib;zlib$(OpenCVDebugSuffix).lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OpenCV_Lib);%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

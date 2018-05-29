@@ -4,6 +4,8 @@
 #include "Settings.h"
 #include "Analysis.h"
 #include "ofxGui/src/ofxPanel.h"
+#include "ofAppProjector.h"
+#include "ofxXmlSettings/src/ofxXmlSettings.h"
 
 class ofAppGui : public ofBaseApp
 {
@@ -19,33 +21,32 @@ public:
     void keyReleased(int key) override;
     void mouseMoved(int x, int y) override;
     void mouseDragged(int x, int y, int button) override;
+	void update_homography() const;
     void mousePressed(int x, int y, int button) override;
     void mouseReleased(int x, int y, int button) override;
     void mouseEntered(int x, int y) override;
     void mouseExited(int x, int y) override;
     void windowResized(int w, int h) override;
     void dragEvent(ofDragInfo dragInfo) override;
-    void gotMessage(ofMessage msg) override;
-    
-
-
+	void load_config();
+	void save_config();
+	void gotMessage(ofMessage msg) override;
     
     //ofRecorder recorder;
     std::shared_ptr<AnalysisThread> analysis;
 
     ofxPanel gui;
 
-
-    ofSoundStream soundStream;
-    int sampleRate;
-    int channels;
-
-
     vector<ofxCvBlob> currentBlobs;
 
     ofFbo recordFbo;
     ofPixels recordPixels;
-    bool isCalibration;
 
     std::shared_ptr<ofSettings> _settings;
+	shared_ptr<ofBaseApp> projector_app;
+
+private:
+	ofxXmlSettings xml_settings_;
+
+
 };

@@ -7,8 +7,8 @@
 
 #include "convexHull/ofxConvexHull.h"
 
-AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : quit_(false), mouse_x(0), mouse_y(0), grabber_(settings),
-                                                                       convex_hull_(), sensing_window(0,0, 1, 1)
+AnalysisThread::AnalysisThread(std::shared_ptr<ofSettings> settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
+                                                                       grabber_(settings), convex_hull_()
 {
 	cv_mem_storage_ = cvCreateMemStorage( 1000 );
 
@@ -121,7 +121,7 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
 		}
 		ofPolyline poly( filtered );
 		//poly.simplify();
-		//poly = poly.getSmoothed(3);
+		poly = poly.getSmoothed(3);
 		blobs_path_.emplace_back(poly);
 	}
 
@@ -308,16 +308,14 @@ std::vector<ofVec2f> AnalysisThread::get_joints(const int body_index) const
 void AnalysisThread::simplify_dp( const vector<ofPoint>& contour_in, vector<ofPoint>& contour_out, const float tolerance ) const
 {  
 	//-- copy points.  
+
+	const int numOfPoints = contour_in.size();
+
+	const auto cvpoints = new CvPoint[ numOfPoints ];  
 	  
-	int numOfPoints;  
-	numOfPoints = contour_in.size();  
-	  
-	CvPoint* cvpoints;  
-	cvpoints = new CvPoint[ numOfPoints ];  
-	  
-	for( int i=0; i<numOfPoints; i++)  
-	{  
-		int j = i % numOfPoints;  
+	for(auto i=0; i<numOfPoints; i++)  
+	{
+		auto j = i % numOfPoints;  
 		  
 		cvpoints[ i ].x = contour_in[ j ].x;  
 		cvpoints[ i ].y = contour_in[ j ].y;  
@@ -383,6 +381,13 @@ std::vector<ofVec2f> AnalysisThread::get_blob(const size_t idx) const
 
 	return points_2d;
 }
+
+ofRectangle AnalysisThread::get_blob_min_max(const size_t idx) const
+{
+	std::lock_guard<std::mutex> lock(update_mutex_);
+
+	return blobs_path_public_[idx].getBoundingBox();
+}	
 
 bool AnalysisThread::point_in_blobs(const ofPoint p, float distance)
 {

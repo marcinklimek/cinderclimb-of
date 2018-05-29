@@ -17,12 +17,14 @@ void LUVector2::destructor(State & state, UVector2* object)
     delete object;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUVector2::getX(State & state, UVector2* object)
 {
     state.stack->push<LUA_NUMBER>(object->x);
     return 1;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUVector2::getY(State & state, UVector2* object)
 {
     state.stack->push<LUA_NUMBER>(object->y);
@@ -31,7 +33,6 @@ int LUVector2::getY(State & state, UVector2* object)
 
 
 UberObject uber_object;
-
 UberObject::UberObject() = default;
 
 int UberObject::update_joints() const
@@ -73,6 +74,7 @@ vector<UVector2> UberObject::get_blob(const int idx) const
 	return v;
 }
 
+
 int UberObject::get_num_bodies() const
 {
 	return analysis->get_num_bodies();
@@ -100,6 +102,7 @@ LUberObject::LUberObject(State * state) : Object<UberObject>(state)
 
 	LUTOK_PROPERTY("numBlobs", &LUberObject::get_num_blobs, &LUberObject::nullMethod);
 	LUTOK_METHOD("blob", &LUberObject::get_blob);
+	LUTOK_METHOD("blobMinMax", &LUberObject::get_blob_min_max);
 
 	LUTOK_METHOD("insideBlob", &LUberObject::inside_blob);
 }
@@ -114,18 +117,21 @@ void LUberObject::destructor(State & state, UberObject * object)
 {
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::get_num_joints(State & state, UberObject * object) 
 {
     state.stack->push<int>(object->get_num_joints());
     return 1;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::get_num_bodies(State & state, UberObject * object) 
 {
     state.stack->push<int>(object->get_num_joints());
     return 1;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::get_joint(State & state, UberObject * object)
 {
 	auto interfaceLVector3 = state.getInterface<LUVector2>("Vector3");
@@ -147,6 +153,7 @@ int LUberObject::get_joint(State & state, UberObject * object)
 	return 0;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::get_joints(State & state, UberObject * object)
 {
 	auto interfaceLVector3 = state.getInterface<LUVector2>("Vector3");
@@ -177,6 +184,7 @@ int LUberObject::get_joints(State & state, UberObject * object)
 	return 0;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::get_num_blobs(State& state, UberObject* object)
 {
 	state.stack->push<int>(object->get_num_blobs());
@@ -184,6 +192,7 @@ int LUberObject::get_num_blobs(State& state, UberObject* object)
 	return 1;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::get_blob(State& state, UberObject* object)
 {
 	auto interfaceLVector3 = state.getInterface<LUVector2>("Vector3");
@@ -214,12 +223,13 @@ int LUberObject::get_blob(State& state, UberObject* object)
 	return 0;
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
 int LUberObject::inside_blob(State& state, UberObject* object)
 {
 	if (state.stack->is<LUA_TNUMBER>(1) && state.stack->is<LUA_TNUMBER>(2) && state.stack->is<LUA_TNUMBER>(3))
 	{
 
-		const auto x = static_cast<LUA_NUMBER>(  state.stack->to<LUA_NUMBER>(1));
+		const auto x = static_cast<LUA_NUMBER>(state.stack->to<LUA_NUMBER>(1));
 		const auto y = static_cast<LUA_NUMBER>(state.stack->to<LUA_NUMBER>(2));
 		const auto r = static_cast<LUA_NUMBER>(state.stack->to<LUA_NUMBER>(3));
 
@@ -231,9 +241,45 @@ int LUberObject::inside_blob(State& state, UberObject* object)
 	return 0;
 }
 
-int luaopen_UberObject(lua_State* L)
+// ReSharper disable once CppMemberFunctionMayBeStatic CppMemberFunctionMayBeConst
+int LUberObject::get_blob_min_max(State& state, UberObject* object)
 {
-	auto state = new State(L);
+
+	// this function returns normalized values 0..1
+	if (state.stack->is<LUA_TNUMBER>(1))
+	{
+		state.stack->newTable();
+
+		const auto index = static_cast<int>(state.stack->to<int>(1) - 1);
+
+		auto rect = uber_object.analysis->get_blob_min_max(index);
+
+		state.stack->pushLiteral("min_x");
+		state.stack->push<LUA_NUMBER>(rect.getMinX());
+		state.stack->rawSet();
+
+		state.stack->pushLiteral("max_x");
+		state.stack->push<LUA_NUMBER>(rect.getMaxX());
+		state.stack->rawSet();
+
+		state.stack->pushLiteral("min_y");
+		state.stack->push<LUA_NUMBER>(rect.getMinY());
+		state.stack->rawSet();
+
+		state.stack->pushLiteral("max_y");
+		state.stack->push<LUA_NUMBER>(rect.getMaxY());
+		state.stack->rawSet();
+		
+		return 1;
+	}
+
+	return 0;
+}
+
+
+int luaopen_UberObject(lua_State* l)
+{
+	auto state = new State(l);
 
     state->registerInterface<LUVector2>("Vector3");
     state->registerInterface<LUberObject>("UberObj");

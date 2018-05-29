@@ -42,6 +42,7 @@ int main()
     projector_app->analysis = analysis;
 
     projector_app->gui = gui_app;
+	gui_app->projector_app = projector_app;
 
     ofRunApp(gui_window, gui_app);
     ofRunApp(projector_window, projector_app);

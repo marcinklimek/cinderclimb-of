@@ -33,12 +33,12 @@ public:
     void nextScript();
     void prevScript();
 
-    std::shared_ptr<ofAppGui> gui;
+    std::shared_ptr<ofBaseApp> gui;
     std::shared_ptr<AnalysisThread> analysis;
 
     ofxLua lua;
     vector<string> scripts;
     size_t currentScript;
 
-	bool isCalibration = true;
+	bool isCalibration = false;
 };

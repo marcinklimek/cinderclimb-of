@@ -20,7 +20,7 @@ touchSound:load("sounds/balloon.wav")
 
 score = 0
 score_ground = 0
-level = 1
+level = 10
 
 
 function tablelength(T)
@@ -58,24 +58,58 @@ local function drawText(str, x, y, big)
 end
 
 
-local function Ball(world, _r)
+local function player_add_score(value)
+
+	if game_time > 0 then
+		score = score + 1	
+	end	
+
+end
+
+local function ground_add_score(value)
+
+	if game_time > 0 then
+		score_ground = score_ground + 1	
+	end	
+
+end
+
+function generate_pos(ball, bounds)
+	local path = of.random(0, 1)
+	
+	if path > 0.5 then
+		ball.x = of.random(0, bounds.min_x) * 10.24
+		ball.x = ball.x + 2*ball.r
+	else
+		ball.x = of.random(bounds.max_x, 1) * 10.24
+		ball.x = ball.x - 2*ball.r
+	end
+
+	ball.y = of.random(-2, -0.5)		
+end
+
+local function Ball(world, bounds)
     
-    -- public 
+	    -- public 
 	local self = {
 		name = "ball",
-	    r = _r,
+	    r = of.random(0.1, 0.6),
 		state = 0,
+		x = 0,
+		y = 0
 	}
+
+	self.ballAnim = Sprite.Atlas(5, false)
+	self.ballAnim.add("images/explosion_01.png")
+	self.ballAnim.add("images/explosion_02.png")
+	self.ballAnim.add("images/explosion_03.png")
+	self.ballAnim.add("images/explosion_04.png")
+	self.ballAnim.add("images/explosion_05.png")
 
 	self.bomb = of.Image()
 	self.bomb:load("images/gold_1.png")
 
-	self.x = of.random(0.2, 9)
-	self.y = of.random(-2, -0.5)
-
-
-	local w = self.bomb:getWidth()
-	local h = self.bomb:getHeight()
+	generate_pos(self, bounds)
 
 	local bodyDef = box2d.BodyDef()
 	bodyDef.position = box2d.Vec2(self.x, self.y)
@@ -96,18 +130,7 @@ local function Ball(world, _r)
 
 	fixture = body.createFixture(fixtureDef)
 
-
-
 	body.angularVelocity = of.random(-25, 25)
-
-
-	self.ballAnim = Sprite.Atlas(5, false)
-	self.ballAnim.add("images/explosion_01.png")
-	self.ballAnim.add("images/explosion_02.png")
-	self.ballAnim.add("images/explosion_03.png")
-	self.ballAnim.add("images/explosion_04.png")
-	self.ballAnim.add("images/explosion_05.png")
-
 
 	function self.draw()
 	    
@@ -133,35 +156,42 @@ local function Ball(world, _r)
 		of.popStyle()
 	end
 
-	function self.update()
+	function self.update(bounds)
 
+		local x = body.position.x / 10.24
+		local y = body.position.y /  7.68
+
+		--print("update", self.state, self.ballAnim.finished(), x, y)
 		if self.state == 0 then
 
-			local x = body.position.x / 10.24
-			local y = body.position.y /  7.68
+
 			local r = 2*self.r
+
+			if self.y > 2.0 then
+				self.state = 1
+			end
 
 			if uber.insideBlob(x, y, self.r/10.24) == true then
 
-				play()
-
 				self.state = 1
-				self.ballAnim.play()
 
-				if game_time > 0 then
-					score = score + 1	
-				end
+				player_add_score(1)
 
 			end
+
+		elseif self.state == 1 then
+
+			self.ballAnim.play()
+			self.state = 2
 		else
 
 			self.ballAnim.update()
 
 			if self.ballAnim.finished() == true then
+
 				self.state = 0
 
-				self.x = of.random(0.2, 9)
-				self.y = of.random(-1, -0.5)
+				generate_pos(self, bounds)
 
 				body.setTransform( box2d.Vec2(self.x, self.y), 0 )
 				body.gravityScale = 0.1 + level/20
@@ -179,10 +209,7 @@ local function Ball(world, _r)
 
 			if self.state == 0 then
 				self.state = 1
-
-				if game_time > 0 then
-					score_ground = score_ground + 1
-				end
+				ground_add_score(1)
 			end
 		end
 
@@ -198,7 +225,7 @@ local function Player(world)
 	-- public
     local self = {
     	name = "ground"
-	}
+   	}
 
 	function self.update()
 	end
@@ -210,15 +237,17 @@ local function Player(world)
 		of.noFill()
 
 		for i=1, uber.numBlobs do
-			blob = uber.blob(i)
+			local blob = uber.blob(i)
 			
-			of.beginShape()
+			if blob then
+				of.beginShape()
+				
+				for k, v in pairs(blob) do
+					of.vertex(v.x, v.y)
+				end
 
-			for k, v in pairs(blob) do
-				of.vertex(v.x, v.y)
+				of.endShape()
 			end
-
-			of.endShape()
 		end
 
 	end
@@ -232,7 +261,8 @@ local function Scene()
 	-- public
     local self = {
     	name = "ground",
-    	balls = {}
+    	balls = {},
+    	blob_rect = {min_x = 0.1, max_x = 0.2, min_y = 0.1, max_y = 0.2}
 	}
 
 	-- private
@@ -278,6 +308,42 @@ local function Scene()
 		end
 	end
 
+	function self.updateBoundingBox(rect)
+	
+		if self.blob_rect.min_x > rect.min_x then
+			self.blob_rect.min_x = rect.min_x
+		end
+
+		if self.blob_rect.min_y > rect.min_y then
+			self.blob_rect.min_y = rect.min_y
+		end
+
+		if self.blob_rect.max_x < rect.max_x  then
+			self.blob_rect.max_x = rect.max_x
+		end
+
+		if self.blob_rect.max_y < rect.max_y then
+			self.blob_rect.max_y = rect.max_y
+		end	
+
+
+		if self.blob_rect.min_x < 0 then
+			self.blob_rect.min_x = 0
+		end
+
+		if self.blob_rect.min_y < 0 then
+			self.blob_rect.min_y = 0
+		end
+
+		if self.blob_rect.max_x > 1 then
+			self.blob_rect.max_x = 1
+		end
+
+		if self.blob_rect.max_y > 1 then
+			self.blob_rect.max_y = 1
+		end
+
+	end
 
 	function self.draw()
 
@@ -308,20 +374,20 @@ local function Scene()
 
 	function self.update()
 
+		for i=1, uber.numBlobs do
+			self.updateBoundingBox(uber.blobMinMax(i))
+		end
+
 		self.world.step(timeStep, velocityIterations, positionIterations)
 		self.world.clearForces()
 
 		for index, ball in ipairs(self.balls) do
-			ball.update()
+			ball.update( self.blob_rect )
 		end		
 
-
-		if self.counter > 300 then
+		if self.counter > 100 then
 			self.counter = 0
-
-			if tablelength(self.balls) < 7 then
-				table.insert(self.balls, Ball(self.world, of.random(0.2, 0.5)) )
-			end
+			self.addBall()
 		end
 
 		checkContact()
@@ -337,9 +403,15 @@ local function Scene()
 	function self.gameInit()
 		self.balls = {}
 
-		table.insert(self.balls, Ball(self.world, of.random(0.2, 0.5)) )
-		table.insert(self.balls, Ball(self.world, of.random(0.2, 0.5)) )
-		table.insert(self.balls, Ball(self.world, of.random(0.2, 0.5)) )
+		self.addBall()
+	end
+
+	function self.addBall()
+
+		if tablelength(self.balls) < 7 then
+			table.insert(self.balls, Ball(self.world, self.blob_rect) )	
+		end
+
 	end
 
 	self.gameInit()
@@ -349,11 +421,8 @@ end
 
 
 function update_game()
-	
-	
 	player.update()
 	scene.update()
-
 end
 
 -- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -361,12 +430,15 @@ end
 
 
 function setup()
-	print("SETUP\n")
+	
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
-	--of.setWindowPosition(1920 + 1680,0)
+	of.setWindowPosition(1920 + 1680,0)
+
 	scene = Scene()
 	player = Player(scene.world)
+
+
 end
 
 
@@ -387,7 +459,7 @@ function update()
 		
 		if clear_score == 1 then
 			
-			level = 0
+			level = 1
 			score = 0
 			score_ground = 0
 
@@ -405,12 +477,12 @@ function update()
 				game_time = 0
 			end
 
-			if game_time % 5 == 0 then
+			if game_time % 20 == 0 then
 				level = level + 1
 			end
 
-			if level > 100 then
-				level = 100
+			if level > 40 then
+				level = 40
 			end
 
 		end
