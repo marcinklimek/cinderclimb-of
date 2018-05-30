@@ -70,7 +70,7 @@ void ofAppProjector::update()
 //--------------------------------------------------------------
 void ofAppProjector::draw() 
 {
-	//draw_fbo();
+	draw_fbo();
 
 	ofPushMatrix();
     
