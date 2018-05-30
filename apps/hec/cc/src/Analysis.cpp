@@ -104,11 +104,11 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
     contour_finder_.findContours(image_processed_gray_, settings_->area_min, settings_->area_max, 10, true); // find holes
 	
 	blobs_path_.clear();
-	for (auto& blob : contour_finder_.blobs)
+	for (const auto& blob : contour_finder_.blobs)
 	{
 		std::vector<ofPoint> filtered;
 
-		for(auto& point: blob.pts)
+		for(const auto& point: blob.pts)
 		{
 			ofPoint v;
 			v.x = point.x / settings_->image_size_W;
