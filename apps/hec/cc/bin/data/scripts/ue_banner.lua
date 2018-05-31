@@ -52,9 +52,9 @@ end
 
 ----------------------------------------------------
 function draw()
-end
 
-function drawUI()
+	of.pushMatrix()
+	of.scale(0.01, 0.01, 0.01)
 
 	if start == 1 then
 		banner:draw(0, 0, 1024, 768)
@@ -79,10 +79,7 @@ function drawUI()
 		explosionAtlas[index]:draw(0, 0, 1024, 768)
 	end
 
-
-	
-	
-
+	of.popMatrix()
 end
 
 ----------------------------------------------------

@@ -18,6 +18,7 @@
 
 #include "ofUtils.h"
 #include "ofxLuaBindings.h"
+#include <boost/algorithm/string/replace.hpp>
 
 // macro for chdir() as Windows uses a protected variant
 #ifdef TARGET_WIN32
@@ -158,7 +159,11 @@ bool ofxLua::doScript(const string& script, bool changeDir) {
 	string fullpath = ofFilePath::getAbsolutePath(ofToDataPath(script));
 	string file = ofFilePath::getFileName(fullpath);
 	string folder = ofFilePath::getEnclosingDirectory(fullpath);
-	
+
+	cout << "fullpath " << fullpath << endl;
+	cout << "file " << file << endl;
+	cout << "folder " << folder << endl;
+
 	// trim trailing slash
 	if(folder.size() > 0 && folder.at(folder.size()-1) == '/') {
 		folder.erase(folder.end()-1);

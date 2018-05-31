@@ -17,8 +17,12 @@ void ofAppProjector::setup()
 	//cout << ofGetWindowPositionY() << endl;
 
     // scripts to run
-	scripts.push_back("scripts/game_03.lua");
-	scripts.push_back("scripts/game_01.lua");
+	
+	scripts.push_back("scripts/game_03-position.lua");
+	scripts.push_back("scripts/game_03-totoro.lua");
+	
+	scripts.push_back("scripts/game_03-trail.lua");
+	scripts.push_back("scripts/game_01-coins.lua");
 	scripts.push_back("scripts/ue_banner.lua");
     currentScript = 0;
 
@@ -70,8 +74,6 @@ void ofAppProjector::update()
 //--------------------------------------------------------------
 void ofAppProjector::draw() 
 {
-	draw_fbo();
-
 	ofPushMatrix();
     
 	ofTranslate(0, 0, 0.0);
@@ -79,7 +81,6 @@ void ofAppProjector::draw()
 
 	if (isCalibration)
 		ofBackground(ofColor::floralWhite);
-
 	
     // call the script's draw() function
     lua.scriptDraw();
@@ -89,9 +90,6 @@ void ofAppProjector::draw()
 
 void ofAppProjector::draw_fbo()
 {
-
-
-
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_ADD);
 	fbo.draw(0, 0, 1024, 768);
@@ -198,8 +196,12 @@ void ofAppProjector::errorReceived(string& msg) {
 }
 
 //--------------------------------------------------------------
-void ofAppProjector::reloadScript() {
-    
+void ofAppProjector::reloadScript() 
+{
+    fbo.begin();
+		ofClear(0,0,0,0);
+    fbo.end();
+
     // exit, reinit the lua state, and reload the current script
     lua.scriptExit();
 
@@ -207,8 +209,12 @@ void ofAppProjector::reloadScript() {
     // add Uber object
     luaopen_UberObject(lua);
 
+	cout << "Loaded: " << scripts[currentScript] << endl;
+
     lua.doScript(scripts[currentScript], true);
     lua.scriptSetup();
+
+
 }
 
 void ofAppProjector::nextScript() {

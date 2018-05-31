@@ -289,7 +289,9 @@ int LUberObject::get_fbo(State& state, UberObject* object)
 		auto x = reinterpret_cast<swig_lua_userdata*>( state.stack->to<void*>(1) );
 		auto y = reinterpret_cast<ofImage*>( x->ptr );
 
-		y->setFromPixels(uber_object.analysis->fbo_pixels);
+
+		if (uber_object.analysis->fbo_pixels.isAllocated() )
+			y->setFromPixels(uber_object.analysis->fbo_pixels);
 	}
 	return 1;
 }
