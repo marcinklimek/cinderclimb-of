@@ -20,13 +20,24 @@ table.insert(explosionAtlas, of.Image())
 table.insert(explosionAtlas, of.Image())
 table.insert(explosionAtlas, of.Image())
 table.insert(explosionAtlas, of.Image())
+table.insert(explosionAtlas, of.Image())
+table.insert(explosionAtlas, of.Image())
+table.insert(explosionAtlas, of.Image())
+table.insert(explosionAtlas, of.Image())
+table.insert(explosionAtlas, of.Image())
 
-explosionAtlas[1]:load("images/pos/image0-glow.png")
-explosionAtlas[2]:load("images/pos/image2.png")
-explosionAtlas[3]:load("images/pos/image3.png")
-explosionAtlas[4]:load("images/pos/image4.png")
-explosionAtlas[5]:load("images/pos/image5.png")
-explosionAtlas[6]:load("images/pos/image1.png")
+explosionAtlas[1]:load("images/pos/image0.png")
+explosionAtlas[2]:load("images/pos/image00.png")
+explosionAtlas[3]:load("images/pos/image11.png")
+explosionAtlas[4]:load("images/pos/image22.png")
+explosionAtlas[5]:load("images/pos/image33.png")
+explosionAtlas[6]:load("images/pos/image44.png")
+explosionAtlas[7]:load("images/pos/image55.png")
+explosionAtlas[8]:load("images/pos/image66.png")
+explosionAtlas[9]:load("images/pos/image77.png")
+explosionAtlas[10]:load("images/pos/image88.png")
+
+explosionAtlasMax = 10
 imageIdx = 1
 
 
@@ -58,7 +69,7 @@ function update()
 			points = 0
 
 			imageIdx = imageIdx + 1
-			if imageIdx > 6 then
+			if imageIdx > explosionAtlasMax then
 				imageIdx = 1
 			end
 
@@ -127,6 +138,14 @@ function draw()
 				end
 
 				if x > totoro:getWidth() then
+					x = 0
+				end
+
+				if y < 0 then
+					y = 0
+				end
+
+				if x < 0 then
 					x = 0
 				end
 

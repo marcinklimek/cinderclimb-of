@@ -91,14 +91,14 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
 
     //_imageProcessed.blur(_settings->blur_amount * 2 + 1);
 
-    //for(auto i=0; i<_settings->erode_open_count; i++)
-    //    _imageProcessed.erode();
+    for(auto i=0; i<settings_->erode_open_count; i++)
+        image_processed_.erode();
 
-    //for (auto i = 0; i<_settings->dillate_count; i++)
-    //    _imageProcessed.dilate();
-    //
-    //for (auto i = 0; i<_settings->erode_close_count; i++)
-    //    _imageProcessed.erode();
+    for (auto i = 0; i<settings_->dillate_count; i++)
+        image_processed_.dilate();
+    
+    for (auto i = 0; i<settings_->erode_close_count; i++)
+        image_processed_.erode();
 
     image_processed_gray_ = image_processed_;
     contour_finder_.findContours(image_processed_gray_, settings_->area_min, settings_->area_max, 10, true); // find holes
@@ -118,8 +118,10 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
 			filtered.emplace_back(v);
 		}
 		ofPolyline poly( filtered );
+		
+		poly = poly.getSmoothed( settings_->smoothing );
 		poly.simplify( settings_->tolerance  );
-		poly = poly.getSmoothed( 7 );
+		
 		blobs_path_.emplace_back(poly);
 	}
 

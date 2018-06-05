@@ -110,8 +110,8 @@ function draw()
 	of.scale(0.01, 0.01, 0.01)
 	of.setHexColor(0xFFAFFF)
 	
-	str = "Czas: " .. tostring(game_time)
-	Utils.drawText( str, 820, 690, true)  
+	-- str = "Czas: " .. tostring(game_time)
+	-- Utils.drawText( str, 820, 690, true)  
 
 	of.popMatrix()
 	of.popStyle()

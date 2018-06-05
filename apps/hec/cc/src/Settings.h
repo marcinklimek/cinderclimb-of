@@ -19,6 +19,7 @@ public:
     //ofParameter<ofColor> color;
 
     ofParameter<float> tolerance;
+	ofParameter<int> smoothing;
 
     //ofParameter<int> blur_amount;
     ofParameter<int> erode_open_count;

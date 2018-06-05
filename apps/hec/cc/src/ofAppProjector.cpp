@@ -17,7 +17,8 @@ void ofAppProjector::setup()
 	//cout << ofGetWindowPositionY() << endl;
 
     // scripts to run
-	
+
+	scripts.push_back("scripts/game_03-box.lua");
 	scripts.push_back("scripts/game_03-position.lua");
 	scripts.push_back("scripts/game_03-totoro.lua");
 	
