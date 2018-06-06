@@ -9,15 +9,18 @@
 void ofAppGui::setup()
 {
 	load_config();
-
     setupGui();
+
+	
 }
 
 //--------------------------------------------------------------
 void ofAppGui::setupGui()
 {
     gui.setup(_settings->get_gui_parameters());
-    gui.setPosition(spacing + _settings->image_size_W, spacing + _settings->image_size_H);
+
+	gui.setWidthElements(300);
+    gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
 
     ofSetBackgroundAuto(false);
     ofSetBackgroundColor(0);

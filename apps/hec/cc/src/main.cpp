@@ -19,16 +19,17 @@ int main()
     shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
     projector_window->setVerticalSync(true);
 
-	settings.width = 1200;
+	settings.width = 1600;
 	settings.height = 1000;
-    settings.setPosition(ofVec2f(5, 20));
+    settings.setPosition(ofVec2f(0, 25));
     settings.resizable = true;
+	
 
     // share main's OpenGL resources with gui
-    //settings.shareContextWith = projector_window;	
+    settings.shareContextWith = projector_window;	
     shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(settings);
-    gui_window->setVerticalSync(true);
-
+    gui_window->setVerticalSync(false);
+	
     shared_ptr<ofAppGui> gui_app(new ofAppGui);
     shared_ptr<ofAppProjector> projector_app(new ofAppProjector);
 	gui_app->_settings = app_settings;

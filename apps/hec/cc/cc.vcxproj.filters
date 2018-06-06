@@ -133,6 +133,15 @@
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp">
       <Filter>addons\ofxXmlSettings\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\bgsubcnt\bgsubcnt.cpp">
+      <Filter>src\bgsub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxColorMap\src\namedMaps.cpp">
+      <Filter>addons\ofxColorMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.cpp">
+      <Filter>addons\ofxColorMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -272,6 +281,12 @@
     </Filter>
     <Filter Include="addons\ofxXmlSettings\libs">
       <UniqueIdentifier>{fd41a4d0-9750-4407-a90f-dce9465eda40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\bgsub">
+      <UniqueIdentifier>{ab8a29a4-1e52-4cfa-b892-221bb519efe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxColorMap">
+      <UniqueIdentifier>{04a20886-08ac-412e-a3c3-6c93bd9fd082}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -892,6 +907,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h">
       <Filter>addons\ofxXmlSettings\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bgsubcnt\bgsubcnt.h">
+      <Filter>src\bgsub</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.h">
+      <Filter>addons\ofxColorMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

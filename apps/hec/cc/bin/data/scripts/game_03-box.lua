@@ -45,11 +45,11 @@ local function Shape(x, y, w, h)
 
 		--local p = of.Point(x, y)
 		
-		if self.box.inside(x, y) then
+		-- if self.box.inside(x, y) then
 		
-			self.touched = true
+		-- 	self.touched = true
 
-		end
+		-- end
 
 	end
 
@@ -86,9 +86,8 @@ function setup()
 	of.setWindowTitle("projektor")
 	of.setWindowPosition(1920 , 10) -- (1920 + 1680,0)
 
-	for x=0,numX-1 do
-
-		for y=0,numY-1 do
+	for y=0,numY-1 do
+		for x=0,numX-1 do
 
 			local xx = deltaX * x + border
 			local yy = deltaY * y + border

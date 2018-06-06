@@ -18,13 +18,21 @@ public:
     //ofParameter<float> radius;
     //ofParameter<ofColor> color;
 
+	ofParameter<int> colorMapIndex;
+
     ofParameter<float> tolerance;
 	ofParameter<int> smoothing;
 
-    //ofParameter<int> blur_amount;
+    ofParameter<int> blur_amount;
     ofParameter<int> erode_open_count;
 	ofParameter<int> erode_close_count;
     ofParameter<int> dillate_count;
+
+    ofParameter<int> blur_amount2;
+    ofParameter<int> erode_open_count2;
+	ofParameter<int> erode_close_count2;
+    ofParameter<int> dillate_count2;
+
     //ofParameter<int> circle_size;
 
     ofParameter<float> area_min;
@@ -37,6 +45,9 @@ public:
 	ofParameter<bool>  useConvexHull;
 	//ofParameter<float> gamma;
 	//ofParameter<float> amplify;
+
+	ofParameter<float> nearClipping;
+	ofParameter<float> farClipping;
 
     ofParameterGroup& get_gui_parameters();
 

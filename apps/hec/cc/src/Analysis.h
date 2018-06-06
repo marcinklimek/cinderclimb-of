@@ -7,6 +7,8 @@
 #include "convexHull/ofxConvexHull.h"
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
 #include "ofxHomography.h"
+#include <opencv2/video/background_segm.hpp>
+#include "ofxColorMap/src/ofxColorMap.h"
 
 
 class AnalysisThread  : public ofThread
@@ -86,11 +88,10 @@ private:
 
 	vector<ofPolyline> blobs_path_;
 	vector<ofPolyline> blobs_path_public_;
-	
 
-	CvMemStorage* cv_mem_storage_;
-
-	void simplify_dp(const vector<ofPoint>& contour_in, vector<ofPoint>& contour_out, float tolerance) const;
+	cv::Ptr<cv::BackgroundSubtractor> pBgSub;
 
 	bool update_public();
+
+	
 };

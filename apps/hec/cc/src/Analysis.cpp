@@ -6,23 +6,27 @@
 #include "ofxCv/Wrappers.h"
 
 #include "convexHull/ofxConvexHull.h"
+#include "bgsubcnt/bgsubcnt.h"
+
+
 
 AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
                                                                        settings_ (settings), grabber_(settings)
 
 {
-	cv_mem_storage_ = cvCreateMemStorage( 1000 );
+	//colormap.setMapFromName("jet");
+	//pBgSub = cv::bgsubcnt::createBackgroundSubtractorCNT();
+
+    cv::Ptr<cv::BackgroundSubtractorMOG2> pBgSubMOG2 = cv::createBackgroundSubtractorMOG2(500, 8, false);
 	
+    pBgSub = pBgSubMOG2;
+
 	startThread();
 }
 
 AnalysisThread::~AnalysisThread()
 {
     stop();
-
-	//-- clean up.  
-	if( cv_mem_storage_ != nullptr )  
-		cvReleaseMemStorage( &cv_mem_storage_ );
 }
 
 void AnalysisThread::stop()
@@ -89,7 +93,10 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
     input_frame_ = frame;
     image_processed_ = frame;
 
-    //_imageProcessed.blur(_settings->blur_amount * 2 + 1);
+	if( settings_->blur_amount % 2 == 0 )
+		settings_->blur_amount += 1;
+
+    image_processed_.blur(settings_->blur_amount);
 
     for(auto i=0; i<settings_->erode_open_count; i++)
         image_processed_.erode();
@@ -101,6 +108,38 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
         image_processed_.erode();
 
     image_processed_gray_ = image_processed_;
+
+	// - bg sub
+
+	cv::Mat fgMask;
+	cv::Mat bg;
+    pBgSub->apply(ofxCv::toCv(image_processed_gray_), fgMask);
+	pBgSub->getBackgroundImage(bg);
+
+	ofImage image;
+	ofxCv::toOf( fgMask, image);
+
+	//ofxCvGrayscaleImage bgimage;
+	//bgimage.setFromPixels( image.getPixels() );
+	//image_processed_gray_.absDiff(bgimage);
+	
+	image_processed_gray_.setFromPixels(image.getPixels());
+
+	if( settings_->blur_amount2 % 2 == 0 )
+		settings_->blur_amount2 += 1;
+
+	image_processed_gray_.blur(settings_->blur_amount2);
+    for(auto i=0; i<settings_->erode_open_count2; i++)
+        image_processed_gray_.erode();
+
+    for (auto i = 0; i<settings_->dillate_count2; i++)
+        image_processed_gray_.dilate();
+    
+    for (auto i = 0; i<settings_->erode_close_count2; i++)
+        image_processed_gray_.erode();
+
+	//
+
     contour_finder_.findContours(image_processed_gray_, settings_->area_min, settings_->area_max, 10, true); // find holes
 	
 	blobs_path_.clear();
@@ -125,17 +164,6 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
 		blobs_path_.emplace_back(poly);
 	}
 
-	 // for (auto& blob : blobs_)
-	 // {
-	 // 	vector<ofPoint> points_out;
-	 // 	simplify_dp(blob.pts, points_out, settings_->tolerance/1000.0f);
-  
-	 // 	blob.pts = points_out;
-	 // 	blob.nPts = points_out.size();
-  
-	 // 	ofPolyline path(blob.pts);
-	 // }
-
     //if (_settings->useConvexHull)
     //{
     //    for (auto i = 0; i < contourFinder.blobs.size(); i++)
@@ -153,6 +181,11 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
     rgbPix.resize(settings_->image_size_W, settings_->image_size_H);
     color_frame_.setFromPixels(rgbPix);
 	color_frame_.mirror(false, true);
+
+
+	// color map
+	//colormap.setMapFromIndex(settings_->colorMapIndex);
+	
 }
 
 
@@ -160,12 +193,14 @@ void AnalysisThread::draw()
 {
 	std::lock_guard<std::mutex> lock(update_mutex_);
 
-    ofSetHexColor(0xffffff);
 
-    image_processed_public_.draw(     spacing,                       spacing,					           preview_W,                   preview_H);
-    input_frame_public_.draw(         spacing,                       spacing + (preview_H + spacing) * 1,  preview_W,                   preview_H);
-    image_processed_gray_public_.draw(spacing,                       spacing + (preview_H + spacing) * 2,  preview_W,	                preview_H);
-    color_frame_public_.draw(         spacing + preview_W + spacing, spacing,                              settings_->image_size_W, settings_->image_size_H);
+
+    ofSetHexColor(0xffffff);
+	
+    image_processed_gray_public_.draw(  spacing,                       spacing,					               preview_W,               preview_H);
+    input_frame_public_.draw(			spacing,                       spacing + (preview_H + spacing) * 1,      preview_W,               preview_H);
+    image_processed_public_.draw(		spacing,                       spacing + (preview_H + spacing) * 2 + 50); //, preview_W * 2,           preview_H * 2);
+    color_frame_public_.draw(			spacing + preview_W + spacing, spacing,                                  settings_->image_size_W, settings_->image_size_H);
 
 	float w =  settings_->image_size_W;
 	float h =  settings_->image_size_H;
@@ -178,7 +213,7 @@ void AnalysisThread::draw()
 	draw_joints(joints_public_);
 }
 
-void AnalysisThread::draw_blobs( vector<ofPolyline>& blobs) const
+void AnalysisThread::draw_blobs(vector<ofPolyline>& blobs) const
 {
     ofRectangle rect;
     rect.set(spacing + preview_W + spacing, spacing, settings_->image_size_W, settings_->image_size_H);
@@ -194,7 +229,7 @@ void AnalysisThread::draw_blobs( vector<ofPolyline>& blobs) const
 
     ofPushStyle();
     // ---------------------------- draw the bounding rectangle
-    ofSetHexColor(0xDD00CC);
+    ofSetHexColor(0x990099);
     ofPushMatrix();
     ofTranslate(x, y, 0.0);
     ofScale(scale_x, scale_y, 0.0);
@@ -307,64 +342,6 @@ std::vector<ofVec2f> AnalysisThread::get_joints(const int body_index) const
 void AnalysisThread::set_fbo_texture(const ofTexture& of_texture)
 {
 	of_texture.readToPixels(fbo_pixels);
-}
-
-
-void AnalysisThread::simplify_dp( const vector<ofPoint>& contour_in, vector<ofPoint>& contour_out, const float tolerance ) const
-{  
-	//-- copy points.  
-
-	const int numOfPoints = contour_in.size();
-
-	const auto cvpoints = new CvPoint[ numOfPoints ];  
-	  
-	for(auto i=0; i<numOfPoints; i++)  
-	{
-		auto j = i % numOfPoints;  
-		  
-		cvpoints[ i ].x = contour_in[ j ].x;  
-		cvpoints[ i ].y = contour_in[ j ].y;  
-	}
-	  
-	//-- create contour.  
-	  
-	CvContour	contour;  
-	CvSeqBlock	contour_block;  
-	  
-	cvMakeSeqHeaderForArray  
-	(  
-		CV_SEQ_POLYLINE,  
-		sizeof(CvContour),  
-		sizeof(CvPoint),  
-		cvpoints,  
-		numOfPoints,  
-		reinterpret_cast<CvSeq*>(&contour),  
-		&contour_block  
-	);  
-
-	  
-	//-- simplify contour.  
-	CvSeq *result = 0;  
-	result = cvApproxPoly  
-	(  
-		&contour,  
-		sizeof( CvContour ),  
-		cv_mem_storage_,  
-		CV_POLY_APPROX_DP,  
-		cvContourPerimeter( &contour ) * tolerance,  
-		0  
-	);  
-	  
-	//-- contour out points.  
-	contour_out.clear();  
-	for(auto j=0; j<result->total; j++ )  
-	{
-		auto* pt = reinterpret_cast<CvPoint*>(cvGetSeqElem(result, j));  
-		  
-		contour_out.emplace_back(static_cast<float>(pt->x), static_cast<float>(pt->y));
-	}  
-	  
-	delete[] cvpoints;  
 }
 
 int AnalysisThread::get_num_blobs() const

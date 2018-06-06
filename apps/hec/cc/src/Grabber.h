@@ -18,8 +18,12 @@ class ofGrabber
 	int numBodiesTracked;
 	bool haveAllStreams;
 
+	vector<ofColor>		depthLookupTable;
+	float	nearClipping, farClipping;
+	int colorMapIndex;
 public:
 
+	ofxCvColorImage depthIndex;
 	ofxCvColorImage bodyIndex;
 	ofImage colorImg;
 
@@ -31,6 +35,7 @@ public:
 	ICoordinateMapper* getCoordinateMapper() const { return coordinateMapper; }
 
 	void update();
+	void updateRawDepthLookupTable();
 	void draw();
 	bool get(ofxCvColorImage& frame);
 

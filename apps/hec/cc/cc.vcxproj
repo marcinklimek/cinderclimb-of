@@ -220,6 +220,8 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxColorMap\src\namedMaps.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxButton.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp" />
@@ -233,6 +235,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp" />
     <ClCompile Include="src\Analysis.cpp" />
+    <ClCompile Include="src\bgsubcnt\bgsubcnt.cpp" />
     <ClCompile Include="src\Calibrator.cpp" />
     <ClCompile Include="src\convexHull\ofxConvexHull.cpp" />
     <ClCompile Include="src\Grabber.cpp" />
@@ -265,6 +268,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h" />
@@ -462,6 +466,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="src\Analysis.h" />
+    <ClInclude Include="src\bgsubcnt\bgsubcnt.h" />
     <ClInclude Include="src\Calibrator.h" />
     <ClInclude Include="src\convexHull\ofxConvexHull.h" />
     <ClInclude Include="src\Grabber.h" />
