@@ -1,0 +1,22 @@
+<Parameters>
+	<colormap>74</colormap>
+	<tolerance>0.0006</tolerance>
+	<smoothing>7</smoothing>
+	<blur_amount>1</blur_amount>
+	<erosion_open>2</erosion_open>
+	<erosion_close>1</erosion_close>
+	<dillate>3</dillate>
+	<blur_amount_2>1</blur_amount_2>
+	<erosion_open_2>2</erosion_open_2>
+	<erosion_close_2>1</erosion_close_2>
+	<dillate_2>3</dillate_2>
+	<area_min>1500</area_min>
+	<area_max>5e+06</area_max>
+	<use_convex>0</use_convex>
+	<near>1120</near>
+	<far>1520</far>
+	<Reset_Background>0</Reset_Background>
+	<Learning_Time>2.4</Learning_Time>
+	<Threshold_Value>0</Threshold_Value>
+<Parameters/>
+</Parameters>

@@ -9,6 +9,7 @@
 #include "ofxHomography.h"
 #include <opencv2/video/background_segm.hpp>
 #include "ofxColorMap/src/ofxColorMap.h"
+#include "ofxCv/RunningBackground.h"
 
 
 class AnalysisThread  : public ofThread
@@ -76,6 +77,9 @@ private:
     ofxCvGrayscaleImage image_processed_gray_;
 	ofxCvGrayscaleImage image_processed_gray_public_;
 
+	ofImage image_processed_gray_of;
+	ofImage image_processed_gray_public_of;
+
     ofxCvColorImage color_frame_;
 	ofxCvColorImage color_frame_public_;
 
@@ -90,8 +94,7 @@ private:
 	vector<ofPolyline> blobs_path_public_;
 
 	cv::Ptr<cv::BackgroundSubtractor> pBgSub;
+	ofxCv::RunningBackground background;
 
 	bool update_public();
-
-	
 };

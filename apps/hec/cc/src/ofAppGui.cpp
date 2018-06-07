@@ -19,7 +19,7 @@ void ofAppGui::setupGui()
 {
     gui.setup(_settings->get_gui_parameters());
 
-	gui.setWidthElements(300);
+	
     gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
 
     ofSetBackgroundAuto(false);

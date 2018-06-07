@@ -49,6 +49,10 @@ public:
 	ofParameter<float> nearClipping;
 	ofParameter<float> farClipping;
 
+    ofParameter<bool> resetBackground;
+    ofParameter<float> learningTime;
+	ofParameter<float> thresholdValue;
+
     ofParameterGroup& get_gui_parameters();
 
 };

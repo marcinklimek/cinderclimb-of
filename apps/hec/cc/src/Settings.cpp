@@ -29,6 +29,11 @@ ofSettings::ofSettings()
 
     parameters.add(nearClipping.set("near", 1000.0f, 0.0f, 8000.0f));
     parameters.add(farClipping.set("far",  8000.0f, 0.0f, 8000.0f));
+
+
+    parameters.add(resetBackground.set("Reset Background", false));
+    parameters.add(learningTime.set("Learning Time", 30, 0, 30));
+    parameters.add(thresholdValue.set("Threshold Value", 10, 0, 255));
 }
 
 ofParameterGroup& ofSettings::get_gui_parameters()

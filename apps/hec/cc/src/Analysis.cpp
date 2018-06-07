@@ -7,7 +7,7 @@
 
 #include "convexHull/ofxConvexHull.h"
 #include "bgsubcnt/bgsubcnt.h"
-
+#include "ofxCv/ContourFinder.h"
 
 
 AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
@@ -20,6 +20,8 @@ AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mo
     cv::Ptr<cv::BackgroundSubtractorMOG2> pBgSubMOG2 = cv::createBackgroundSubtractorMOG2(500, 8, false);
 	
     pBgSub = pBgSubMOG2;
+
+	background.setIgnoreForeground(false);
 
 	startThread();
 }
@@ -40,11 +42,13 @@ void AnalysisThread::setup()
     input_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_gray_.allocate(settings_->image_size_W, settings_->image_size_H);
+	image_processed_gray_of.allocate(settings_->image_size_W, settings_->image_size_H, OF_IMAGE_GRAYSCALE);
     color_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
 
     input_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_public_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_gray_public_.allocate(settings_->image_size_W, settings_->image_size_H);
+	image_processed_gray_public_of.allocate(settings_->image_size_W, settings_->image_size_H, OF_IMAGE_GRAYSCALE);
     color_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
 }
 
@@ -93,10 +97,13 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
     input_frame_ = frame;
     image_processed_ = frame;
 
-	if( settings_->blur_amount % 2 == 0 )
-		settings_->blur_amount += 1;
+	if( settings_->blur_amount > 0 )
+	{
+		if( settings_->blur_amount % 2 == 0 )
+			settings_->blur_amount += 1;
 
-    image_processed_.blur(settings_->blur_amount);
+	    image_processed_.blurGaussian(settings_->blur_amount);
+	}
 
     for(auto i=0; i<settings_->erode_open_count; i++)
         image_processed_.erode();
@@ -107,8 +114,13 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
     for (auto i = 0; i<settings_->erode_close_count; i++)
         image_processed_.erode();
 
-    image_processed_gray_ = image_processed_;
+	//cv::Mat out(image_processed_.getWidth(), image_processed_.getHeight(), CV_8UC3);
+	//cv::fastNlMeansDenoisingColored(ofxCv::toCv(image_processed_), out);
 
+
+    image_processed_gray_ = image_processed_.getPixels();
+
+#ifdef OLD_BG_SUB
 	// - bg sub
 
 	cv::Mat fgMask;
@@ -118,16 +130,30 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
 
 	ofImage image;
 	ofxCv::toOf( fgMask, image);
-
+	
 	//ofxCvGrayscaleImage bgimage;
 	//bgimage.setFromPixels( image.getPixels() );
 	//image_processed_gray_.absDiff(bgimage);
-	
 	image_processed_gray_.setFromPixels(image.getPixels());
+#else
+    if(settings_->resetBackground) {
+        background.reset();
+        settings_->resetBackground = false;
+    }
+	
+    background.setLearningTime(settings_->learningTime);
+    background.setThresholdValue(settings_->thresholdValue);
+	background.update(image_processed_, image_processed_gray_of);
+	
 
+	ofxCv::toOf(background.getForeground(), image_processed_gray_of);
+	image_processed_gray_ = image_processed_gray_of;
+	
+#endif
+	
 	if( settings_->blur_amount2 % 2 == 0 )
 		settings_->blur_amount2 += 1;
-
+	
 	image_processed_gray_.blur(settings_->blur_amount2);
     for(auto i=0; i<settings_->erode_open_count2; i++)
         image_processed_gray_.erode();

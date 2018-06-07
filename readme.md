@@ -1,3 +1,5 @@
+http://jaesik.info/publications/depthups/index.html
+http://jaesik.info/publications/depthups/tip14_paper.pdf
 TODO
 ====
 
