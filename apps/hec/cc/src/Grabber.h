@@ -7,39 +7,39 @@
 #include "Settings.h"
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
 #include "ofxCvColorImage.h"
+#include "ofxCvShortImage.h"
+
 
 class ofGrabber
 {
 	std::shared_ptr<ofSettings> _settings;
 
+    bool haveAllStreams;
 	ICoordinateMapper* coordinateMapper;
+	vector<ofVec2f> depthCoords;
+    int numBodiesTracked;
 
-	vector<ofVec2f> colorCoords;
-	int numBodiesTracked;
-	bool haveAllStreams;
-
-	vector<ofColor>		depthLookupTable;
-	float	nearClipping, farClipping;
+	vector<ofColor>	depthLookupTable;
+	float nearClipping;
+    float farClipping;
 	int colorMapIndex;
+
 public:
 
-	ofxCvColorImage depthIndex;
-	ofxCvColorImage bodyIndex;
-	ofImage colorImg;
+    ofxCvShortImage depthIndex;
+
+	ofxCvColorImage colorIndex;
 
 	ofGrabber(std::shared_ptr<ofSettings> settings);
 	~ofGrabber();
-
-    bool getPixels(ofPixels &frame);
 
 	ICoordinateMapper* getCoordinateMapper() const { return coordinateMapper; }
 
 	void update();
 	void updateRawDepthLookupTable();
-	void draw();
-	bool get(ofxCvColorImage& frame);
-
-	int numBodies() const { return numBodiesTracked; }
+	bool get(ofxCvShortImage& frame);
+    
+    int numBodies() const { return numBodiesTracked; }
 
 	ofxKFW2::Device kinect;
 };

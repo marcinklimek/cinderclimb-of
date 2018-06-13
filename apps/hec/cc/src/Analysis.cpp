@@ -1,4 +1,7 @@
-﻿#include "Analysis.h"
+﻿#include <Windows.h>
+#include <ppl.h>
+
+#include "Analysis.h"
 #include "ofMain.h"
 
 #include "ofxCvColorImage.h"
@@ -8,22 +11,17 @@
 #include "convexHull/ofxConvexHull.h"
 #include "bgsubcnt/bgsubcnt.h"
 #include "ofxCv/ContourFinder.h"
+#include "ofxCvFloatImage.h"
 
 
 AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
-                                                                       settings_ (settings), grabber_(settings)
+                                                                       settings_ (settings), grabber_(settings), fps_(0)
 
 {
-	//colormap.setMapFromName("jet");
-	//pBgSub = cv::bgsubcnt::createBackgroundSubtractorCNT();
+    settings_->resetBackground.addListener(this, &AnalysisThread::resetChanged);
+    averageTimer = settings_->resetBackgroundTime;
 
-    cv::Ptr<cv::BackgroundSubtractorMOG2> pBgSubMOG2 = cv::createBackgroundSubtractorMOG2(500, 8, false);
-	
-    pBgSub = pBgSubMOG2;
-
-	background.setIgnoreForeground(false);
-
-	startThread();
+    startThread();
 }
 
 AnalysisThread::~AnalysisThread()
@@ -41,14 +39,16 @@ void AnalysisThread::setup()
 {
     input_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_.allocate(settings_->image_size_W, settings_->image_size_H);
-    image_processed_gray_.allocate(settings_->image_size_W, settings_->image_size_H);
-	image_processed_gray_of.allocate(settings_->image_size_W, settings_->image_size_H, OF_IMAGE_GRAYSCALE);
+	backgroundModel_.allocate(settings_->image_size_W, settings_->image_size_H);
+    backgroundModel_.set(UINT16_MAX);
+    backgroundModel_public_.allocate(settings_->image_size_W, settings_->image_size_H);
+
+    image_foreground_.allocate(settings_->image_size_W, settings_->image_size_H);
     color_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
 
     input_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_public_.allocate(settings_->image_size_W, settings_->image_size_H);
-    image_processed_gray_public_.allocate(settings_->image_size_W, settings_->image_size_H);
-	image_processed_gray_public_of.allocate(settings_->image_size_W, settings_->image_size_H, OF_IMAGE_GRAYSCALE);
+    image_foreground_public_.allocate(settings_->image_size_W, settings_->image_size_H);
     color_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
 }
 
@@ -59,9 +59,15 @@ bool AnalysisThread::update_public()
 	joints_public_ = joints_;
 	blobs_path_public_ = blobs_path_;
 
+    //input_frame_.contrastStretch();
+    //image_processed_.contrastStretch();
+    //image_foreground_.contrastStretch();
+    
     input_frame_public_ = input_frame_;
     image_processed_public_ = image_processed_;
-    image_processed_gray_public_ = image_processed_gray_;
+    image_foreground_public_ = image_foreground_;
+    backgroundModel_public_ = backgroundModel_;
+
     color_frame_public_ = color_frame_;
 
 	return false;
@@ -69,104 +75,175 @@ bool AnalysisThread::update_public()
 
 void AnalysisThread::threadedFunction()
 {
+    ofResetElapsedTimeCounter();
+
+    auto t0 = ofGetElapsedTimeMillis();
     while (!quit_)
     {
+        const auto t1 = ofGetElapsedTimeMillis();    
 		grabber_.update();
-        
-		ofxCvColorImage frame;
-		frame.allocate(1920, 1080);
-		if (grabber_.get(frame))
+
+		if (grabber_.get(input_frame_))
 		{
-			frame.resize(settings_->image_size_W, settings_->image_size_H);
-			frame.mirror(false, true);
+			input_frame_.mirror(false, true);
 
-			update_frame(frame);
+			update_frame();
 			update_joints();
-
 			update_public();
+            
+		    frame_counter_++;
 		}
+
+        if ( (t1 - t0) > 1000)
+        {
+            t0 = ofGetElapsedTimeMillis();
+            
+            fps_ = frame_counter_;
+            frame_counter_ = 0;
+        }
 	}
 }
 
-
-void AnalysisThread::update_frame(ofxCvColorImage& frame)
+void AnalysisThread::average(ofxCvShortImage& image_input_a, ofxCvShortImage& image_input_b) const
 {
-    if (frame.getWidth() == 0 || frame.getHeight() == 0)
+    auto& input_a = image_input_a.getShortPixelsRef();
+    const auto input_b = image_input_b.getShortPixelsRef();
+
+    const long epsilon = settings_->epsilon;
+
+    concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
+    {
+        const long v1 = input_a[i];
+        const long v2 = input_b[i];
+
+        const auto v = std::min(v1, v2);
+        
+        if (v > epsilon)
+            input_a[i] = v;
+    });
+}
+
+void AnalysisThread::inRange(ofxCvShortImage& image_input_a,  float min, float max) const
+{
+    auto& input_a = image_input_a.getShortPixelsRef();
+
+    concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
+    {
+        const auto v = input_a[i];
+        
+        if (v > min && v < max)
+            input_a[i] = v;
+        else
+            input_a[i] = 0;
+    });
+}
+
+void AnalysisThread::foreground(ofxCvShortImage& image_input_a,  ofxCvShortImage& image_mask) const
+{
+    auto& input_a = image_input_a.getShortPixelsRef();
+    const auto input_mask = image_mask.getShortPixelsRef();
+
+    concurrency::parallel_for(0, DEPTH_SIZE, [&](int i) 
+    {
+        const auto v = input_a[i];
+        const auto m = input_mask[i];
+        
+        if (v < m)
+            input_a[i] = v;
+        else
+            input_a[i] = 0;
+    });
+}
+
+void AnalysisThread::resetChanged(bool& state)
+{
+    if (state)
+    {
+        backgroundModel_.set(UINT16_MAX);
+    }
+}
+
+
+void AnalysisThread::update_frame()
+{
+    if (input_frame_.getWidth() == 0 || input_frame_.getHeight() == 0)
         return;
-    
-    input_frame_ = frame;
-    image_processed_ = frame;
 
-	if( settings_->blur_amount > 0 )
-	{
-		if( settings_->blur_amount % 2 == 0 )
-			settings_->blur_amount += 1;
+    image_processed_ = input_frame_;
+    inRange( image_processed_, settings_->nearClipping, settings_->farClipping);
+    image_processed_.contrastStretch(settings_->nearClipping, settings_->farClipping);
 
-	    image_processed_.blurGaussian(settings_->blur_amount);
-	}
-
+    if( settings_->blur_amount > 0 )
+	 {
+	 	if( settings_->blur_amount % 2 == 0 )
+	 		settings_->blur_amount += 1;
+ 
+	     image_processed_.blurGaussian(settings_->blur_amount);
+	 }
+ 
     for(auto i=0; i<settings_->erode_open_count; i++)
         image_processed_.erode();
 
     for (auto i = 0; i<settings_->dillate_count; i++)
         image_processed_.dilate();
-    
+
     for (auto i = 0; i<settings_->erode_close_count; i++)
         image_processed_.erode();
 
-	//cv::Mat out(image_processed_.getWidth(), image_processed_.getHeight(), CV_8UC3);
-	//cv::fastNlMeansDenoisingColored(ofxCv::toCv(image_processed_), out);
 
+	if (settings_->resetBackground && averageTimer > 0)
+	{
+	    static unsigned long long t0 =  ofGetElapsedTimeMillis();
 
-    image_processed_gray_ = image_processed_.getPixels();
+		average(backgroundModel_, image_processed_);
+        
+        const auto t1 = ofGetElapsedTimeMillis();    
+        
+	    if ( (t1 - t0) > 1000)
+        {
+            t0 = ofGetElapsedTimeMillis();
+            --averageTimer;
+        }
 
-#ifdef OLD_BG_SUB
-	// - bg sub
+        if ( averageTimer == 0)
+        {
+            settings_->resetBackground = false;
+            averageTimer = settings_->resetBackgroundTime;
+        }
 
-	cv::Mat fgMask;
-	cv::Mat bg;
-    pBgSub->apply(ofxCv::toCv(image_processed_gray_), fgMask);
-	pBgSub->getBackgroundImage(bg);
+        return;
+	}
 
-	ofImage image;
-	ofxCv::toOf( fgMask, image);
+    image_foreground_ = image_processed_;
+
+    foreground(image_foreground_, backgroundModel_);
+    
+
+    if( settings_->blur_amount2 > 0 )
+    {
+	    if( settings_->blur_amount2 % 2 == 0 )
+		    settings_->blur_amount2 += 1;
 	
-	//ofxCvGrayscaleImage bgimage;
-	//bgimage.setFromPixels( image.getPixels() );
-	//image_processed_gray_.absDiff(bgimage);
-	image_processed_gray_.setFromPixels(image.getPixels());
-#else
-    if(settings_->resetBackground) {
-        background.reset();
-        settings_->resetBackground = false;
+	    image_foreground_.blur(settings_->blur_amount2);
     }
-	
-    background.setLearningTime(settings_->learningTime);
-    background.setThresholdValue(settings_->thresholdValue);
-	background.update(image_processed_, image_processed_gray_of);
-	
 
-	ofxCv::toOf(background.getForeground(), image_processed_gray_of);
-	image_processed_gray_ = image_processed_gray_of;
-	
-#endif
-	
-	if( settings_->blur_amount2 % 2 == 0 )
-		settings_->blur_amount2 += 1;
-	
-	image_processed_gray_.blur(settings_->blur_amount2);
     for(auto i=0; i<settings_->erode_open_count2; i++)
-        image_processed_gray_.erode();
+        image_foreground_.erode();
 
     for (auto i = 0; i<settings_->dillate_count2; i++)
-        image_processed_gray_.dilate();
+        image_foreground_.dilate();
     
     for (auto i = 0; i<settings_->erode_close_count2; i++)
-        image_processed_gray_.erode();
+        image_foreground_.erode();
 
 	//
+    ofxCvGrayscaleImage temp;
+    temp.allocate(image_foreground_.width, image_foreground_.height);
+    temp = image_foreground_;
 
-    contour_finder_.findContours(image_processed_gray_, settings_->area_min, settings_->area_max, 10, true); // find holes
+    //temp.adaptiveThreshold(5);
+
+    contour_finder_.findContours(temp, settings_->area_min, settings_->area_max, 10, false); // find holes
 	
 	blobs_path_.clear();
 	for (const auto& blob : contour_finder_.blobs)
@@ -199,19 +276,8 @@ void AnalysisThread::update_frame(ofxCvColorImage& frame)
     //    }
     //}
 
-    // kinect gives RGBA, in OF we nedd to have RGB
-    auto& pix = grabber_.kinect.getColorSource()->getPixels();
-
-    ofPixels rgbPix(pix);
-    rgbPix.setImageType(OF_IMAGE_COLOR);
-    rgbPix.resize(settings_->image_size_W, settings_->image_size_H);
-    color_frame_.setFromPixels(rgbPix);
+    color_frame_ = grabber_.colorIndex;
 	color_frame_.mirror(false, true);
-
-
-	// color map
-	//colormap.setMapFromIndex(settings_->colorMapIndex);
-	
 }
 
 
@@ -219,17 +285,20 @@ void AnalysisThread::draw()
 {
 	std::lock_guard<std::mutex> lock(update_mutex_);
 
-
-
     ofSetHexColor(0xffffff);
 	
-    image_processed_gray_public_.draw(  spacing,                       spacing,					               preview_W,               preview_H);
-    input_frame_public_.draw(			spacing,                       spacing + (preview_H + spacing) * 1,      preview_W,               preview_H);
-    image_processed_public_.draw(		spacing,                       spacing + (preview_H + spacing) * 2 + 50); //, preview_W * 2,           preview_H * 2);
-    color_frame_public_.draw(			spacing + preview_W + spacing, spacing,                                  settings_->image_size_W, settings_->image_size_H);
+    input_frame_public_.draw(           spacing,                               spacing,					            preview_W, preview_H);
+    image_processed_public_.draw(		spacing + preview_W + spacing,         spacing                            , preview_W, preview_H);
+    image_foreground_public_.draw(	spacing + (preview_W + spacing) * 2,   spacing                            , preview_W, preview_H);
+    backgroundModel_public_.draw(	spacing + (preview_W + spacing) * 3,   spacing                            , preview_W, preview_H);
+
+    color_frame_public_.draw(	spacing,		spacing + (preview_H + spacing)*1);
+
+    return;
 
 	float w =  settings_->image_size_W;
 	float h =  settings_->image_size_H;
+
 
 	ofSetColor(0, 0, 0xcc, 0x80);
 	ofDrawRectangle(spacing + preview_W + spacing + sensing_window.x * w, spacing + sensing_window.y * h,
@@ -237,6 +306,11 @@ void AnalysisThread::draw()
 
 	draw_blobs(blobs_path_public_);
 	draw_joints(joints_public_);
+
+    ofSetHexColor(0xffffff);
+    stringstream reportStr;
+    reportStr << "fps: " << fps_;
+    ofDrawBitmapString(reportStr.str(), spacing, spacing);
 }
 
 void AnalysisThread::draw_blobs(vector<ofPolyline>& blobs) const

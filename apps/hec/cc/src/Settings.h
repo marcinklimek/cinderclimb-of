@@ -1,6 +1,14 @@
 ﻿#pragma once
 #include "ofParameter.h"
 
+constexpr int DEPTH_WIDTH = 512;
+constexpr int DEPTH_HEIGHT = 424;
+constexpr int DEPTH_SIZE = DEPTH_WIDTH * DEPTH_HEIGHT;
+
+constexpr int COLOR_WIDTH = 1920;
+constexpr int COLOR_HEIGHT = 1080;
+constexpr int COLOR_SIZE = COLOR_WIDTH * COLOR_HEIGHT;
+
 constexpr int preview_W = 320;
 constexpr int preview_H = 240;
 constexpr int spacing = 10;
@@ -11,12 +19,10 @@ public:
 
     ofSettings();
 
-	float image_size_W = 1920/2;
-	float image_size_H = 1080/2;
+	int image_size_W = DEPTH_WIDTH;
+	int image_size_H = DEPTH_HEIGHT;
 
     ofParameterGroup parameters;
-    //ofParameter<float> radius;
-    //ofParameter<ofColor> color;
 
 	ofParameter<int> colorMapIndex;
 
@@ -33,26 +39,17 @@ public:
 	ofParameter<int> erode_close_count2;
     ofParameter<int> dillate_count2;
 
-    //ofParameter<int> circle_size;
-
     ofParameter<float> area_min;
     ofParameter<float>  area_max;
 
-    //ofParameter<float> brightness;
-    //ofParameter<float>  contrast;
-    //ofParameter<float>  learingRate;
-
-	ofParameter<bool>  useConvexHull;
-	//ofParameter<float> gamma;
-	//ofParameter<float> amplify;
-
-	ofParameter<float> nearClipping;
-	ofParameter<float> farClipping;
+	ofParameter<int> nearClipping;
+	ofParameter<int> farClipping;
 
     ofParameter<bool> resetBackground;
-    ofParameter<float> learningTime;
+    ofParameter<int> resetBackgroundTime;
+
 	ofParameter<float> thresholdValue;
+    ofParameter<float> epsilon;
 
     ofParameterGroup& get_gui_parameters();
-
 };

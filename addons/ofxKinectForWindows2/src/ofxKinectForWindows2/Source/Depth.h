@@ -34,6 +34,7 @@ namespace ofxKinectForWindows2 {
 			void getWorldInColorFrame(ofFloatPixels & world) const;
 			void getWorldInDepthFrame(ofFloatPixels & world) const;
 			void getColorInDepthFrameMapping(ofFloatPixels & colorInDepthFrameMapping) const;
+            void getDepthInColorFrameMapping(std::vector<DepthSpacePoint>& dsp) const;
 			void getDepthInColorFrameMapping(ofFloatPixels & depthInColorFrameMapping) const;
 			void getDepthToWorldTable(ofFloatPixels & world) const;
 

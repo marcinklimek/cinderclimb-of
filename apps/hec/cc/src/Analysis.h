@@ -7,8 +7,6 @@
 #include "convexHull/ofxConvexHull.h"
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
 #include "ofxHomography.h"
-#include <opencv2/video/background_segm.hpp>
-#include "ofxColorMap/src/ofxColorMap.h"
 #include "ofxCv/RunningBackground.h"
 
 
@@ -36,7 +34,7 @@ public:
 	void update_joints();
 	int get_num_bodies() const;
 	int get_num_joints() const;
-	ofVec2f get_joint(int joint_idx) const;
+	ofVec2f get_joint(int jointIdx) const;
 
 	int get_num_blobs() const;
 	
@@ -45,7 +43,11 @@ public:
 	bool point_in_blobs(const ofPoint p, float distance);
 
 	void threadedFunction() override;
-	std::vector<ofVec2f> get_joints(const int body_index) const;
+    void average(ofxCvShortImage& image_input_a, ofxCvShortImage& image_input_b) const;
+    void inRange(ofxCvShortImage & image_input_a, float min, float max) const;
+    void foreground(ofxCvShortImage& image_input_a, ofxCvShortImage& image_mask) const;
+    void resetChanged(bool& state);
+    std::vector<ofVec2f> get_joints(const int body_index) const;
 	void set_fbo_texture(const ofTexture& of_texture);
 
 	float mouse_x;
@@ -57,28 +59,30 @@ public:
 
 	HomoTrans sensing_trans;
 	ofPixels fbo_pixels;
+    int averageTimer;
 
 private:
 
 	bool quit_;
-    void update_frame(ofxCvColorImage& frame);
+
+    void update_frame();
     
     std::shared_ptr<ofSettings> settings_;
 
     ofGrabber grabber_;
     ofxConvexHull convex_hull_;
 
-    ofxCvColorImage input_frame_;
+    ofxCvShortImage input_frame_;
 	ofxCvColorImage input_frame_public_;
 
-    ofxCvColorImage image_processed_;
+    ofxCvShortImage image_processed_;
 	ofxCvColorImage image_processed_public_;
 
-    ofxCvGrayscaleImage image_processed_gray_;
-	ofxCvGrayscaleImage image_processed_gray_public_;
+	ofxCvShortImage backgroundModel_;
+    ofxCvGrayscaleImage backgroundModel_public_;
 
-	ofImage image_processed_gray_of;
-	ofImage image_processed_gray_public_of;
+    ofxCvShortImage image_foreground_;
+	ofxCvGrayscaleImage image_foreground_public_;
 
     ofxCvColorImage color_frame_;
 	ofxCvColorImage color_frame_public_;
@@ -93,8 +97,9 @@ private:
 	vector<ofPolyline> blobs_path_;
 	vector<ofPolyline> blobs_path_public_;
 
-	cv::Ptr<cv::BackgroundSubtractor> pBgSub;
-	ofxCv::RunningBackground background;
+    unsigned long long fps_;
+    unsigned long long frame_counter_;
+    
 
 	bool update_public();
 };

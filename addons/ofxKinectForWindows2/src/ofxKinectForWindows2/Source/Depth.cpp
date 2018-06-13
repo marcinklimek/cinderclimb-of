@@ -209,6 +209,14 @@ namespace ofxKinectForWindows2 {
 				this->pixels.size(), reinterpret_cast<ColorSpacePoint*>(colorInDepthFrameMapping.getData()));
 		}
 
+
+		void Depth::getDepthInColorFrameMapping(std::vector<DepthSpacePoint>& dsp) const {
+			
+			this->coordinateMapper->MapColorFrameToDepthSpace(
+				this->pixels.size(), this->pixels.getData(),
+				this->colorFrameSize, reinterpret_cast<DepthSpacePoint*>(&dsp[0]));
+		}
+
 		//----------
 		void Depth::getDepthInColorFrameMapping(ofFloatPixels & depthInColorFrameMapping) const {
 			depthInColorFrameMapping.allocate(this->colorFrameWidth, this->colorFrameHeight, OF_PIXELS_RG);
