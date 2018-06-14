@@ -262,6 +262,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
     <ClCompile Include="src\ofAppGui.cpp" />
     <ClCompile Include="src\ofAppProjector.cpp" />
+    <ClCompile Include="src\ofSensingWindow.cpp" />
     <ClCompile Include="src\Recorder.cpp" />
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\Uber.cpp" />
@@ -478,6 +479,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClInclude Include="src\Grabber.h" />
     <ClInclude Include="src\ofAppGui.h" />
     <ClInclude Include="src\ofAppProjector.h" />
+    <ClInclude Include="src\ofSensingWindow.h" />
     <ClInclude Include="src\ofxHomography.h" />
     <ClInclude Include="src\Recorder.h" />
     <ClInclude Include="src\Settings.h" />

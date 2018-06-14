@@ -8,6 +8,7 @@
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
 #include "ofxHomography.h"
 #include "ofxCv/RunningBackground.h"
+#include "ofSensingWindow.h"
 
 
 class AnalysisThread  : public ofThread
@@ -55,7 +56,8 @@ public:
 
     ofVec2f projector_screen_size;
 
-	ofRectangle sensing_window;
+	ofSensingWindow sensing_window;
+
 
 	HomoTrans sensing_trans;
 	ofPixels fbo_pixels;

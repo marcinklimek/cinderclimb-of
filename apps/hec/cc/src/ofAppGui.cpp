@@ -10,8 +10,6 @@ void ofAppGui::setup()
 {
 	load_config();
     setupGui();
-
-	
 }
 
 //--------------------------------------------------------------
@@ -34,9 +32,14 @@ void ofAppGui::exit()
     //recorder.stop();
 }
 
-void ofAppGui::updateRecorder()
+void ofAppGui::update_homography() const
 {
-    //recorder.update(colorImg.getPixels());
+	analysis->sensing_trans.distortedCorners[0] = analysis->sensing_window.points[0]();
+	analysis->sensing_trans.distortedCorners[1] = analysis->sensing_window.points[1]();
+	analysis->sensing_trans.distortedCorners[2] = analysis->sensing_window.points[2]();
+	analysis->sensing_trans.distortedCorners[3] = analysis->sensing_window.points[3]();
+
+	analysis->sensing_trans.update();
 }
 
 //--------------------------------------------------------------
@@ -55,14 +58,13 @@ void ofAppGui::draw()
 
     analysis->draw();
 
-    ofSetHexColor(0xffffff);
-    stringstream reportStr;
-    reportStr << "fps: " << ofGetFrameRate();
-
-    ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, _settings->image_size_W, _settings->image_size_H);
-    ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
-
+    // ofSetHexColor(0xffffff);
+    // stringstream reportStr;
+    // reportStr << "fps: " << ofGetFrameRate();
+    //
+    // ofRectangle rect;
+    // rect.set( _settings->color_preview_pos.getX(), _settings->color_preview_pos.getY(), _settings->image_size_W, _settings->image_size_H);
+    // ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
 
 	gui.draw();
 }
@@ -78,7 +80,6 @@ void ofAppGui::keyPressed(int key)
      	default: 
      		break;
      }
-
 
 	projector_app->keyPressed(key);
 }
@@ -101,68 +102,87 @@ void ofAppGui::keyReleased(int key)
 //--------------------------------------------------------------
 void ofAppGui::mouseMoved(int x, int y)
 {
+    auto rect = _settings->color_preview_pos;
+    rect.scaleFromCenter(1.1);
+
+    if (rect.inside(x,y))
+    {
+        const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
+        const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
+
+        analysis->sensing_window.mouseMoved(mx, my);
+
+        if ( analysis->sensing_window.is_changed() )
+        {
+		    update_homography();
+		    save_config();   
+        }
+    }
 }
 
 //--------------------------------------------------------------
 void ofAppGui::mouseDragged(int x, int y, int button)
 {
-	// right button
-	if ( button == 2 )
-	{
-		float w = _settings->color_preview_pos.getWidth();
-		float h = _settings->color_preview_pos.getHeight();
+    auto rect = _settings->color_preview_pos;
+    rect.scaleFromCenter(1.1);
 
-		ofRectangle rect = ofRectangle( _settings->color_preview_pos.getX(), _settings->color_preview_pos.getY(), w, h);
-		if ( rect.inside(x,y) )
-		{
-			const ofVec2f start_point(analysis->sensing_window.x * w,  analysis->sensing_window.y * h);
+    if (rect.inside(x,y))
+    {
+        const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
+        const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
 
-			analysis->sensing_window.width  = (x - start_point.x - rect.x) / w;
-			analysis->sensing_window.height = (y - start_point.y - rect.y) / h;
+        analysis->sensing_window.mouseDragged(mx, my, button);
 
-			update_homography();
-
-			save_config();
-		}
-	}
+        if ( analysis->sensing_window.is_changed() )
+        {
+		    update_homography();
+		    save_config();   
+        }
+    }
 }
 
-void ofAppGui::update_homography() const
-{
-	analysis->sensing_trans.distortedCorners[0] = analysis->sensing_window.getTopLeft();
-	analysis->sensing_trans.distortedCorners[1] = analysis->sensing_window.getTopRight();
-	analysis->sensing_trans.distortedCorners[2] = analysis->sensing_window.getBottomRight();
-	analysis->sensing_trans.distortedCorners[3] = analysis->sensing_window.getBottomLeft();
 
-	analysis->sensing_trans.update();
-}
 
 //--------------------------------------------------------------
 void ofAppGui::mousePressed(int x, int y, int button)
 {
-	// right button
-	if ( button == 2 )
-	{
-		float w = _settings->color_preview_pos.getWidth();
-		float h = _settings->color_preview_pos.getHeight();
+    auto rect = _settings->color_preview_pos;
+    rect.scaleFromCenter(1.1);
 
-		ofRectangle rect = ofRectangle( _settings->color_preview_pos.getX(), _settings->color_preview_pos.getY(), w, h);
+    if (rect.inside(x,y))
+    {
+        const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
+        const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
 
-		if ( rect.inside(x,y) )
-		{
-			analysis->sensing_window.x = (x - rect.x) / w; // przejscie do znormalizowanej przestrzeni
-			analysis->sensing_window.y = (y - rect.y) / h;
+        analysis->sensing_window.mousePressed(mx, my, button);
 
-			update_homography();
-
-			save_config();
-		}
-	}
+        if ( analysis->sensing_window.is_changed() )
+        {
+		    update_homography();
+		    save_config();   
+        }
+    }
 }
 
 //--------------------------------------------------------------
 void ofAppGui::mouseReleased(int x, int y, int button)
 {
+    auto rect = _settings->color_preview_pos;
+    rect.scaleFromCenter(1.1);
+
+    if (rect.inside(x,y))
+    {
+        const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
+        const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
+
+        analysis->sensing_window.mouseReleased(mx, my, button);
+
+        if ( analysis->sensing_window.is_changed() )
+        {
+		    update_homography();
+		    save_config();   
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -190,26 +210,18 @@ void ofAppGui::dragEvent(ofDragInfo dragInfo)
 {
 }
 
-
 void ofAppGui::load_config()
 {
 	if ( xml_settings_.loadFile("cc-settings.xml") )
 	{
-  		analysis->sensing_window.x = xml_settings_.getValue("analysis:sensing_window_x", 0.2);
-		analysis->sensing_window.y = xml_settings_.getValue("analysis:sensing_window_y", 0.2);
-		analysis->sensing_window.width = xml_settings_.getValue("analysis:sensing_window_width", 0.5);
-		analysis->sensing_window.height = xml_settings_.getValue("analysis:sensing_window_height", 0.5);
-
+  		analysis->sensing_window.load(xml_settings_);
 		update_homography();
 	}
 }
 
 void ofAppGui::save_config()
 {
-  	xml_settings_.setValue("analysis:sensing_window_x", analysis->sensing_window.x);
-	xml_settings_.setValue("analysis:sensing_window_y", analysis->sensing_window.y);
-	xml_settings_.setValue("analysis:sensing_window_width", analysis->sensing_window.width);
-	xml_settings_.setValue("analysis:sensing_window_height", analysis->sensing_window.height);
+    analysis->sensing_window.save(xml_settings_);
 
 	xml_settings_.saveFile("cc-settings.xml");
 }

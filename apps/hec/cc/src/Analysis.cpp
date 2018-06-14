@@ -14,7 +14,7 @@
 #include "ofxCvFloatImage.h"
 
 
-AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), sensing_window(0,0, 1, 1), quit_(false),
+AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), quit_(false),
                                                                        settings_ (settings), grabber_(settings), fps_(0)
 
 {
@@ -289,10 +289,6 @@ void AnalysisThread::draw()
     
     ofTranslate(settings_->color_preview_pos.getX(), settings_->color_preview_pos.getY());
 
-	ofSetColor(0, 0, 0xcc, 0x80);
-	ofDrawRectangle(sensing_window.x * w,     sensing_window.y * h,
-		            sensing_window.width * w, spacing + sensing_window.height * h);
-
 	draw_blobs(blobs_path_public_);
 	draw_joints(joints_public_);
 
@@ -300,38 +296,18 @@ void AnalysisThread::draw()
     stringstream report_str;
     report_str << "fps: " << fps_;
     ofDrawBitmapString(report_str.str(), spacing, spacing);
-    
+
+
+    sensing_window.draw(settings_->color_preview_pos.getWidth(), settings_->color_preview_pos.getHeight());
+
     ofPopStyle();
     ofPopMatrix();
 }
 
 void AnalysisThread::draw_blobs(vector<ofPolyline>& blobs) const
 {
-    ofRectangle rect;
-    rect.set(0, 0, settings_->image_size_W, settings_->image_size_H);
-
-    float w = rect.width;
-    float h = rect.height;
-
-	const auto x = sensing_window.x * w;
-	const auto y = sensing_window.y * h;
-
-	const float scale_x = w * sensing_window.width;//settings_->image_size_W;
-	const float scale_y = h * sensing_window.height;//settings_->image_size_H ;
-
     ofPushStyle();
-    // ---------------------------- draw the bounding rectangle
-    ofSetHexColor(0x990099);
     ofPushMatrix();
-    ofTranslate(x, y, 0.0);
-    ofScale(scale_x, scale_y, 0.0);
-    
-    ofNoFill();
-    for (auto& blob : blobs)
-    {
-        ofDrawRectangle(blob.getBoundingBox().x, blob.getBoundingBox().y,
-                        blob.getBoundingBox().width, blob.getBoundingBox().height);
-    }
 
     // ---------------------------- draw the blobs
     ofSetColor(0, 180, 180);
@@ -340,6 +316,7 @@ void AnalysisThread::draw_blobs(vector<ofPolyline>& blobs) const
     {
 		blob.draw();
     }
+
     ofPopMatrix();
     ofPopStyle();
 }
@@ -347,6 +324,7 @@ void AnalysisThread::draw_blobs(vector<ofPolyline>& blobs) const
 
 void AnalysisThread::draw_joints( vector<ofVec2f>& joints) const
 {
+/*
 	const auto w = settings_->image_size_W;
 	const auto h = settings_->image_size_H;
 
@@ -368,10 +346,12 @@ void AnalysisThread::draw_joints( vector<ofVec2f>& joints) const
 
     ofPopMatrix();
     ofPopStyle();
+*/
 }
 
 void AnalysisThread::update_joints()
 {
+/*
 	const int body_index = 0;
 
 	if (grabber_.numBodies() > 0)
@@ -394,6 +374,7 @@ void AnalysisThread::update_joints()
 
 		joints_ = filtered;
 	}
+*/
 }
 
 int AnalysisThread::get_num_bodies() const
@@ -417,8 +398,6 @@ ofVec2f AnalysisThread::get_joint(const int jointIdx) const
 
 	std::lock_guard<std::mutex> lock(update_mutex_);
 	
-	//ofVec2f p = joints_public_[jointIdx];
-	//p = p * ofVec2f(-1, 1) + ofVec2f(1, 0); // mirror
 	return joints_public_[jointIdx];
 }
 

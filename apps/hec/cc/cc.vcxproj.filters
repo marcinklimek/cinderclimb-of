@@ -142,6 +142,9 @@
     <ClCompile Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.cpp">
       <Filter>addons\ofxColorMap</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofSensingWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -934,6 +937,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxTiming\src\RateTimer.h">
       <Filter>addons\ofxTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofSensingWindow.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
