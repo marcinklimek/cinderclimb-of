@@ -18,6 +18,9 @@ AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mo
                                                                        settings_ (settings), grabber_(settings), fps_(0)
 
 {
+    const concurrency::SchedulerPolicy policy(2, concurrency::MinConcurrency, 16, concurrency::MaxConcurrency, 32);
+    Concurrency::Scheduler::SetDefaultSchedulerPolicy(policy);
+
     settings_->resetBackground.addListener(this, &AnalysisThread::resetChanged);
     averageTimer = settings_->resetBackgroundTime;
 
@@ -59,15 +62,12 @@ bool AnalysisThread::update_public()
 	joints_public_ = joints_;
 	blobs_path_public_ = blobs_path_;
 
-    //input_frame_.contrastStretch();
-    //image_processed_.contrastStretch();
-    //image_foreground_.contrastStretch();
-    
+    input_frame_.contrastStretch();
+
     input_frame_public_ = input_frame_;
     image_processed_public_ = image_processed_;
     image_foreground_public_ = image_foreground_;
     backgroundModel_public_ = backgroundModel_;
-
     color_frame_public_ = color_frame_;
 
 	return false;
@@ -109,8 +109,6 @@ void AnalysisThread::average(ofxCvShortImage& image_input_a, ofxCvShortImage& im
     auto& input_a = image_input_a.getShortPixelsRef();
     const auto input_b = image_input_b.getShortPixelsRef();
 
-    const long epsilon = settings_->epsilon;
-
     concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
     {
         const long v1 = input_a[i];
@@ -118,7 +116,7 @@ void AnalysisThread::average(ofxCvShortImage& image_input_a, ofxCvShortImage& im
 
         const auto v = std::min(v1, v2);
         
-        if (v > epsilon)
+        if (v > 0)
             input_a[i] = v;
     });
 }
@@ -146,7 +144,7 @@ void AnalysisThread::foreground(ofxCvShortImage& image_input_a,  ofxCvShortImage
     concurrency::parallel_for(0, DEPTH_SIZE, [&](int i) 
     {
         const auto v = input_a[i];
-        const auto m = input_mask[i];
+        const auto m = input_mask[i] - settings_->epsilon;
         
         if (v < m)
             input_a[i] = v;
@@ -241,8 +239,6 @@ void AnalysisThread::update_frame()
     temp.allocate(image_foreground_.width, image_foreground_.height);
     temp = image_foreground_;
 
-    //temp.adaptiveThreshold(5);
-
     contour_finder_.findContours(temp, settings_->area_min, settings_->area_max, 10, false); // find holes
 	
 	blobs_path_.clear();
@@ -262,19 +258,10 @@ void AnalysisThread::update_frame()
 		ofPolyline poly( filtered );
 		
 		poly = poly.getSmoothed( settings_->smoothing );
-		poly.simplify( settings_->tolerance  );
+		poly.simplify( settings_->tolerance );
 		
 		blobs_path_.emplace_back(poly);
 	}
-
-    //if (_settings->useConvexHull)
-    //{
-    //    for (auto i = 0; i < contourFinder.blobs.size(); i++)
-    //    {
-    //        contourFinder.blobs[i].pts = convexHull.getConvexHull(contourFinder.blobs[i].pts);
-    //        contourFinder.blobs[i].nPts = contourFinder.blobs[i].pts.size();
-    //    }
-    //}
 
     color_frame_ = grabber_.colorIndex;
 	color_frame_.mirror(false, true);
@@ -287,42 +274,47 @@ void AnalysisThread::draw()
 
     ofSetHexColor(0xffffff);
 	
-    input_frame_public_.draw(           spacing,                               spacing,					            preview_W, preview_H);
-    image_processed_public_.draw(		spacing + preview_W + spacing,         spacing                            , preview_W, preview_H);
+    input_frame_public_.draw(       spacing,                               spacing,					            preview_W, preview_H);
+    image_processed_public_.draw(	spacing + preview_W + spacing,         spacing                            , preview_W, preview_H);
     image_foreground_public_.draw(	spacing + (preview_W + spacing) * 2,   spacing                            , preview_W, preview_H);
     backgroundModel_public_.draw(	spacing + (preview_W + spacing) * 3,   spacing                            , preview_W, preview_H);
 
-    color_frame_public_.draw(	spacing,		spacing + (preview_H + spacing)*1);
+    color_frame_public_.draw( settings_->color_preview_pos );
 
-    return;
+    const float w =  settings_->image_size_W;
+    const float h =  settings_->image_size_H;
 
-	float w =  settings_->image_size_W;
-	float h =  settings_->image_size_H;
-
+    ofPushMatrix();
+    ofPushStyle();
+    
+    ofTranslate(settings_->color_preview_pos.getX(), settings_->color_preview_pos.getY());
 
 	ofSetColor(0, 0, 0xcc, 0x80);
-	ofDrawRectangle(spacing + preview_W + spacing + sensing_window.x * w, spacing + sensing_window.y * h,
+	ofDrawRectangle(sensing_window.x * w,     sensing_window.y * h,
 		            sensing_window.width * w, spacing + sensing_window.height * h);
 
 	draw_blobs(blobs_path_public_);
 	draw_joints(joints_public_);
 
     ofSetHexColor(0xffffff);
-    stringstream reportStr;
-    reportStr << "fps: " << fps_;
-    ofDrawBitmapString(reportStr.str(), spacing, spacing);
+    stringstream report_str;
+    report_str << "fps: " << fps_;
+    ofDrawBitmapString(report_str.str(), spacing, spacing);
+    
+    ofPopStyle();
+    ofPopMatrix();
 }
 
 void AnalysisThread::draw_blobs(vector<ofPolyline>& blobs) const
 {
     ofRectangle rect;
-    rect.set(spacing + preview_W + spacing, spacing, settings_->image_size_W, settings_->image_size_H);
+    rect.set(0, 0, settings_->image_size_W, settings_->image_size_H);
 
     float w = rect.width;
     float h = rect.height;
 
-	const auto x = spacing + preview_W + spacing + sensing_window.x * w;
-	const auto y = spacing + sensing_window.y * h;
+	const auto x = sensing_window.x * w;
+	const auto y = sensing_window.y * h;
 
 	const float scale_x = w * sensing_window.width;//settings_->image_size_W;
 	const float scale_y = h * sensing_window.height;//settings_->image_size_H ;
@@ -358,8 +350,8 @@ void AnalysisThread::draw_joints( vector<ofVec2f>& joints) const
 	const auto w = settings_->image_size_W;
 	const auto h = settings_->image_size_H;
 
-	const auto x = spacing + preview_W + spacing + sensing_window.x * w;
-	const auto y = spacing + sensing_window.y * h;
+	const auto x = sensing_window.x * w;
+	const auto y = sensing_window.y * h;
 
     ofPushStyle();
 

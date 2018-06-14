@@ -463,6 +463,12 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\optical_flow.hpp" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\stabilizer.hpp" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\videostab\videostab.hpp" />
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\DelayTimer.h" />
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\FadeTimer.h" />
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\Hysteresis.h" />
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\LerpTimer.h" />
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\ofxTiming.h" />
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\RateTimer.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="src\Analysis.h" />

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "ofParameter.h"
+#include "ofRectangle.h"
 
 constexpr int DEPTH_WIDTH = 512;
 constexpr int DEPTH_HEIGHT = 424;
@@ -9,8 +10,8 @@ constexpr int COLOR_WIDTH = 1920;
 constexpr int COLOR_HEIGHT = 1080;
 constexpr int COLOR_SIZE = COLOR_WIDTH * COLOR_HEIGHT;
 
-constexpr int preview_W = 320;
-constexpr int preview_H = 240;
+constexpr int preview_W = 256;
+constexpr int preview_H = 212;
 constexpr int spacing = 10;
 
 class ofSettings
@@ -21,6 +22,8 @@ public:
 
 	int image_size_W = DEPTH_WIDTH;
 	int image_size_H = DEPTH_HEIGHT;
+
+    ofRectangle color_preview_pos;
 
     ofParameterGroup parameters;
 

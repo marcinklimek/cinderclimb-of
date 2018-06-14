@@ -288,6 +288,9 @@
     <Filter Include="addons\ofxColorMap">
       <UniqueIdentifier>{04a20886-08ac-412e-a3c3-6c93bd9fd082}</UniqueIdentifier>
     </Filter>
+    <Filter Include="addons\ofxTimer">
+      <UniqueIdentifier>{42623a18-4f7b-44fc-b6d9-b6f9d5b0e7d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h">
@@ -913,6 +916,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.h">
       <Filter>addons\ofxColorMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\DelayTimer.h">
+      <Filter>addons\ofxTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\FadeTimer.h">
+      <Filter>addons\ofxTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\Hysteresis.h">
+      <Filter>addons\ofxTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\LerpTimer.h">
+      <Filter>addons\ofxTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\ofxTiming.h">
+      <Filter>addons\ofxTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxTiming\src\RateTimer.h">
+      <Filter>addons\ofxTimer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

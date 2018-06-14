@@ -2,6 +2,8 @@
 
 ofSettings::ofSettings()
 {
+    color_preview_pos.set(spacing, spacing + preview_H + spacing, DEPTH_WIDTH, DEPTH_HEIGHT);
+
     parameters.setName("Parameters");
 
 	parameters.add(colorMapIndex.set("colormap", 117, 0, 141));
@@ -15,7 +17,7 @@ ofSettings::ofSettings()
     parameters.add(dillate_count.set("dillate", 0, 0, 30));
 
 	parameters.add(blur_amount2.set("blur amount 2", 0, 0, 30));
-    parameters.add(erode_open_count2.set("erosion open 2", 0, 0, 30));
+    parameters.add(erode_open_count2.set("erosion open 2", 1, 0, 30));
 	parameters.add(erode_close_count2.set("erosion close 2", 0, 0, 30));
     parameters.add(dillate_count2.set("dillate 2", 0, 0, 30));
 
@@ -24,14 +26,12 @@ ofSettings::ofSettings()
     
     parameters.add(thresholdValue.set("Threshold Value", 10, 0, 255));
 
-    parameters.add(nearClipping.set("near", 1000.0f, 0.0f, 8000.0f));
+    parameters.add(nearClipping.set("near", 0000.0f, 0.0f, 8000.0f));
     parameters.add(farClipping.set("far",  8000.0f, 0.0f, 8000.0f));
 
     parameters.add(resetBackground.set("reset Background", true));
-    parameters.add(resetBackgroundTime.set("reset Background time", 10, 1, 30));
+    parameters.add(resetBackgroundTime.set("reset Background time", 5, 1, 30));
     parameters.add(epsilon.set("epsilon", 500, 0, 10000));
-    
-    
     
 }
 

@@ -72,13 +72,9 @@ void ofAppGui::keyPressed(int key)
 {
      switch (key)
      {
-         case 'f':
-         {
-             //recorder.start(grabber.getWidth(), grabber.getHeight(), 30.0f);
-    
-             return;
-         }
- 
+         case 'f': return;
+         case 'r': return;
+
      	default: 
      		break;
      }
@@ -90,6 +86,15 @@ void ofAppGui::keyPressed(int key)
 //--------------------------------------------------------------
 void ofAppGui::keyReleased(int key)
 {
+     switch (key)
+     {
+         case 'f': return;
+         case 'r': return;
+
+     	default: 
+     		break;
+     }
+
 	projector_app->keyReleased(key);
 }
 
@@ -104,10 +109,10 @@ void ofAppGui::mouseDragged(int x, int y, int button)
 	// right button
 	if ( button == 2 )
 	{
-		float w =  _settings->image_size_W;
-		float h =  _settings->image_size_H;
+		float w = _settings->color_preview_pos.getWidth();
+		float h = _settings->color_preview_pos.getHeight();
 
-		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, w, h);
+		ofRectangle rect = ofRectangle( _settings->color_preview_pos.getX(), _settings->color_preview_pos.getY(), w, h);
 		if ( rect.inside(x,y) )
 		{
 			const ofVec2f start_point(analysis->sensing_window.x * w,  analysis->sensing_window.y * h);
@@ -138,12 +143,13 @@ void ofAppGui::mousePressed(int x, int y, int button)
 	// right button
 	if ( button == 2 )
 	{
-		ofRectangle rect = ofRectangle(spacing + preview_W + spacing, spacing, _settings->image_size_W, _settings->image_size_H);
+		float w = _settings->color_preview_pos.getWidth();
+		float h = _settings->color_preview_pos.getHeight();
+
+		ofRectangle rect = ofRectangle( _settings->color_preview_pos.getX(), _settings->color_preview_pos.getY(), w, h);
+
 		if ( rect.inside(x,y) )
 		{
-			float w =  _settings->image_size_W;
-			float h =  _settings->image_size_H;
-
 			analysis->sensing_window.x = (x - rect.x) / w; // przejscie do znormalizowanej przestrzeni
 			analysis->sensing_window.y = (y - rect.y) / h;
 
