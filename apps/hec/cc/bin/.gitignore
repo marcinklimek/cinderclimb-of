@@ -1,0 +1,8 @@
+/cc.exe
+/cc.exp
+*.lib
+/cc.iobj
+/cc.ipdb
+/cc_debug.exe
+/cc_debug.exp
+/cc_debug.lib
