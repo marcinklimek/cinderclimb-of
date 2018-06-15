@@ -15,7 +15,7 @@
 
 
 AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), quit_(false),
-                                                                       settings_ (settings), grabber_(settings), fps_(0)
+                                                                       settings_ (settings), grabber_(settings), fps_(0), backgroundModel_set(true)
 
 {
     const concurrency::SchedulerPolicy policy(2, concurrency::MinConcurrency, 16, concurrency::MaxConcurrency, 32);
@@ -23,6 +23,9 @@ AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mo
 
     settings_->resetBackground.addListener(this, &AnalysisThread::resetChanged);
     averageTimer = settings_->resetBackgroundTime;
+
+    fps_timer.setPeriod(1);
+    backgroundModel_timer.setPeriod(settings_->resetBackgroundTime);
 
     startThread();
 }
@@ -73,14 +76,12 @@ bool AnalysisThread::update_public()
 	return false;
 }
 
+
+
 void AnalysisThread::threadedFunction()
 {
-    ofResetElapsedTimeCounter();
-
-    auto t0 = ofGetElapsedTimeMillis();
     while (!quit_)
     {
-        const auto t1 = ofGetElapsedTimeMillis();    
 		grabber_.update();
 
 		if (grabber_.get(input_frame_))
@@ -94,10 +95,8 @@ void AnalysisThread::threadedFunction()
 		    frame_counter_++;
 		}
 
-        if ( (t1 - t0) > 1000)
+        if (fps_timer.tick())
         {
-            t0 = ofGetElapsedTimeMillis();
-            
             fps_ = frame_counter_;
             frame_counter_ = 0;
         }
@@ -157,6 +156,8 @@ void AnalysisThread::resetChanged(bool& state)
 {
     if (state)
     {
+        backgroundModel_set = true;
+        backgroundModel_timer.setPeriod( settings_->resetBackgroundTime);
         backgroundModel_.set(UINT16_MAX);
     }
 }
@@ -189,24 +190,14 @@ void AnalysisThread::update_frame()
         image_processed_.erode();
 
 
-	if (settings_->resetBackground && averageTimer > 0)
+	if (backgroundModel_set)
 	{
-	    static unsigned long long t0 =  ofGetElapsedTimeMillis();
-
 		average(backgroundModel_, image_processed_);
         
-        const auto t1 = ofGetElapsedTimeMillis();    
-        
-	    if ( (t1 - t0) > 1000)
+        if ( backgroundModel_timer.tick() )
         {
-            t0 = ofGetElapsedTimeMillis();
-            --averageTimer;
-        }
-
-        if ( averageTimer == 0)
-        {
+            backgroundModel_set = false;
             settings_->resetBackground = false;
-            averageTimer = settings_->resetBackgroundTime;
         }
 
         return;
@@ -239,7 +230,7 @@ void AnalysisThread::update_frame()
     temp.allocate(image_foreground_.width, image_foreground_.height);
     temp = image_foreground_;
 
-    contour_finder_.findContours(temp, settings_->area_min, settings_->area_max, 10, false); // find holes
+    contour_finder_.findContours(temp, settings_->area_min, settings_->area_max, 10, true); // find holes
 	
 	blobs_path_.clear();
 	for (const auto& blob : contour_finder_.blobs)
@@ -252,7 +243,7 @@ void AnalysisThread::update_frame()
 			v.x = point.x / settings_->image_size_W;
 			v.y = point.y / settings_->image_size_H;
 
-			v = ofxHomography::toScreenCoordinates(v, sensing_trans.homography);
+			v = ofxHomography::toScreenCoordinates(v, sensing_window.get_homography());
 			filtered.emplace_back(v);
 		}
 		ofPolyline poly( filtered );

@@ -9,6 +9,7 @@
 #include "ofxHomography.h"
 #include "ofxCv/RunningBackground.h"
 #include "ofSensingWindow.h"
+#include "ofxTiming/src/DelayTimer.h"
 
 
 class AnalysisThread  : public ofThread
@@ -59,7 +60,7 @@ public:
 	ofSensingWindow sensing_window;
 
 
-	HomoTrans sensing_trans;
+
 	ofPixels fbo_pixels;
     int averageTimer;
 
@@ -100,8 +101,12 @@ private:
 	vector<ofPolyline> blobs_path_public_;
 
     unsigned long long fps_;
-    unsigned long long frame_counter_;
+    unsigned long long frame_counter_{};
     
+    DelayTimer fps_timer;
+    DelayTimer backgroundModel_timer;
+    bool backgroundModel_set;
 
 	bool update_public();
+
 };

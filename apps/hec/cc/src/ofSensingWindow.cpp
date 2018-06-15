@@ -25,6 +25,17 @@ void ofSensingWindow::reset()
     }
 }
 
+void ofSensingWindow::update_homography()
+{
+    sensing_trans.distortedCorners[0] = points[0]();
+    sensing_trans.distortedCorners[1] = points[1]();
+    sensing_trans.distortedCorners[2] = points[2]();
+    sensing_trans.distortedCorners[3] = points[3]();
+
+    sensing_trans.update();
+}
+
+
 void ofSensingWindow::draw(float w, float h)
 {
     ofSetColor(0, 128, 128, 128);
@@ -76,6 +87,9 @@ void ofSensingWindow::mouseDragged(float x, float y, int button)
             is_changed_ = true;
 		}
 	}
+
+    if (is_changed_)
+        update_homography();
 }
 
 //--------------------------------------------------------------
@@ -153,4 +167,6 @@ void ofSensingWindow::load(ofxXmlSettings& xml)
     {
         reset();
     }
+
+    update_homography();
 }

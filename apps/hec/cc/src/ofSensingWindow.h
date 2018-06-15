@@ -2,6 +2,7 @@
 #include <array>
 #include "ofPoint.h"
 #include "ofxXmlSettings/src/ofxXmlSettings.h"
+#include "ofxHomography.h"
 
 class DraggableVertex
 {
@@ -30,6 +31,8 @@ public:
 class ofSensingWindow
 {
     bool is_changed_;
+    
+    HomoTrans sensing_trans;
 
 public:
 
@@ -50,6 +53,7 @@ public:
 
     void reset();
 
+
     void draw(float w, float h);
     void mouseMoved(float x, float y);
     void mouseDragged(float x, float y, int button);
@@ -58,4 +62,10 @@ public:
 
     void save(ofxXmlSettings& xml);
     void load(ofxXmlSettings& xml);
+
+    ofMatrix4x4 get_homography() const { return sensing_trans.homography; }
+
+private:
+
+    void update_homography();
 };

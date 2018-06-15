@@ -31,6 +31,7 @@ public:
 	}
 	void setPeriod(float period) {
 		this->period = period;
+        ticks = 0;
 	}
 	float getPeriod() {
 		return period;

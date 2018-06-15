@@ -21,7 +21,6 @@ public:
     void keyReleased(int key) override;
     void mouseMoved(int x, int y) override;
     void mouseDragged(int x, int y, int button) override;
-	void update_homography() const;
     void mousePressed(int x, int y, int button) override;
     void mouseReleased(int x, int y, int button) override;
     void mouseEntered(int x, int y) override;

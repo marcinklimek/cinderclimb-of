@@ -20,9 +20,12 @@ local function Shape(x, y, w, h)
 		y = 0,
 		w = 1,
 		h = 1,
+		x2 = x + w,
+		y2 = y + h,
 		box = of.Rectangle(x, y, w, h),
-
+		timer = 0,
 		touched = false,
+		back = false,
 		alpha = 255
 	}
 
@@ -43,27 +46,49 @@ local function Shape(x, y, w, h)
 
 	function self.inside(x, y)
 
+		if self.touched or self.back then
+			return
+		end
+
+		--print (x >= self.x , y >= self.y , x <= self.x2 , y <= self.y2)
 		--local p = of.Point(x, y)
 		
-		-- if self.box.inside(x, y) then
+		if x >= self.x and y >= self.y and x <= self.x2 and y <= self.y2 then
 		
-		-- 	self.touched = true
+			self.touched = true
 
-		-- end
+		end
 
+		return self.touched
 	end
 
 	function self.update()
 
 		if self.touched then
 
-			self.alpha = self.alpha - 10
+			self.alpha = self.alpha - 4
 
 			if self.alpha < 0 then
 				self.alpha = 0
 				self.touched = false
+				self.wait = true
 			end
+		elseif self.wait then
+			self.timer = self.timer + 1
 
+			if self.timer > 240 then
+				self.timer = 0
+				self.wait = false
+				self.back = true
+			end
+		elseif self.back then
+			self.alpha = self.alpha + 4
+
+			if self.alpha > 255 then
+				self.alpha = 255
+				self.touched = false
+				self.back = false
+			end
 		end
 
 	end
@@ -84,7 +109,7 @@ function setup()
 
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
-	of.setWindowPosition(1920 , 10) -- (1920 + 1680,0)
+	of.setWindowPosition(1920 , 0) -- (1920 + 1680,0)
 
 	for y=0,numY-1 do
 		for x=0,numX-1 do
@@ -101,6 +126,10 @@ function setup()
 
 end
 
+function round(x)
+  return x>=0 and math.floor(x+0.5) or math.ceil(x-0.5)
+end
+
 ----------------------------------------------------
 function update()
 
@@ -114,20 +143,20 @@ function update()
 			
 			for k, v in pairs(blob) do
 
-				local x = v.x / deltaX
-				local y = v.y / deltaY
+				local x = round(v.x / deltaX)
+				local y = round(v.y / deltaY)
 
-				for i,shape in ipairs(shapes) do
-					shape.inside(x, y)
-				end
-
-
-				--local offset = math.floor( x + y*(numX+1) )
-				
-				--if offset > 0 and offset < numX*numY then
-				--	shapes[offset].touch()
-				--	print (numX*numY, v.x, v.y, x, y, offset)
+				--for i,shape in ipairs(shapes) do
+				--	shape.inside(x, y)
 				--end
+				local offset = round( x + y*(numX) ) 
+				--print(v.x, v.y, x, y, offset)
+				
+				
+				if x < numX and y < numY then
+					shapes[offset].touch()
+					--print (numX*numY, v.x, v.y, x, y, offset)
+				end
 				
 			end
 

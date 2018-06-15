@@ -32,15 +32,7 @@ void ofAppGui::exit()
     //recorder.stop();
 }
 
-void ofAppGui::update_homography() const
-{
-	analysis->sensing_trans.distortedCorners[0] = analysis->sensing_window.points[0]();
-	analysis->sensing_trans.distortedCorners[1] = analysis->sensing_window.points[1]();
-	analysis->sensing_trans.distortedCorners[2] = analysis->sensing_window.points[2]();
-	analysis->sensing_trans.distortedCorners[3] = analysis->sensing_window.points[3]();
 
-	analysis->sensing_trans.update();
-}
 
 //--------------------------------------------------------------
 void ofAppGui::update()
@@ -114,7 +106,6 @@ void ofAppGui::mouseMoved(int x, int y)
 
         if ( analysis->sensing_window.is_changed() )
         {
-		    update_homography();
 		    save_config();   
         }
     }
@@ -135,7 +126,6 @@ void ofAppGui::mouseDragged(int x, int y, int button)
 
         if ( analysis->sensing_window.is_changed() )
         {
-		    update_homography();
 		    save_config();   
         }
     }
@@ -158,7 +148,6 @@ void ofAppGui::mousePressed(int x, int y, int button)
 
         if ( analysis->sensing_window.is_changed() )
         {
-		    update_homography();
 		    save_config();   
         }
     }
@@ -179,7 +168,6 @@ void ofAppGui::mouseReleased(int x, int y, int button)
 
         if ( analysis->sensing_window.is_changed() )
         {
-		    update_homography();
 		    save_config();   
         }
     }
@@ -215,7 +203,6 @@ void ofAppGui::load_config()
 	if ( xml_settings_.loadFile("cc-settings.xml") )
 	{
   		analysis->sensing_window.load(xml_settings_);
-		update_homography();
 	}
 }
 
