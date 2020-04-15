@@ -2,32 +2,34 @@
 #include "ofAppGui.h"
 #include "ofAppProjector.h"
 
-ofGLFWWindowSettings settings;
-std::shared_ptr<ofSettings> app_settings;
+
 
 //========================================================================
 int main()
 {
+	ofGLFWWindowSettings projector_settings;
+	ofGLFWWindowSettings gui_settings;
+	
+	std::shared_ptr<ofSettings> app_settings;
+	
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
 	app_settings = std::make_shared<ofSettings>();
 
-	settings.width = 1024;
-	settings.height = 768;
-    
-    settings.resizable = false;
-    shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(settings);
-    projector_window->setVerticalSync(true);
-
-	settings.width = 1600;
-	settings.height = 1000;
-    settings.setPosition(ofVec2f(0, 25));
-    settings.resizable = true;
+	projector_settings.setSize(1024, 768);
+    projector_settings.resizable = false;
 	
+    shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(projector_settings);
+	projector_window->setVerticalSync(true);
+
+	
+	gui_settings.setSize(1600, 1000);
+    gui_settings.setPosition(ofVec2f(0, 25));
+    gui_settings.resizable = true;
 
     // share main's OpenGL resources with gui
-    settings.shareContextWith = projector_window;	
-    shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(settings);
+    gui_settings.shareContextWith = projector_window;	
+    shared_ptr<ofAppBaseWindow> gui_window = ofCreateWindow(gui_settings);
     gui_window->setVerticalSync(false);
 	
     shared_ptr<ofAppGui> gui_app(new ofAppGui);

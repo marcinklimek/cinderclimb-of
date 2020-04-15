@@ -42,7 +42,7 @@ void ofSettings::scan_for_scripts()
 {
     // scripts to run
 
-	const string path = "scripts";
+	const std::string path = "scripts";
 	ofDirectory dir(path);
 
 	dir.allowExt("lua");
@@ -65,7 +65,7 @@ void ofSettings::scan_for_scripts()
 	parameters.add(currentScript.set("script", 0, 0, scripts.size()-1) );
 }
 
-string ofSettings::get_script()
+std::string ofSettings::get_script()
 {
 	if (currentScript > 0 && currentScript < scripts.size())
 		return scripts[currentScript];

@@ -21,7 +21,7 @@ public:
     ofSettings();
 
 	void scan_for_scripts();
-	string get_script();
+    std::string get_script();
 
 	int image_size_W = DEPTH_WIDTH;
 	int image_size_H = DEPTH_HEIGHT;
@@ -59,6 +59,6 @@ public:
 
     ofParameterGroup& get_gui_parameters();
 
-	vector<string> scripts;
+	std::vector<std::string> scripts;
 	ofParameter<int> currentScript;
 };

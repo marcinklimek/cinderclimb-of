@@ -22,30 +22,30 @@
     <ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>cc</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
@@ -224,14 +224,34 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
   <ItemGroup>
     <ClCompile Include="..\..\..\addons\ofxColorMap\src\namedMaps.cpp" />
     <ClCompile Include="..\..\..\addons\ofxColorMap\src\ofxColorMap.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxButton.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\Document.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\Element.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\Events.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\Exceptions.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\JsonConfigParser.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\Layout.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxDOMBoxLayout.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxDOMFlexBoxLayout.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxDOMLayoutHelper.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiButton.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiContainer.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiElement.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiExtended.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiFpsPlotter.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiFunctionPlotter.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGraphics.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxLabel.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxPanel.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSlider.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiInputField.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiLabel.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiMenu.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiPanel.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiRangeSlider.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiSlider.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiSliderGroup.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiTabs.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiToggle.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiValuePlotter.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxGui\src\ofxGuiZoomableGraphics.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlerror.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
@@ -288,15 +308,39 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Tracker.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Utilities.h" />
     <ClInclude Include="..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv\Wrappers.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGui.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\Document.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\Element.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\Events.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\EventTarget.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\Exceptions.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\IDGenerator.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\JsonConfigParser.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\Layout.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxDOM.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxDOMBoxLayout.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxDOMFlexBoxLayout.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxDOMLayoutHelper.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiButton.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiContainer.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiDefaultConfig.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiElement.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiExtended.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiFpsPlotter.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiFunctionPlotter.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGraphics.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiGroup.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxLabel.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxPanel.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSlider.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.h" />
-    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiInputField.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiLabel.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiMenu.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiPanel.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiRangeSlider.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiSlider.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiSliderGroup.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiTabs.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiToggle.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiValuePlotter.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\ofxGuiZoomableGraphics.h" />
+    <ClInclude Include="..\..\..\addons\ofxGui\src\Types.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h" />

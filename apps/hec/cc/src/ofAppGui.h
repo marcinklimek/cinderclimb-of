@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "Settings.h"
 #include "Analysis.h"
-#include "ofxGui/src/ofxPanel.h"
+#include "ofxGui/src/ofxGuiExtended.h"
 #include "ofxXmlSettings/src/ofxXmlSettings.h"
 
 class ofAppGui : public ofBaseApp
@@ -34,7 +34,7 @@ public:
     //ofRecorder recorder;
     std::shared_ptr<AnalysisThread> analysis;
 
-    ofxPanel gui;
+    ofxGui gui;
 
     vector<ofxCvBlob> currentBlobs;
 

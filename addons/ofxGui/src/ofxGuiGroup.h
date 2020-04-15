@@ -1,103 +1,73 @@
 #pragma once
-#include "ofxBaseGui.h"
+#include "ofxGuiContainer.h"
 
-#include "ofxSlider.h"
-#include "ofxButton.h"
-#include "ofParameterGroup.h"
-#include "ofParameter.h"
 
-class ofxGuiGroup : public ofxBaseGui {
+class ofxGuiGroupHeader : public ofxGuiElement {
 	public:
-		ofxGuiGroup();
-		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename = "settings.xml", float x = 10, float y = 10);
-		virtual ~ofxGuiGroup(){
-		}
-		ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
-		ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		ofxGuiGroupHeader(const ofJson &config = ofJson());
 
-		void add(ofxBaseGui * element);
-		void add(const ofParameterGroup & parameters);
+		~ofxGuiGroupHeader();
 
-		template<typename T>
-		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
-			add(new ofxSlider<T>(p));
-		}
-		void add(ofParameter <bool> & parameter);
-		void add(ofParameter <std::string> & parameter);
-		void add(ofParameter <ofVec2f> & parameter);
-		void add(ofParameter <ofVec3f> & parameter);
-		void add(ofParameter <ofVec4f> & parameter);
-		void add(ofParameter <ofColor> & parameter);
-		void add(ofParameter <ofShortColor> & parameter);
-		void add(ofParameter <ofFloatColor> & parameter);
+		virtual bool mousePressed(ofMouseEventArgs & args) override;
 
-		void minimize();
-		void maximize();
-		void minimizeAll();
-		void maximizeAll();
+		virtual float getMinWidth() override;
+		virtual float getMinHeight() override;
 
-		void setWidthElements(float w);
+		static std::string getClassType();
 
-		void clear();
-
-		virtual void sizeChangedCB();
-
-		virtual bool mouseMoved(ofMouseEventArgs & args);
-		virtual bool mousePressed(ofMouseEventArgs & args);
-		virtual bool mouseDragged(ofMouseEventArgs & args);
-		virtual bool mouseReleased(ofMouseEventArgs & args);
-		virtual bool mouseScrolled(ofMouseEventArgs & args);
-
-
-		std::vector <std::string> getControlNames() const;
-		std::size_t getNumControls() const;
-
-		ofxIntSlider & getIntSlider(const std::string& name);
-		ofxFloatSlider & getFloatSlider(const std::string& name);
-		ofxToggle & getToggle(const std::string& name);
-		ofxButton & getButton(const std::string& name);
-		ofxGuiGroup & getGroup(const std::string& name);
-
-		ofxBaseGui * getControl(const std::string& name);
-		ofxBaseGui * getControl(std::size_t num);
-
-		virtual ofAbstractParameter & getParameter();
-
-		virtual void setPosition(const ofPoint& p);
-		virtual void setPosition(float x, float y);
 	protected:
-		virtual void render();
-		virtual bool setValue(float mx, float my, bool bCheck);
 
-		float spacing, spacingNextElement;
-		float header;
+		virtual std::vector<std::string> getClassTypes() override;
 
-		template <class ControlType>
-		ControlType & getControlType(const std::string& name);
-
-		virtual void generateDraw();
-
-		std::vector <ofxBaseGui *> collection;
-		ofParameterGroup parameters;
-
-		std::string filename;
-		bool minimized;
-		bool bGuiActive;
-
-		ofPath border, headerBg;
+		virtual void generateDraw() override;
+		virtual void render() override;
 		ofVboMesh textMesh;
+
 };
 
-template <class ControlType>
-ControlType & ofxGuiGroup::getControlType(const std::string& name){
-	ControlType * control = dynamic_cast <ControlType *>(getControl(name));
-	if(control){
-		return *control;
-	}else{
-		ofLogWarning() << "getControlType " << name << " not found, creating new";
-		control = new ControlType;
-		control->setName(name);
-		add(control);
-		return *control;
-	}
-}
+
+class ofxGuiGroup : public ofxGuiContainer {
+	public:
+
+		ofxGuiGroup();
+		ofxGuiGroup(const std::string& collectionName);
+		ofxGuiGroup(const std::string& collectionName, const ofJson & config);
+		ofxGuiGroup(const ofParameterGroup & parameters, const ofJson &config = ofJson());
+		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
+		ofxGuiGroup(const std::string& collectionName, const std::string& _filename, float x = 10, float y = 10);
+
+		virtual ~ofxGuiGroup();
+
+		void setup();
+
+		virtual void minimize();
+		virtual void maximize();
+		virtual void minimizeAll();
+		virtual void maximizeAll();
+		bool getMinimized();
+		void toggleMinimize();
+
+		void setShowHeader(bool show);
+		ofxGuiElement* getHeader();
+
+		virtual std::vector<ofxGuiElement*> getControls() override;
+
+		static std::string getClassType();
+
+	protected:
+
+		virtual std::vector<std::string> getClassTypes() override;
+
+		virtual void _setConfig(const ofJson & config) override;
+
+		ofParameter<bool> minimized;
+		ofParameter<bool> showHeader;
+		ofxGuiElement* header;
+
+		virtual void onHeaderVisibility(bool& showing);
+		virtual void onHeaderHeight(float& height);
+
+	private:
+		float widthMaximized, heightMaximized;
+
+};

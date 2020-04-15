@@ -233,7 +233,7 @@ void AnalysisThread::update_frame()
 	blobs_path_.clear();
 	for (const auto& blob : contour_finder_.blobs)
 	{
-		std::vector<ofPoint> filtered;
+		std::vector<glm::vec3> filtered;
 
 		for(const auto& point: blob.pts)
 		{
@@ -437,7 +437,7 @@ bool AnalysisThread::point_in_blobs(const ofPoint p, float distance)
 
 		auto closest_point = blob.getClosestPoint( p );
 
-		if (  fabsf(closest_point.distance(p)) <= distance )
+		if (  fabsf(glm::distance(closest_point, glm::vec3(p))) <= distance )
 		{
 			return true;
 		}

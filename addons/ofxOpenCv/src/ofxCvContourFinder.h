@@ -40,7 +40,7 @@ class ofxCvContourFinder : public ofBaseDraws {
     virtual void  draw() const { draw(0,0, _width, _height); };
     void  draw( float x, float y ) const override { draw(x,y, _width, _height); };
 	void  draw( float x, float y, float w, float h ) const override;
-	void  draw(const ofPoint & point) const override;
+	void  draw(const ofPoint & point) const;
 	void  draw(const ofRectangle & rect) const override;
 	void setAnchorPercent(float xPct, float yPct) override;
     virtual void setAnchorPoint(int x, int y);

@@ -44,7 +44,8 @@ using namespace std;
 
 #define MAX_TAG_VALUE_LENGTH_IN_CHARS		1024
 
-class ofxXmlSettings: public ofBaseFileSerializer{
+class ofxXmlSettings
+{
 
 	public:
         ofxXmlSettings();

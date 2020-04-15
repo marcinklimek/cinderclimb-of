@@ -17,11 +17,11 @@ constexpr char roi_config_file_name[] = "cc-settings.xml";
 //--------------------------------------------------------------
 void ofAppGui::setup_gui()
 {
-    gui.setup(_settings->get_gui_parameters());
-    gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
+    //gui.setup(_settings->get_gui_parameters());
+    //gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
 
-    if (ofFile::doesFileExist(gui_config_file_name))
-        gui.loadFromFile(gui_config_file_name);
+    //if (ofFile::doesFileExist(gui_config_file_name))
+    //    gui.loadFromFile(gui_config_file_name);
 
     ofAddListener( _settings->get_gui_parameters().parameterChangedE(), this, &ofAppGui::listenerFunction);
 
@@ -42,7 +42,7 @@ void ofAppGui::listenerFunction(ofAbstractParameter& e)
 void ofAppGui::exit()
 {
 	save_config();
-    gui.saveToFile("hec-settings.xml");
+    //gui.saveToFile("hec-settings.xml");
     //recorder.stop();
 }
 
@@ -71,7 +71,7 @@ void ofAppGui::draw()
     // rect.set( _settings->color_preview_pos.getX(), _settings->color_preview_pos.getY(), _settings->image_size_W, _settings->image_size_H);
     // ofDrawBitmapString(reportStr.str(), rect.getX() + spacing, rect.getY() + spacing);
 
-	gui.draw();
+	//gui.draw();
 }
 
 //--------------------------------------------------------------
