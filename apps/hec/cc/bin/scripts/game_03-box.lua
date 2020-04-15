@@ -11,6 +11,10 @@ border = deltaX*0.1
 
 shapes = {}
 
+colorTimer = 0
+colorR = 255
+colorG = 255
+colorB = 255
 
 local function Shape(x, y, w, h)
     
@@ -26,13 +30,16 @@ local function Shape(x, y, w, h)
 		timer = 0,
 		touched = false,
 		back = false,
-		alpha = 255
+		alpha = 255,
+		r = 255,
+		g = 255,
+		b = 255
 	}
 
 	function self.draw()
 	    of.pushStyle()	
 
-		of.setColor(255, 255, 255, self.alpha)
+		of.setColor(self.r, self.g, self.b, self.alpha)
 		of.drawRectangle( self.box )
 
 		of.popStyle()
@@ -43,6 +50,12 @@ local function Shape(x, y, w, h)
 		self.touched = true
 
 	end
+
+	function self.new_color()
+	
+
+	end
+
 
 	function self.inside(x, y)
 
@@ -76,13 +89,18 @@ local function Shape(x, y, w, h)
 		elseif self.wait then
 			self.timer = self.timer + 1
 
-			if self.timer > 240 then
+			if self.timer > 30 then
 				self.timer = 0
 				self.wait = false
 				self.back = true
+
+				self.r = colorR
+				self.g = colorG
+				self.b = colorB
+
 			end
 		elseif self.back then
-			self.alpha = self.alpha + 4
+			self.alpha = self.alpha + 10
 
 			if self.alpha > 255 then
 				self.alpha = 255
@@ -132,6 +150,17 @@ end
 
 ----------------------------------------------------
 function update()
+
+	colorTimer = colorTimer + 1
+
+	if colorTimer == 120 then
+		
+		colorTimer = 0
+
+		colorR = of.random(100, 255)
+		colorG = of.random(100, 255)
+		colorB = of.random(100, 255)
+	end
 
 	for i=1, uber.numBlobs do
 

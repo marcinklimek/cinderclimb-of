@@ -5,6 +5,8 @@
 //--------------------------------------------------------------
 void ofAppProjector::setup() 
 {
+	ofAddListener( _settings->get_gui_parameters().parameterChangedE(), this, &ofAppProjector::listenerFunction);
+
 	fbo.allocate(1024, 768);
     fbo.begin();
 		ofClear(0,0,0,255);
@@ -15,17 +17,6 @@ void ofAppProjector::setup()
 
 	//cout << ofGetWindowPositionX() << endl;
 	//cout << ofGetWindowPositionY() << endl;
-
-    // scripts to run
-
-	scripts.push_back("scripts/game_03-box.lua");
-	scripts.push_back("scripts/game_03-position.lua");
-	scripts.push_back("scripts/game_03-totoro.lua");
-	
-	scripts.push_back("scripts/game_03-trail.lua");
-	scripts.push_back("scripts/game_01-coins.lua");
-	scripts.push_back("scripts/ue_banner.lua");
-    currentScript = 0;
 
     uber_object.analysis = analysis;
 
@@ -42,11 +33,19 @@ void ofAppProjector::setup()
     // true = change working directory to the script's parent dir
     // so lua will find scripts with relative paths via require
     // note: changing dir does *not* affect the OF data path
-    lua.doScript(scripts[currentScript], true);
+    lua.doScript(_settings->get_script(), true);
 
     // call the script's setup() function
     lua.scriptSetup();
 	
+}
+
+void ofAppProjector::listenerFunction(ofAbstractParameter& e)
+{
+    if ( e.getName() == "script" )
+    {
+        reloadScript();
+    }
 }
 
 //--------------------------------------------------------------
@@ -107,13 +106,17 @@ void ofAppProjector::exit()
 }
 
 //--------------------------------------------------------------
-void ofAppProjector::keyPressed(int key) {
-    switch (key) {
+void ofAppProjector::keyPressed(int key) 
+{
+    switch (key) 
+	{
 
 	case 'f':
 
 		ofToggleFullscreen();
 		return;
+
+  	case ' ':
     case 'r':
         reloadScript();
         break;
@@ -123,17 +126,16 @@ void ofAppProjector::keyPressed(int key) {
         break;
 
     case OF_KEY_LEFT:
-        prevScript();
+		if ( _settings->currentScript - 1 >= 0 )
+			--_settings->currentScript;
+
         break;
 
     case OF_KEY_RIGHT:
-        nextScript();
-        break;
+        if ( ( _settings->currentScript + 1 ) < _settings->scripts.size() )
+			++_settings->currentScript;
 
-    case ' ':
-        lua.doString("print(\"this is a lua string saying you hit the space bar!\")");
         break;
-
     default: ;
     }
 
@@ -210,29 +212,11 @@ void ofAppProjector::reloadScript()
     // add Uber object
     luaopen_UberObject(lua);
 
-	cout << "Loaded: " << scripts[currentScript] << endl;
+	cout << "Loaded: " << _settings->get_script() << endl;
 
-    lua.doScript(scripts[currentScript], true);
+    lua.doScript(_settings->get_script(), true);
     lua.scriptSetup();
-
-
 }
 
-void ofAppProjector::nextScript() {
-    currentScript++;
-    if (currentScript > scripts.size() - 1) {
-        currentScript = 0;
-    }
-    reloadScript();
-}
 
-void ofAppProjector::prevScript() {
-    if (currentScript == 0) {
-        currentScript = scripts.size() - 1;
-    }
-    else {
-        currentScript--;
-    }
-    reloadScript();
-}
 

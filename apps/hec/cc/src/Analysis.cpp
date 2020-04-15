@@ -9,8 +9,6 @@
 #include "ofxCv/Wrappers.h"
 
 #include "convexHull/ofxConvexHull.h"
-#include "bgsubcnt/bgsubcnt.h"
-#include "ofxCv/ContourFinder.h"
 #include "ofxCvFloatImage.h"
 
 
@@ -243,7 +241,7 @@ void AnalysisThread::update_frame()
 			v.x = point.x / settings_->image_size_W;
 			v.y = point.y / settings_->image_size_H;
 
-			v = ofxHomography::toScreenCoordinates(v, sensing_window.get_homography());
+			v = ofxHomography::toScreenCoordinates(v, roi_window.get_homography());
 			filtered.emplace_back(v);
 		}
 		ofPolyline poly( filtered );
@@ -272,9 +270,6 @@ void AnalysisThread::draw()
 
     color_frame_public_.draw( settings_->color_preview_pos );
 
-    const float w =  settings_->image_size_W;
-    const float h =  settings_->image_size_H;
-
     ofPushMatrix();
     ofPushStyle();
     
@@ -288,8 +283,7 @@ void AnalysisThread::draw()
     report_str << "fps: " << fps_;
     ofDrawBitmapString(report_str.str(), spacing, spacing);
 
-
-    sensing_window.draw(settings_->color_preview_pos.getWidth(), settings_->color_preview_pos.getHeight());
+    roi_window.draw(settings_->color_preview_pos.getWidth(), settings_->color_preview_pos.getHeight());
 
     ofPopStyle();
     ofPopMatrix();
@@ -319,8 +313,8 @@ void AnalysisThread::draw_joints( vector<ofVec2f>& joints) const
 	const auto w = settings_->image_size_W;
 	const auto h = settings_->image_size_H;
 
-	const auto x = sensing_window.x * w;
-	const auto y = sensing_window.y * h;
+	const auto x = roi_window.x * w;
+	const auto y = roi_window.y * h;
 
     ofPushStyle();
 
@@ -333,7 +327,7 @@ void AnalysisThread::draw_joints( vector<ofVec2f>& joints) const
     ofSetColor(250, 250, 250);
 	
     for (const auto joint : joints) 
-        ofDrawCircle(joint.x * w * sensing_window.width, joint.y * h * sensing_window.height, 2);
+        ofDrawCircle(joint.x * w * roi_window.width, joint.y * h * roi_window.height, 2);
 
     ofPopMatrix();
     ofPopStyle();
@@ -354,7 +348,7 @@ void AnalysisThread::update_joints()
 
 		for( const auto& joint: joints_)
 		{
-			if ( sensing_window.inside(joint) )
+			if ( roi_window.inside(joint) )
 			{
 				ofVec2f v = joint;
 				v.x = 1.0f + v.x * -1.0f;

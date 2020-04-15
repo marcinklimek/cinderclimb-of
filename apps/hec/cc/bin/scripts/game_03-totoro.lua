@@ -13,7 +13,7 @@ fbo = of.Image()
 fbo:allocate(1024, 768, of.IMAGE_COLOR_ALPHA);
 
 function setup()
-	
+
 	of.clear(0, 0, 0, 0)
 
 	of.setFrameRate(60)
@@ -25,14 +25,14 @@ end
 ----------------------------------------------------
 
 function update()
-	
+
 	uber.getFBO(fbo)
 	totoroTex:setAlphaMask( fbo:getTexture() )
 
 end
 
 function drawFBO()
-	
+
 	of.enableAlphaBlending()
 
 	if uber.numBlobs == 0 then
@@ -52,10 +52,10 @@ function drawFBO()
 
 		for i=1, uber.numBlobs do
 			local blob = uber.blob(i)
-			
+
 			if blob then
 				of.beginShape()
-				
+
 				for k, v in pairs(blob) do
 					of.vertex(v.x, v.y)
 				end
@@ -76,8 +76,8 @@ function draw()
 
 	of.pushStyle()
 	of.pushMatrix()
-	
-	
+
+
 	of.scale(0.01, 0.01, 0.01)
 	of.enableBlendMode(of.BLENDMODE_ADD)
 
@@ -94,10 +94,10 @@ function draw()
 
 	for i=1, uber.numBlobs do
 		local blob = uber.blob(i)
-		
+
 		if blob then
 			of.beginShape()
-			
+
 			for k, v in pairs(blob) do
 				of.vertex(v.x, v.y)
 			end
@@ -105,7 +105,7 @@ function draw()
 			of.endShape()
 		end
 	end
-	
+
 	of.popMatrix()
 
 	of.popStyle()

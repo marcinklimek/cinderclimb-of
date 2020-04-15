@@ -4,16 +4,15 @@
 #include "Settings.h"
 #include "Analysis.h"
 #include "ofxGui/src/ofxPanel.h"
-#include "ofAppProjector.h"
 #include "ofxXmlSettings/src/ofxXmlSettings.h"
 
 class ofAppGui : public ofBaseApp
 {
 public:
     void setup() override;
-    void setupGui();
-    void exit() override;
-    void updateRecorder();
+    void setup_gui();
+	void listenerFunction(ofAbstractParameter& e);
+	void exit() override;
 
     void update() override;
     void draw() override;
@@ -27,9 +26,10 @@ public:
     void mouseExited(int x, int y) override;
     void windowResized(int w, int h) override;
     void dragEvent(ofDragInfo dragInfo) override;
+	void gotMessage(ofMessage msg) override;
+
 	void load_config();
 	void save_config();
-	void gotMessage(ofMessage msg) override;
     
     //ofRecorder recorder;
     std::shared_ptr<AnalysisThread> analysis;

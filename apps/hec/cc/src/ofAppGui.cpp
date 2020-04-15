@@ -9,29 +9,42 @@
 void ofAppGui::setup()
 {
 	load_config();
-    setupGui();
+    setup_gui();
 }
 
+constexpr char gui_config_file_name[] = "hec-settings.xml";
+constexpr char roi_config_file_name[] = "cc-settings.xml";
 //--------------------------------------------------------------
-void ofAppGui::setupGui()
+void ofAppGui::setup_gui()
 {
     gui.setup(_settings->get_gui_parameters());
-
-	
     gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
+
+    if (ofFile::doesFileExist(gui_config_file_name))
+        gui.loadFromFile(gui_config_file_name);
+
+    ofAddListener( _settings->get_gui_parameters().parameterChangedE(), this, &ofAppGui::listenerFunction);
 
     ofSetBackgroundAuto(false);
     ofSetBackgroundColor(0);
     ofEnableAlphaBlending();
 }
 
+void ofAppGui::listenerFunction(ofAbstractParameter& e)
+{
+    if ( e.getName() == "script" )
+    {
+        
+    }
+}
+
 //--------------------------------------------------------------
 void ofAppGui::exit()
 {
 	save_config();
+    gui.saveToFile("hec-settings.xml");
     //recorder.stop();
 }
-
 
 
 //--------------------------------------------------------------
@@ -73,7 +86,7 @@ void ofAppGui::keyPressed(int key)
      		break;
      }
 
-	projector_app->keyPressed(key);
+	//projector_app->keyPressed(key);
 }
 
 //--------------------------------------------------------------
@@ -84,11 +97,21 @@ void ofAppGui::keyReleased(int key)
          case 'f': return;
          case 'r': return;
 
+    case OF_KEY_LEFT:
+		if ( _settings->currentScript - 1 >= 0 )
+			--_settings->currentScript;
+
+        break;
+
+    case OF_KEY_RIGHT:
+        if ( ( _settings->currentScript + 1 ) < _settings->scripts.size() )
+			++_settings->currentScript;
+
      	default: 
      		break;
      }
 
-	projector_app->keyReleased(key);
+	//projector_app->keyReleased(key);
 }
 
 //--------------------------------------------------------------
@@ -102,9 +125,9 @@ void ofAppGui::mouseMoved(int x, int y)
         const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
         const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
 
-        analysis->sensing_window.mouseMoved(mx, my);
+        analysis->roi_window.mouseMoved(mx, my);
 
-        if ( analysis->sensing_window.is_changed() )
+        if ( analysis->roi_window.is_changed() )
         {
 		    save_config();   
         }
@@ -122,9 +145,9 @@ void ofAppGui::mouseDragged(int x, int y, int button)
         const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
         const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
 
-        analysis->sensing_window.mouseDragged(mx, my, button);
+        analysis->roi_window.mouseDragged(mx, my, button);
 
-        if ( analysis->sensing_window.is_changed() )
+        if ( analysis->roi_window.is_changed() )
         {
 		    save_config();   
         }
@@ -144,9 +167,9 @@ void ofAppGui::mousePressed(int x, int y, int button)
         const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
         const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
 
-        analysis->sensing_window.mousePressed(mx, my, button);
+        analysis->roi_window.mousePressed(mx, my, button);
 
-        if ( analysis->sensing_window.is_changed() )
+        if ( analysis->roi_window.is_changed() )
         {
 		    save_config();   
         }
@@ -164,9 +187,9 @@ void ofAppGui::mouseReleased(int x, int y, int button)
         const float mx = (x - _settings->color_preview_pos.getX()) / _settings->color_preview_pos.getWidth();
         const float my = (y - _settings->color_preview_pos.getY()) / _settings->color_preview_pos.getHeight();
 
-        analysis->sensing_window.mouseReleased(mx, my, button);
+        analysis->roi_window.mouseReleased(mx, my, button);
 
-        if ( analysis->sensing_window.is_changed() )
+        if ( analysis->roi_window.is_changed() )
         {
 		    save_config();   
         }
@@ -200,15 +223,15 @@ void ofAppGui::dragEvent(ofDragInfo dragInfo)
 
 void ofAppGui::load_config()
 {
-	if ( xml_settings_.loadFile("cc-settings.xml") )
+	if ( xml_settings_.loadFile(roi_config_file_name) )
 	{
-  		analysis->sensing_window.load(xml_settings_);
+  		analysis->roi_window.load(xml_settings_);
 	}
 }
 
 void ofAppGui::save_config()
 {
-    analysis->sensing_window.save(xml_settings_);
+    analysis->roi_window.save(xml_settings_);
 
-	xml_settings_.saveFile("cc-settings.xml");
+	xml_settings_.saveFile(roi_config_file_name);
 }

@@ -15,7 +15,7 @@ ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& _mom ) {
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom);
-        allocate( (int)mom.getWidth(), (int)mom.getHeight() );
+	    ofxCvImage::allocate( (int)mom.getWidth(), (int)mom.getHeight() );
         cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLogWarning("ofxCvColorImage") << "copy constructor: source image not allocated";

@@ -33,6 +33,7 @@ int main()
     shared_ptr<ofAppGui> gui_app(new ofAppGui);
     shared_ptr<ofAppProjector> projector_app(new ofAppProjector);
 	gui_app->_settings = app_settings;
+	projector_app->_settings = app_settings;
 
     shared_ptr<AnalysisThread> analysis = std::make_shared<AnalysisThread>(app_settings);
     analysis->setup();

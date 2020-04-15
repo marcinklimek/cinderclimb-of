@@ -3,62 +3,88 @@
 #include "ofMain.h"
 #include "Hysteresis.h"
 
-class FadeTimer {
+class FadeTimer
+{
 protected:
-	enum {RISING = true, FALLING = false};
+	enum { RISING = true, FALLING = false };
+
 	double referenceTime, risingLength, fallingLength;
 	bool direction;
 public:
 	FadeTimer()
-	:risingLength(0)
-	,fallingLength(0)
-	,direction(RISING)
-	,referenceTime(0) {
+		: risingLength(0)
+		  , fallingLength(0)
+		  , direction(RISING)
+		  , referenceTime(0)
+	{
 	}
-	void setLength(double length) {
+
+	void setLength(double length)
+	{
 		this->risingLength = length;
 		this->fallingLength = length;
 	}
-	void setLength(double risingLength, double fallingLength) {
+
+	void setLength(double risingLength, double fallingLength)
+	{
 		this->risingLength = risingLength;
 		this->fallingLength = fallingLength;
 	}
-	void start() {
+
+	void start()
+	{
 		double curTime = ofGetElapsedTimef();
 		double state = get();
 		referenceTime = curTime - state * risingLength;
 		direction = RISING;
 	}
-	void stop() {
+
+	void stop()
+	{
 		double curTime = ofGetElapsedTimef();
 		double state = get();
 		referenceTime = curTime - (1 - state) * fallingLength;
 		direction = FALLING;
 	}
-	void update(Hysteresis& hysteresis) {
-		if(hysteresis.wasTriggered()) {
+
+	void update(Hysteresis& hysteresis)
+	{
+		if (hysteresis.wasTriggered())
+		{
 			start();
-		} else if(hysteresis.wasUntriggered()) {
+		}
+		else if (hysteresis.wasUntriggered())
+		{
 			stop();
 		}
 	}
-	double get() {
-		if(referenceTime > 0) {
+
+	double get()
+	{
+		if (referenceTime > 0)
+		{
 			double base = ofGetElapsedTimef() - referenceTime;
-			if(direction == FALLING) {
+			if (direction == FALLING)
+			{
 				base /= fallingLength;
 				base = 1 - base;
-			} else {
+			}
+			else
+			{
 				base /= risingLength;
 			}
-			if(base < 0) return 0;
-			if(base > 1) return 1;
+			if (base < 0) return 0;
+			if (base > 1) return 1;
 			return base;
-		} else {
+		}
+		else
+		{
 			return 0;
 		}
 	}
-	bool getActive() {
+
+	bool getActive()
+	{
 		return get() > 0;
 	}
 };

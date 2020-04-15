@@ -1,4 +1,6 @@
 ﻿#include "Settings.h"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
 
 ofSettings::ofSettings()
 {
@@ -21,7 +23,7 @@ ofSettings::ofSettings()
 	parameters.add(erode_close_count2.set("erosion close 2", 0, 0, 30));
     parameters.add(dillate_count2.set("dillate 2", 0, 0, 30));
 
-    parameters.add(area_min.set("area min", 5500.0f, 500.0f, 50000.0f));
+    parameters.add(area_min.set("area min", 500.0f, 500.0f, 50000.0f));
     parameters.add(area_max.set("area max", 5000000.0f, 5000.0f, 5000000.0f));
     
     parameters.add(thresholdValue.set("Threshold Value", 10, 0, 255));
@@ -31,9 +33,46 @@ ofSettings::ofSettings()
 
     parameters.add(resetBackground.set("reset Background", true));
     parameters.add(resetBackgroundTime.set("reset Background time", 5, 1, 30));
-    parameters.add(epsilon.set("epsilon", 500, 0, 10000));
-    
+    parameters.add(epsilon.set("epsilon", 100, 0, 10000));
+
+	scan_for_scripts();
 }
+
+void ofSettings::scan_for_scripts()
+{
+    // scripts to run
+
+	const string path = "scripts";
+	ofDirectory dir(path);
+
+	dir.allowExt("lua");
+	dir.listDir();
+
+	scripts.clear();
+	scripts.emplace_back("scripts/start.lua");
+
+	for (auto i = 0; i < dir.size(); i++) 
+	{
+		const auto name = dir.getPath(i);
+		if ( boost::starts_with( name, "scripts\\game_" ) )
+		{
+			scripts.push_back( name );
+		}
+	}
+
+	std::sort(scripts.begin(), scripts.end());
+
+	parameters.add(currentScript.set("script", 0, 0, scripts.size()-1) );
+}
+
+string ofSettings::get_script()
+{
+	if (currentScript > 0 && currentScript < scripts.size())
+		return scripts[currentScript];
+
+	return scripts[0];
+}
+
 
 ofParameterGroup& ofSettings::get_gui_parameters()
 {
