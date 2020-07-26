@@ -17,6 +17,11 @@ constexpr char roi_config_file_name[] = "cc-settings.xml";
 //--------------------------------------------------------------
 void ofAppGui::setup_gui()
 {
+    gui.setupFlexBoxLayout();
+
+	ofxGuiPanel* panel = gui.addPanel(_settings->get_gui_parameters());
+	panel->loadTheme("theme_default.json", true);    
+
     //gui.setup(_settings->get_gui_parameters());
     //gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
 

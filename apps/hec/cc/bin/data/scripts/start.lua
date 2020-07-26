@@ -1,6 +1,4 @@
 Utils = require "Utils"
-
-box2d = require "LuaBox2D"
 uber = UberObj("Kinect")
 
 numX = 32
@@ -17,8 +15,8 @@ colorG = 255
 colorB = 255
 
 local function Shape(x, y, w, h)
-    
-	    -- public 
+
+	    -- public
 	local self = {
 		x = 0,
 		y = 0,
@@ -37,7 +35,7 @@ local function Shape(x, y, w, h)
 	}
 
 	function self.draw()
-	    of.pushStyle()	
+	    of.pushStyle()
 
 		of.setColor(self.r, self.g, self.b, self.alpha)
 		of.drawRectangle( self.box )
@@ -52,7 +50,7 @@ local function Shape(x, y, w, h)
 	end
 
 	function self.new_color()
-	
+
 
 	end
 
@@ -65,9 +63,9 @@ local function Shape(x, y, w, h)
 
 		--print (x >= self.x , y >= self.y , x <= self.x2 , y <= self.y2)
 		--local p = of.Point(x, y)
-		
+
 		if x >= self.x and y >= self.y and x <= self.x2 and y <= self.y2 then
-		
+
 			self.touched = true
 
 		end
@@ -127,7 +125,7 @@ function setup()
 
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
-	of.setWindowPosition(1920 , 0) -- (1920 + 1680,0)
+	--of.setWindowPosition(1920 , 0) -- (1920 + 1680,0)
 
 	for y=0,numY-1 do
 		for x=0,numX-1 do
@@ -154,7 +152,7 @@ function update()
 	colorTimer = colorTimer + 1
 
 	if colorTimer == 120 then
-		
+
 		colorTimer = 0
 
 		colorR = of.random(100, 255)
@@ -165,11 +163,11 @@ function update()
 	for i=1, uber.numBlobs do
 
 		local blob = uber.blob(i)
-		
+
 		if blob then
 
 			of.setColor(255, 0, 0, 128)
-			
+
 			for k, v in pairs(blob) do
 
 				local x = round(v.x / deltaX)
@@ -178,15 +176,18 @@ function update()
 				--for i,shape in ipairs(shapes) do
 				--	shape.inside(x, y)
 				--end
-				local offset = round( x + y*(numX) ) 
+				local offset = round( x + y*numX )
 				--print(v.x, v.y, x, y, offset)
-				
-				
+
+
 				if x < numX and y < numY then
-					shapes[offset].touch()
-					--print (numX*numY, v.x, v.y, x, y, offset)
+					local one = shapes[offset]
+
+					if one ~= nil then
+						one.touch()
+					end
 				end
-				
+
 			end
 
 		end
@@ -200,13 +201,14 @@ end
 
 
 function keyPressed(key)
+	print("key pressed")
 end
 
 ----------------------------------------------------
 function draw()
 	of.pushMatrix()
 	of.pushStyle()
-	
+
 	of.enableAlphaBlending()
 	of.setColor(255, 255, 255, 255)
 
@@ -219,12 +221,12 @@ function draw()
 
 	for i=1, uber.numBlobs do
 		local blob = uber.blob(i)
-		
+
 		if blob then
 
 			of.setColor(255, 0, 0, 128)
 			of.beginShape()
-			
+
 			for k, v in pairs(blob) do
 				of.vertex(v.x, v.y)
 			end
@@ -233,7 +235,7 @@ function draw()
 		end
 	end
 
-	
+
 	of.popStyle()
 	of.popMatrix()
 end

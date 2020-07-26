@@ -17,7 +17,7 @@ int main()
 	app_settings = std::make_shared<ofSettings>();
 
 	projector_settings.setSize(1024, 768);
-    projector_settings.resizable = false;
+    projector_settings.resizable = true;
 	
     shared_ptr<ofAppBaseWindow> projector_window = ofCreateWindow(projector_settings);
 	projector_window->setVerticalSync(true);
