@@ -45,10 +45,9 @@ template<class V, class N, class C, class T>
 class ofMesh_;
 using ofMesh = ofMesh_<ofDefaultVertexType, ofDefaultNormalType, ofDefaultColorType, ofDefaultTexCoordType>;
 
-enum class ofFboBeginMode : short;
+enum ofFboMode: short;
 enum ofLoopType: short;
 enum ofOrientation: short;
-
 
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
@@ -70,7 +69,7 @@ class ofStyle{
 			#else
 				drawBitmapMode		= OF_BITMAPMODE_MODEL_BILLBOARD;
 			#endif
-			bgColor.set(200,200,200);
+			bgColor.set(60, 60, 60);
 			//depthTest = false;
 		}
 

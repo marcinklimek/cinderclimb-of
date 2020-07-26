@@ -2,8 +2,9 @@
 
 #include "ofConstants.h"
 
+#ifdef OF_SOUND_PLAYER_FMOD
 
-#include "ofBaseSoundPlayer.h"
+#include "ofSoundBaseTypes.h"
 
 
 extern "C" {
@@ -40,7 +41,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		ofFmodSoundPlayer();
 		virtual ~ofFmodSoundPlayer();
 
-		bool load(string fileName, bool stream = false);
+        bool load(const std::filesystem::path& fileName, bool stream = false);
 		void unload();
 		void play();
 		void stop();
@@ -82,3 +83,4 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		FMOD_SOUND * sound;
 };
 
+#endif //OF_SOUND_PLAYER_FMOD
