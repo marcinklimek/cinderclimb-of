@@ -191,3 +191,5 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
+/libs/openFrameworksCompiled/lib/vs/Win32/openframeworksLib.lib
+/libs/openFrameworksCompiled/lib/vs/Win32/openframeworksLib_debug.lib
