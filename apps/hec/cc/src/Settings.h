@@ -20,6 +20,9 @@ public:
 
     ofSettings();
 
+	void scan_for_scripts();
+    std::string get_script();
+
 	int image_size_W = DEPTH_WIDTH;
 	int image_size_H = DEPTH_HEIGHT;
 
@@ -55,4 +58,7 @@ public:
     ofParameter<float> epsilon;
 
     ofParameterGroup& get_gui_parameters();
+
+	std::vector<std::string> scripts;
+	ofParameter<int> currentScript;
 };

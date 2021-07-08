@@ -1,5 +1,4 @@
 ﻿#include "ofSensingWindow.h"
-#include "ofMatrixStack.h"
 
 ofSensingWindow::ofSensingWindow(): is_changed_(false)
 {

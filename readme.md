@@ -18,6 +18,13 @@ Rodzaje aktywności, dla osób zdrowych:
 - wyświetlenie kształtu na ścianie - musisz się ustawić zgodnie z nim i wytrwać chwilę
 - skacząca żabka - widać tylko jeden chwyt i uczestnik skacze na kolejny chwyt
 
+
+Interesting libs
+================
+
+- http://web.cmb.usc.edu/people/alber/Software/tomominer/docs/cpp/files.html
+
+
 Other
 =====
 

@@ -90,15 +90,15 @@ namespace ofxCv {
 		return fitEllipse(Mat(toCv(polyline)));
 	}
 	
-	void fitLine(const ofPolyline& polyline, ofVec2f& point, ofVec2f& direction) {
+	void fitLine(const ofPolyline& polyline, glm::vec2& point, glm::vec2& direction) {
 		Vec4f line;
 		fitLine(Mat(toCv(polyline)), line, CV_DIST_L2, 0, .01, .01);
 
-        direction = ofVec2f(line[0], line[1]);
-        point = ofVec2f(line[2], line[3]);
+        direction = glm::vec2(line[0], line[1]);
+        point = glm::vec2(line[2], line[3]);
 	}
     
-	ofMatrix4x4 estimateAffine3D(std::vector<ofVec3f>& from, std::vector<ofVec3f>& to, float accuracy) {
+	ofMatrix4x4 estimateAffine3D(std::vector<glm::vec3>& from, std::vector<glm::vec3>& to, float accuracy) {
 		if(from.size() != to.size() || from.size() == 0 || to.size() == 0) {
 			return ofMatrix4x4();
 		}
@@ -106,7 +106,7 @@ namespace ofxCv {
 		return estimateAffine3D(from, to, outliers, accuracy);
 	}
     
-	ofMatrix4x4 estimateAffine3D(std::vector<ofVec3f>& from, std::vector<ofVec3f>& to, std::vector<unsigned char>& outliers, float accuracy) {
+	ofMatrix4x4 estimateAffine3D(std::vector<glm::vec3>& from, std::vector<glm::vec3>& to, std::vector<unsigned char>& outliers, float accuracy) {
 		Mat fromMat(1, from.size(), CV_32FC3, &from[0]);
 		Mat toMat(1, to.size(), CV_32FC3, &to[0]);
 		Mat affine;

@@ -1,5 +1,7 @@
 #include "Uber.h"
-#include "ofxLuaBindings.h"
+
+#include "ofBindings.h"
+#include "ofxLua.h"
 
 using namespace lutok2;
 

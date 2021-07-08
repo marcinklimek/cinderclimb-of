@@ -1,12 +1,19 @@
 ﻿#include "Grabber.h"
 #include "ofxColorMap/src/ofxColorMap.h"
-#include <cmath>
 
 
 ofGrabber::ofGrabber(std::shared_ptr<ofSettings> settings) 
 {
 	_settings = settings;
     kinect.open();
+
+    if ( !kinect.isOpen() )
+    {
+		// display message box  
+		MessageBox(0, _T("Brak kamery Kinect"), _T("Error"),   MB_OK | MB_ICONERROR);
+    	exit(EXIT_FAILURE);
+    }
+	
     kinect.initDepthSource();
     kinect.initColorSource();
     kinect.initInfraredSource();
@@ -15,7 +22,8 @@ ofGrabber::ofGrabber(std::shared_ptr<ofSettings> settings)
 
     if (kinect.getSensor()->get_CoordinateMapper(&coordinateMapper) < 0) 
     {
-        ofLogError() << "Could not acquire CoordinateMapper";
+		MessageBox(0, _T("Problem z uzyskaniem CoordinateMapper"), _T("Error"),   MB_OK | MB_ICONERROR);
+    	exit(EXIT_FAILURE);    	
     }
 
     haveAllStreams = false;
@@ -84,7 +92,8 @@ void ofGrabber::update()
 
 		updateRawDepthLookupTable();
 	}
-        // Count number of tracked bodies
+
+	// Count number of tracked bodies
     numBodiesTracked = 0;
     auto& bodies = kinect.getBodySource()->getBodies();
     for (auto& body : bodies) 

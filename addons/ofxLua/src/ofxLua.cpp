@@ -17,8 +17,7 @@
 #include "ofxLua.h"
 
 #include "ofUtils.h"
-#include "ofxLuaBindings.h"
-#include <boost/algorithm/string/replace.hpp>
+
 
 // macro for chdir() as Windows uses a protected variant
 #ifdef TARGET_WIN32
@@ -28,6 +27,8 @@
 	#define CHDIR chdir
 #endif
 #include <errno.h>
+
+#include "ofBindings.h"
 
 // declare the wrapped modules
 extern "C" {
@@ -104,7 +105,7 @@ void ofxLua::setAbortOnError(bool abort) {
 }
 
 //------------------------------------------------------------------------------
-bool ofxLua::doString(const string& text) {
+bool ofxLua::doString(const std::string& text) {
 	
 	if(!isValid()) {
 		ofLogError("ofxLua") << "Cannot do string, lua state not inited!";
@@ -123,12 +124,12 @@ bool ofxLua::doString(const string& text) {
 	if(ret != 0) {
 		switch(ret) {
 			case LUA_ERRSYNTAX: {
-				string msg = (string) lua_tostring(L, LUA_STACK_TOP);
+				std::string msg = (std::string) lua_tostring(L, LUA_STACK_TOP);
 				errorOccurred(msg);
 				break;
 			}
 			case LUA_ERRMEM: {
-				string msg = "Memory error",
+				std::string msg = "Memory error",
 				errorOccurred(msg);
 				break;
 			}
@@ -140,7 +141,7 @@ bool ofxLua::doString(const string& text) {
 	// run the string
 	ret = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if(ret != 0) {
-		string msg = (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 		return false;
 	}
@@ -149,21 +150,21 @@ bool ofxLua::doString(const string& text) {
 }
 
 //------------------------------------------------------------------------------
-bool ofxLua::doScript(const string& script, bool changeDir) {
+bool ofxLua::doScript(const std::string& script, bool changeDir) {
 
 	if(!isValid()) {
 		ofLogError("ofxLua") << "Cannot do script, lua state not inited!";
 		return false;
 	}
 	
-	string fullpath = ofFilePath::getAbsolutePath(ofToDataPath(script));
-	string file = ofFilePath::getFileName(fullpath);
-	string folder = ofFilePath::getEnclosingDirectory(fullpath);
+	std::string fullpath = ofFilePath::getAbsolutePath(ofToDataPath(script));
+	std::string file = ofFilePath::getFileName(fullpath);
+	std::string folder = ofFilePath::getEnclosingDirectory(fullpath);
 
-	cout << "fullpath " << fullpath << endl;
-	cout << "file " << file << endl;
-	cout << "folder " << folder << endl;
-
+	std::cout << "fullpath " << fullpath << std::endl;
+	std::cout << "file " << file << std::endl;
+	std::cout << "folder " << folder << std::endl;
+	
 	// trim trailing slash
 	if(folder.size() > 0 && folder.at(folder.size()-1) == '/') {
 		folder.erase(folder.end()-1);
@@ -192,17 +193,17 @@ bool ofxLua::doScript(const string& script, bool changeDir) {
 	if(ret != 0) {
 		switch(ret) {
 			case LUA_ERRFILE: {
-				string msg = (string)"Script \""+file+"\" not found or unreadable";
+				std::string msg = (std::string)"Script \""+file+"\" not found or unreadable";
 				errorOccurred(msg);
 				break;
 			}
 			case LUA_ERRSYNTAX: {
-				string msg = (string) lua_tostring(L, LUA_STACK_TOP);
+				std::string msg = (std::string) lua_tostring(L, LUA_STACK_TOP);
 				errorOccurred(msg);
 				break;
 			}
 			case LUA_ERRMEM: {
-				string msg = "Memory error for script \""+file+"\"";
+				std::string msg = "Memory error for script \""+file+"\"";
 				errorOccurred(msg);
 				break;
 			}
@@ -212,7 +213,7 @@ bool ofxLua::doScript(const string& script, bool changeDir) {
 	
 	// run the script
 	if(lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
-		string msg = (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 		return false;
 	}
@@ -237,7 +238,7 @@ void ofxLua::scriptSetup() {
 	}
 	lua_getglobal(L, "setup");
 	if(lua_pcall(L, 0, 0, 0) != 0) {
-		string msg = "Error running setup(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running setup(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -248,7 +249,7 @@ void ofxLua::scriptUpdate() {
 	}
 	lua_getglobal(L, "update");
 	if(lua_pcall(L, 0, 0, 0) != 0) {
-		string msg = "Error running update(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running update(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -259,7 +260,7 @@ void ofxLua::scriptDraw() {
 	}
 	lua_getglobal(L, "draw");
 	if(lua_pcall(L, 0, 0, 0) != 0) {			
-		string msg = "Error running draw(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running draw(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -270,7 +271,7 @@ void ofxLua::scriptDrawFBO() {
 	}
 	lua_getglobal(L, "drawFBO");
 	if(lua_pcall(L, 0, 0, 0) != 0) {			
-		string msg = "Error running drawFBO(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running drawFBO(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -282,7 +283,7 @@ void ofxLua::scriptDrawUI() {
 	}
 	lua_getglobal(L, "drawUI");
 	if(lua_pcall(L, 0, 0, 0) != 0) {			
-		string msg = "Error running drawUI(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running drawUI(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -293,7 +294,7 @@ void ofxLua::scriptExit() {
 	}
 	lua_getglobal(L, "exit");
 	if(lua_pcall(L, 0, 0, 0) != 0) {
-		string msg = "Error running exit(): " + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running exit(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -307,8 +308,8 @@ void ofxLua::scriptWindowResized(int w, int h) {
 	lua_pushinteger(L, w);
 	lua_pushinteger(L, h);
 	if(lua_pcall(L, 2, 0, 0) != 0) {
-		string msg = "Error running windowResized(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running windowResized(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -320,8 +321,8 @@ void ofxLua::scriptKeyPressed(int key) {
 	lua_getglobal(L, "keyPressed");
 	lua_pushinteger(L, key);
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running keyPressed(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running keyPressed(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -333,8 +334,8 @@ void ofxLua::scriptKeyReleased(int key) {
 	lua_getglobal(L, "keyReleased");
 	lua_pushinteger(L, key);
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running keyReleased(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running keyReleased(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -347,8 +348,8 @@ void ofxLua::scriptMouseMoved(int x, int y ) {
 	lua_pushinteger(L, x);
 	lua_pushinteger(L, y);
 	if(lua_pcall(L, 2, 0, 0) != 0) {
-		string msg = "Error running mouseMoved(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mouseMoved(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -362,8 +363,8 @@ void ofxLua::scriptMouseDragged(int x, int y, int button) {
 	lua_pushinteger(L, y);
 	lua_pushinteger(L, button);
 	if(lua_pcall(L, 3, 0, 0) != 0) {
-		string msg = "Error running mouseDragged(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mouseDragged(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -377,8 +378,8 @@ void ofxLua::scriptMousePressed(int x, int y, int button) {
 	lua_pushinteger(L, y);
 	lua_pushinteger(L, button);
 	if(lua_pcall(L, 3, 0, 0) != 0) {			
-		string msg = "Error running mousePressed(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mousePressed(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -392,8 +393,8 @@ void ofxLua::scriptMouseReleased(int x, int y, int button) {
 	lua_pushinteger(L, y);
 	lua_pushinteger(L, button);
 	if(lua_pcall(L, 3, 0, 0) != 0) {
-		string msg = "Error running mouseReleased(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mouseReleased(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -408,8 +409,8 @@ void ofxLua::scriptMouseScrolled(int x, int y, float scrollX, float scrollY) {
 	lua_pushnumber(L, scrollX);
 	lua_pushnumber(L, scrollY);
 	if(lua_pcall(L, 4, 0, 0) != 0) {
-		string msg = "Error running mouseScrolled(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mouseScrolled(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -422,8 +423,8 @@ void ofxLua::scriptMouseEntered(int x, int y) {
 	lua_pushinteger(L, x);
 	lua_pushinteger(L, y);
 	if(lua_pcall(L, 2, 0, 0) != 0) {
-		string msg = "Error running mouseEntered(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mouseEntered(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -436,8 +437,8 @@ void ofxLua::scriptMouseExited(int x, int y) {
 	lua_pushinteger(L, x);
 	lua_pushinteger(L, y);
 	if(lua_pcall(L, 2, 0, 0) != 0) {
-		string msg = "Error running mouseExited(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running mouseExited(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -450,8 +451,8 @@ void ofxLua::scriptDragEvent(ofDragInfo dragInfo) {
 	lua_getglobal(L, "dragEvent");
 	pushobject("ofDragInfo", new ofDragInfo(dragInfo)); // lua manages this memory
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running dragInfo(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running dragInfo(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -463,8 +464,8 @@ void ofxLua::scriptGotMessage(ofMessage msg) {
 	lua_getglobal(L, "gotMessage");
 	lua_pushstring(L, msg.message.c_str());
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running gotMessage(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running gotMessage(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -477,8 +478,8 @@ void ofxLua::scriptTouchDown(ofTouchEventArgs &touch) {
 	lua_getglobal(L, "touchDown");
 	pushobject("ofTouchEventArgs", new ofTouchEventArgs(touch)); // lua manages this memory
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running touchDown(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running touchDown(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -490,8 +491,8 @@ void ofxLua::scriptTouchMoved(ofTouchEventArgs &touch) {
 	lua_getglobal(L, "touchMoved");
 	pushobject("ofTouchEventArgs", new ofTouchEventArgs(touch)); // lua manages this memory
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running touchMoved(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running touchMoved(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -503,8 +504,8 @@ void ofxLua::scriptTouchUp(ofTouchEventArgs &touch) {
 	lua_getglobal(L, "touchUp");
 	pushobject("ofTouchEventArgs", new ofTouchEventArgs(touch)); // lua manages this memory
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running touchUp(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running touchUp(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -516,8 +517,8 @@ void ofxLua::scriptTouchDoubleTap(ofTouchEventArgs &touch) {
 	lua_getglobal(L, "touchDoubleTap");
 	pushobject("ofTouchEventArgs", new ofTouchEventArgs(touch)); // lua manages this memory
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running touchDoubleTap(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running touchDoubleTap(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -529,14 +530,14 @@ void ofxLua::scriptTouchCancelled(ofTouchEventArgs &touch) {
 	lua_getglobal(L, "touchCancelled");
 	pushobject("ofTouchEventArgs", new ofTouchEventArgs(touch)); // lua manages this memory
 	if(lua_pcall(L, 1, 0, 0) != 0) {
-		string msg = "Error running touchCancelled(): "
-					 + (string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running touchCancelled(): "
+					 + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
 
 //------------------------------------------------------------------------------
-bool ofxLua::isBool(const string& name) {
+bool ofxLua::isBool(const std::string& name) {
 	return exists(name, LUA_TBOOLEAN);
 }
 
@@ -544,7 +545,7 @@ bool ofxLua::isBool(const unsigned int index) {
 	return exists(index, LUA_TBOOLEAN);
 }
 
-bool ofxLua::isNumber(const string& name) {
+bool ofxLua::isNumber(const std::string& name) {
 	return exists(name, LUA_TNUMBER);
 }
 
@@ -552,7 +553,7 @@ bool ofxLua::isNumber(const unsigned int index) {
 	return exists(index, LUA_TNUMBER);
 }
 
-bool ofxLua::isString(const string& name) {
+bool ofxLua::isString(const std::string& name) {
 	return exists(name, LUA_TSTRING);
 }
 
@@ -560,7 +561,7 @@ bool ofxLua::isString(const unsigned int index) {
 	return exists(index, LUA_TSTRING);
 }
 
-bool ofxLua::isFunction(const string& name) {
+bool ofxLua::isFunction(const std::string& name) {
 	return exists(name, LUA_TFUNCTION);
 }
 
@@ -568,7 +569,7 @@ bool ofxLua::isFunction(const unsigned int index) {
 	return exists(index, LUA_TFUNCTION);
 }
 
-bool ofxLua::isTable(const string& name) {
+bool ofxLua::isTable(const std::string& name) {
 	return exists(name, LUA_TTABLE);
 }
 
@@ -576,7 +577,7 @@ bool ofxLua::isTable(const unsigned int index) {
 	return exists(index, LUA_TTABLE);
 }
 
-bool ofxLua::isNil(const string& name) {
+bool ofxLua::isNil(const std::string& name) {
 	return exists(name, LUA_TNIL);
 }
 
@@ -585,7 +586,7 @@ bool ofxLua::isNil(const unsigned int index) {
 }
 		
 //------------------------------------------------------------------------------
-void ofxLua::newTable(const string& tableName) {
+void ofxLua::newTable(const std::string& tableName) {
 	if(!isValid()) {
 		return;
 	}
@@ -620,7 +621,7 @@ void ofxLua::newTable(const unsigned int& tableIndex) {
 	lua_settable(L, -3);
 }
 
-bool ofxLua::pushTable(const string& tableName) {
+bool ofxLua::pushTable(const std::string& tableName) {
 	if(!isValid()) {
 		return false;
 	}
@@ -708,7 +709,7 @@ unsigned int ofxLua::tableSize() {
 	return lua_rawlen(L, LUA_STACK_TOP);
 }
 
-unsigned int ofxLua::tableSize(const string& tableName) {
+unsigned int ofxLua::tableSize(const std::string& tableName) {
 	unsigned int size = 0;
 	pushTable(tableName);
 	size = tableSize();
@@ -742,11 +743,11 @@ void ofxLua::printTable() {
 		return;
 	}
 	
-	ofLogNotice("ofxLua") <<  "table " << (string)tables.back();
+	ofLogNotice("ofxLua") <<  "table " << (std::string)tables.back();
 	printTable(LUA_STACK_TOP, 1);
 }
 
-void ofxLua::printTable(const string& tableName) {
+void ofxLua::printTable(const std::string& tableName) {
 	if(!pushTable(tableName)) {
 		return;
 	}
@@ -793,7 +794,7 @@ void ofxLua::clearTable() {
 	lua_pop(L, 1); // stack:
 }
 
-void ofxLua::clearTable(const string& tableName) {
+void ofxLua::clearTable(const std::string& tableName) {
 	if(!pushTable(tableName)) {
 		return;
 	}
@@ -810,7 +811,7 @@ void ofxLua::clearTable(const unsigned int& tableIndex) {
 }
 		
 //------------------------------------------------------------------------------
-bool ofxLua::getBool(const string& name, bool defaultValue) {
+bool ofxLua::getBool(const std::string& name, bool defaultValue) {
 	return read<bool>(name, LUA_TBOOLEAN, defaultValue);
 }
 
@@ -818,7 +819,7 @@ bool ofxLua::getBool(const unsigned int index, bool defaultValue) {
 	return read<bool>(index, LUA_TBOOLEAN, defaultValue);
 }
 
-lua_Number ofxLua::getNumber(const string& name, lua_Number defaultValue) {
+lua_Number ofxLua::getNumber(const std::string& name, lua_Number defaultValue) {
 	return read<lua_Number>(name, LUA_TNUMBER, defaultValue);
 }
 
@@ -826,40 +827,40 @@ lua_Number ofxLua::getNumber(const unsigned int index, lua_Number defaultValue) 
 	return read<lua_Number>(index, LUA_TNUMBER, defaultValue);
 }
 
-string ofxLua::getString(const string& name, const string& defaultValue) {
-	return read<string>(name, LUA_TSTRING, defaultValue);
+std::string ofxLua::getString(const std::string& name, const std::string& defaultValue) {
+	return read<std::string>(name, LUA_TSTRING, defaultValue);
 }
 
-string ofxLua::getString(const unsigned int index, const string& defaultValue) {
-	return read<string>(index, LUA_TSTRING, defaultValue);
+std::string ofxLua::getString(const unsigned int index, const std::string& defaultValue) {
+	return read<std::string>(index, LUA_TSTRING, defaultValue);
 }
 
-void ofxLua::getBoolVector(const string& tableName, vector<bool>& v) {
+void ofxLua::getBoolVector(const std::string& tableName, std::vector<bool>& v) {
 	readVector<bool>(tableName, v, LUA_TBOOLEAN, false);
 }
 
-void ofxLua::getBoolVector(const unsigned int tableIndex, vector<bool>& v) {
+void ofxLua::getBoolVector(const unsigned int tableIndex, std::vector<bool>& v) {
 	readVector<bool>(tableIndex, v, LUA_TBOOLEAN, false);
 }
 
-void ofxLua::getNumberVector(const string& tableName, vector<lua_Number>& v) {
+void ofxLua::getNumberVector(const std::string& tableName, std::vector<lua_Number>& v) {
 	readVector<lua_Number>(tableName, v, LUA_TNUMBER, 0.0f);
 }
 
-void ofxLua::getNumberVector(const unsigned int tableIndex, vector<lua_Number>& v) {
+void ofxLua::getNumberVector(const unsigned int tableIndex, std::vector<lua_Number>& v) {
 	readVector<lua_Number>(tableIndex, v, LUA_TNUMBER, 0.0f);
 }
 
-void ofxLua::getStringVector(const string& tableName, vector<string>& v) {
-	readVector<string>(tableName, v, LUA_TSTRING, "");
+void ofxLua::getStringVector(const std::string& tableName, std::vector<std::string>& v) {
+	readVector<std::string>(tableName, v, LUA_TSTRING, "");
 }
 
-void ofxLua::getStringVector(const unsigned int tableIndex, vector<string>& v) {
-	readVector<string>(tableIndex, v, LUA_TSTRING, "");
+void ofxLua::getStringVector(const unsigned int tableIndex, std::vector<std::string>& v) {
+	readVector<std::string>(tableIndex, v, LUA_TSTRING, "");
 }
 
 //------------------------------------------------------------------------------
-void ofxLua::setBool(const string& name, bool value) {
+void ofxLua::setBool(const std::string& name, bool value) {
 	write<bool>(name, LUA_TBOOLEAN, value);
 }
 
@@ -867,7 +868,7 @@ void ofxLua::setBool(const unsigned int index, bool value) {
 	write<bool>(index, LUA_TBOOLEAN, value);
 }
 
-void ofxLua::setNumber(const string& name, lua_Number value) {
+void ofxLua::setNumber(const std::string& name, lua_Number value) {
 	write<lua_Number>(name, LUA_TNUMBER, value);
 }
 
@@ -875,39 +876,39 @@ void ofxLua::setNumber(const unsigned int index, lua_Number value) {
 	write<lua_Number>(index, LUA_TNUMBER, value);
 }
 
-void ofxLua::setString(const string& name, const string value) {
-	write<string>(name, LUA_TSTRING, value);
+void ofxLua::setString(const std::string& name, const std::string value) {
+	write<std::string>(name, LUA_TSTRING, value);
 }
 
-void ofxLua::setString(const unsigned int index, const string value) {
-	write<string>(index, LUA_TSTRING, value);
+void ofxLua::setString(const unsigned int index, const std::string value) {
+	write<std::string>(index, LUA_TSTRING, value);
 }
 
-void ofxLua::setBoolVector(const string& tableName, vector<bool>& v) {
+void ofxLua::setBoolVector(const std::string& tableName, std::vector<bool>& v) {
 	writeVector<bool>(tableName, LUA_TBOOLEAN, v);
 }
 
-void ofxLua::setBoolVector(const unsigned int tableIndex, vector<bool>& v) {
+void ofxLua::setBoolVector(const unsigned int tableIndex, std::vector<bool>& v) {
 	writeVector<bool>(tableIndex, LUA_TBOOLEAN, v);
 }
 
-void ofxLua::setNumberVector(const string& tableName, vector<lua_Number>& v) {
+void ofxLua::setNumberVector(const std::string& tableName, std::vector<lua_Number>& v) {
 	writeVector<lua_Number>(tableName, LUA_TNUMBER, v);
 }
 
-void ofxLua::setNumberVector(const unsigned int tableIndex, vector<lua_Number>& v) {
+void ofxLua::setNumberVector(const unsigned int tableIndex, std::vector<lua_Number>& v) {
 	writeVector<lua_Number>(tableIndex, LUA_TNUMBER, v);
 }
 
-void ofxLua::setStringVector(const string& tableName, vector<string>& v) {
-	writeVector<string>(tableName, LUA_TSTRING, v);
+void ofxLua::setStringVector(const std::string& tableName, std::vector<std::string>& v) {
+	writeVector<std::string>(tableName, LUA_TSTRING, v);
 }
 
-void ofxLua::setStringVector(const unsigned int tableIndex, vector<string>& v) {
-	writeVector<string>(tableIndex, LUA_TSTRING, v);
+void ofxLua::setStringVector(const unsigned int tableIndex, std::vector<std::string>& v) {
+	writeVector<std::string>(tableIndex, LUA_TSTRING, v);
 }
 
-void ofxLua::setNil(const string& name) {
+void ofxLua::setNil(const std::string& name) {
 	if(!isValid()) {
 		return;
 	}
@@ -968,7 +969,7 @@ void ofxLua::writeTable(ofxLuaFileWriter& writer, bool recursive) {
 	
 	// in a table namespace
 	if(!lua_istable(L, LUA_STACK_TOP)) {
-		ofLogWarning("ofxLua") << "Couldn't write table \"" << (string)tables.back()
+		ofLogWarning("ofxLua") << "Couldn't write table \"" << (std::string)tables.back()
 			<< "\", top of stack is not a table";
 		return;
 	}
@@ -976,7 +977,7 @@ void ofxLua::writeTable(ofxLuaFileWriter& writer, bool recursive) {
 	writeTable(LUA_STACK_TOP, writer, recursive);
 }
 
-void ofxLua::writeTable(const string& tableName, ofxLuaFileWriter& writer, bool recursive) {
+void ofxLua::writeTable(const std::string& tableName, ofxLuaFileWriter& writer, bool recursive) {
 	if(!pushTable(tableName)) {
 		return;
 	}
@@ -986,20 +987,20 @@ void ofxLua::writeTable(const string& tableName, ofxLuaFileWriter& writer, bool 
 	popTable();
 }
 
-bool ofxLua::writeTableToFile(const string& filename, bool recursive) {
+bool ofxLua::writeTableToFile(const std::string& filename, bool recursive) {
 	ofxLuaFileWriter writer;
 	writeTable(writer, recursive);
 	return writer.saveToFile(filename);
 }
 
-bool ofxLua::writeTableToFile(const string& tableName, const string& filename, bool recursive) {
+bool ofxLua::writeTableToFile(const std::string& tableName, const std::string& filename, bool recursive) {
 	ofxLuaFileWriter writer;
 	writeTable(tableName, writer, recursive);
 	return writer.saveToFile(filename);
 }
 
 //------------------------------------------------------------------------------
-void ofxLua::errorOccurred(string& msg) {
+void ofxLua::errorOccurred(std::string& msg) {
 	
 	errorMessage = msg;
 	
@@ -1017,8 +1018,8 @@ void ofxLua::printStack() {
 	if(!isValid()) {
 		return;
 	}
-	
-	stringstream line;
+
+	std::stringstream line;
 	line << "stack " << lua_gettop(L);
 
 	int top = lua_gettop(L);
@@ -1055,8 +1056,8 @@ void ofxLua::printStack() {
 
 // push object pointer to Lua using SWIG helper function,
 // from http://stackoverflow.com/questions/9455552/swiglua-passing-a-c-instance-as-a-lua-function-parameter
-bool ofxLua::pushobject(const string &typeName, void *object, bool manageMemory) {
-	string typeString = typeName + " *";
+bool ofxLua::pushobject(const std::string &typeName, void *object, bool manageMemory) {
+	std::string typeString = typeName + " *";
 	swig_type_info *type = SWIG_TypeQuery(L, typeString.c_str());
 	if(type == NULL) {
 		return false;
@@ -1093,7 +1094,7 @@ template<> lua_Number ofxLua::totype<lua_Number>(int stackIndex, int type, lua_N
 	}
 }
 
-template<> string ofxLua::totype<string>(int stackIndex, int type, string defaultValue) {
+template<> std::string ofxLua::totype<std::string>(int stackIndex, int type, std::string defaultValue) {
 	if(lua_type(L, stackIndex) != type) {
 		return defaultValue;
 	}
@@ -1106,14 +1107,14 @@ template<> string ofxLua::totype<string>(int stackIndex, int type, string defaul
 }
 
 //------------------------------------------------------------------------------
-template <> void ofxLua::settype<bool>(const string& name, int type, bool value) {
+template<> void ofxLua::settype<bool>(const std::string& name, int type, bool value) {
 	if(type == LUA_TBOOLEAN) {
 		lua_pushboolean(L, value);
 		lua_setfield(L, -2, name.c_str());
 	}
 }
 
-template <> void ofxLua::settype<bool>(unsigned int index, int type, bool value) {
+template<> void ofxLua::settype<bool>(unsigned int index, int type, bool value) {
 	if(type == LUA_TBOOLEAN) {
 		lua_pushinteger(L, index);
 		lua_pushboolean(L, value);
@@ -1121,14 +1122,14 @@ template <> void ofxLua::settype<bool>(unsigned int index, int type, bool value)
 	}
 }
 
-template <> void ofxLua::settype<lua_Number>(const string& name, int type, lua_Number value) {
+template<> void ofxLua::settype<lua_Number>(const std::string& name, int type, lua_Number value) {
 	if(type == LUA_TNUMBER) {
 		lua_pushnumber(L, value);
 		lua_setfield(L, -2, name.c_str());
 	}
 }
 
-template <> void ofxLua::settype<lua_Number>(unsigned int index, int type, lua_Number value) {
+template<> void ofxLua::settype<lua_Number>(unsigned int index, int type, lua_Number value) {
 	if(type == LUA_TNUMBER) {
 		lua_pushinteger(L, index);
 		lua_pushnumber(L, value);
@@ -1136,14 +1137,14 @@ template <> void ofxLua::settype<lua_Number>(unsigned int index, int type, lua_N
 	}
 }
 
-template <> void ofxLua::settype<string>(const string& name, int type, string value) {
+template<> void ofxLua::settype<std::string>(const std::string& name, int type, std::string value) {
 	if(type == LUA_TSTRING) {
 		lua_pushstring(L, value.c_str());
 		lua_setfield(L, -2, name.c_str());
 	}
 }
 
-template <> void ofxLua::settype<string>(unsigned int index, int type, string value) {
+template<> void ofxLua::settype<std::string>(unsigned int index, int type, std::string value) {
 	if(type == LUA_TSTRING) {
 		lua_pushinteger(L, index);
 		lua_pushstring(L, value.c_str());
@@ -1152,7 +1153,7 @@ template <> void ofxLua::settype<string>(unsigned int index, int type, string va
 }
 
 //------------------------------------------------------------------------------
-bool ofxLua::exists(const string& name, int type) {
+bool ofxLua::exists(const std::string& name, int type) {
 	if(!isValid()) {
 		return false;
 	}
@@ -1220,15 +1221,15 @@ bool ofxLua::checkType(int stackIndex, int type) {
 // from http://stackoverflow.com/questions/6137684/iterate-through-lua-table
 void ofxLua::printTable(int stackIndex, int numTabs) {
 	
-	string tabs;
+	std::string tabs;
 	for(int i = 0; i < numTabs; ++i) {
 		tabs += "\t";
 	}
 	
 	lua_pushvalue(L, stackIndex); // stack: -1 => table
 	lua_pushnil(L); // stack : -2 => table; -1 => nil
-	
-	stringstream line;
+
+	std::stringstream line;
 	while(lua_next(L, -2)) {
 	
 		// stack: -3 => table; -2 => key; -1 => value
@@ -1236,7 +1237,7 @@ void ofxLua::printTable(int stackIndex, int numTabs) {
 		// stack: -4 => table; -3 => key; -2 => value; -1 => key
 	
 		// ignore global, packages, etc
-		string name = (string) lua_tostring(L, -1);
+		std::string name = (std::string) lua_tostring(L, -1);
 		if(name == "_G" || name == "package") {
 			line.str("");
 			lua_pop(L, 2);
@@ -1244,7 +1245,7 @@ void ofxLua::printTable(int stackIndex, int numTabs) {
 		}
 	
 		// print value type and key
-		line << tabs << (string) lua_typename(L, lua_type(L, -2)) << " " << name;
+		line << tabs << (std::string) lua_typename(L, lua_type(L, -2)) << " " << name;
 		
 		// recurse if a table
 		if(lua_istable(L, -2)) {
@@ -1280,8 +1281,8 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 	
 	lua_pushvalue(L, stackIndex); // stack: -1 => table
 	lua_pushnil(L); // stack: -2 => table; -1 => nil
-	
-	stringstream line;
+
+	std::stringstream line;
 	while(lua_next(L, -2)) {
 
 		// stack: -3 => table; -2 => key; -1 => value
@@ -1308,7 +1309,7 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 						writer.writeBool(lua_tonumber(L, -1), (bool)lua_toboolean(L, -2));
 					}
 					else if(lua_isstring(L, -1)) {
-						writer.writeBool((string) lua_tostring(L, -1), (bool)lua_toboolean(L, -2));
+						writer.writeBool((std::string) lua_tostring(L, -1), (bool)lua_toboolean(L, -2));
 					}
 					else {
 						ofLogWarning("ofxLua") << "unknown key type when writing table";
@@ -1319,7 +1320,7 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 						writer.writeNumber(lua_tonumber(L, -1), lua_tonumber(L, -2));
 					}
 					else if(lua_isstring(L, -1)) {
-						writer.writeNumber((string) lua_tostring(L, -1), lua_tonumber(L, -2));
+						writer.writeNumber((std::string) lua_tostring(L, -1), lua_tonumber(L, -2));
 					}
 					else {
 						ofLogWarning("ofxLua") << "unknown key type when writing table";
@@ -1330,7 +1331,7 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 						writer.writeString(lua_tonumber(L, -1), lua_tostring(L, -2));
 					}
 					else if(lua_isstring(L, -1)) {
-						writer.writeString((string) lua_tostring(L, -1), lua_tostring(L, -2));
+						writer.writeString((std::string) lua_tostring(L, -1), lua_tostring(L, -2));
 					}
 					else {
 						ofLogWarning("ofxLua") << "unknown key type when writing table";

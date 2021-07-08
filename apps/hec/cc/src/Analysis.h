@@ -57,7 +57,7 @@ public:
 
     ofVec2f projector_screen_size;
 
-	ofSensingWindow sensing_window;
+	ofSensingWindow roi_window;
 
 
 

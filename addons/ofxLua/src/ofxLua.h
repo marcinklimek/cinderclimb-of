@@ -33,7 +33,7 @@ class ofxLuaListener {
 
 	public :
 	
-		virtual void errorReceived(string& msg) = 0;
+		virtual void errorReceived(std::string& msg) = 0;
 };
 
 ///	a Lua interpreter instance
@@ -81,7 +81,7 @@ class ofxLua {
 	/// \section Running Lua code
 		
 		/// run a lua string, returns false on script error
-		bool doString(const string& text);
+		bool doString(const std::string& text);
 		
 		/// run a lua script, returns false on script error
 		///
@@ -90,7 +90,7 @@ class ofxLua {
 		/// cannot find local scripts
 		///
 		/// note: changeDir does not affect the current OF data path
-		bool doScript(const string& script, bool changeDir=false);
+		bool doScript(const std::string& script, bool changeDir=false);
 		
 	/// \section Listeners
 		
@@ -110,8 +110,9 @@ class ofxLua {
 		void scriptSetup();
 		void scriptUpdate();
 		void scriptDraw();
-	void scriptDrawFBO();
-	void scriptDrawUI();
+		void scriptDrawFBO();
+		void scriptDrawUI();
+	
 		void scriptExit();
 	
 		void scriptWindowResized(int w, int h);
@@ -141,35 +142,35 @@ class ofxLua {
 		///
 		/// note: pushTable must have been called when using the table index
 		
-		bool isBool(const string& name);
+		bool isBool(const std::string& name);
 		bool isBool(const unsigned int index);
 		
-		bool isNumber(const string& name);
+		bool isNumber(const std::string& name);
 		bool isNumber(const unsigned int index);
 		
-		bool isString(const string& name);
+		bool isString(const std::string& name);
 		bool isString(const unsigned int index);
 		
-		bool isFunction(const string& name);
+		bool isFunction(const std::string& name);
 		bool isFunction(const unsigned int index);
 		
-		bool isTable(const string& name);
+		bool isTable(const std::string& name);
 		bool isTable(const unsigned int index);
 		
 		/// check explictly if something *dosen't* exist
 		///
 		/// nil is the lua equivalent of NULL
-		bool isNil(const string& name);
+		bool isNil(const std::string& name);
 		bool isNil(const unsigned int index);
 	
 	/// \section Table Operations
 	
 		/// create a new table
-		void newTable(const string& tableName);
+		void newTable(const std::string& tableName);
 		void newTable(const unsigned int& tableIndex); // must pushTable first
 	
 		/// push table one level
-		bool pushTable(const string& tableName);
+		bool pushTable(const std::string& tableName);
 		bool pushTable(const unsigned int& tableIndex); // must pushTable first
 		void popTable(); //< pop table one level
 		void popAllTables(); //< pop all table levels
@@ -177,17 +178,17 @@ class ofxLua {
 		/// get the size of a table
 		/// undefined if the table is not a sequence aka has a nil value somewhere
 		unsigned int tableSize(); //< current table
-		unsigned int tableSize(const string& tableName); //< table in current table
+		unsigned int tableSize(const std::string& tableName); //< table in current table
 		unsigned int tableSize(const unsigned int& tableIndex); //< table in current table
 		
 		/// print a table
 		void printTable(); //< current table
-		void printTable(const string& tableName); //< table in current table
+		void printTable(const std::string& tableName); //< table in current table
 		void printTable(const unsigned int& tableIndex); //< table in current table
 		
 		/// clear a table, removes all objects in the table
 		void clearTable(); //< current table
-		void clearTable(const string& tableName); //< table in current table
+		void clearTable(const std::string& tableName); //< table in current table
 		void clearTable(const unsigned int& tableIndex); //< table in current table
 	
 	/// \section Reading
@@ -195,53 +196,53 @@ class ofxLua {
 		/// note: integer indices start with 1!
 		
 		/// get variables
-		bool getBool(const string& name, bool defaultValue=false);
+		bool getBool(const std::string& name, bool defaultValue=false);
 		bool getBool(const unsigned int index, bool defaultValue=false);
 		
-		lua_Number getNumber(const string& name, lua_Number devaultValue=0);
+		lua_Number getNumber(const std::string& name, lua_Number devaultValue=0);
 		lua_Number getNumber(const unsigned int index, lua_Number devaultValue=0);
 		
-		string getString(const string& name, const string& defaultValue="");
-		string getString(const unsigned int index, const string& defaultValue="");
+		std::string getString(const std::string& name, const std::string& defaultValue="");
+		std::string getString(const unsigned int index, const std::string& defaultValue="");
 		
 		/// get a vector from a table, prints warnings on wrong type
 		///
 		/// note: clears given vector before reading lua vars
-		void getBoolVector(const string& tableName, vector<bool>& v);
-		void getBoolVector(const unsigned int tableIndex, vector<bool>& v);
+		void getBoolVector(const std::string& tableName, std::vector<bool>& v);
+		void getBoolVector(const unsigned int tableIndex, std::vector<bool>& v);
 		
-		void getNumberVector(const string& tableName, vector<lua_Number>& v);
-		void getNumberVector(const unsigned int tableIndex, vector<lua_Number>& v);
+		void getNumberVector(const std::string& tableName, std::vector<lua_Number>& v);
+		void getNumberVector(const unsigned int tableIndex, std::vector<lua_Number>& v);
 		
-		void getStringVector(const string& tableName, vector<string>& v);
-		void getStringVector(const unsigned int tableIndex, vector<string>& v);
+		void getStringVector(const std::string& tableName, std::vector<std::string>& v);
+		void getStringVector(const unsigned int tableIndex, std::vector<std::string>& v);
 	
 	/// \section Writing
 		
 		/// note: integer indices start with 1!
 		
 		/// set variables, creates if not existing
-		void setBool(const string& name, bool value);
+		void setBool(const std::string& name, bool value);
 		void setBool(const unsigned int index, bool value);
 		
-		void setNumber(const string& name, lua_Number value);
+		void setNumber(const std::string& name, lua_Number value);
 		void setNumber(const unsigned int index, lua_Number value);
 		
-		void setString(const string& name, const string value);
-		void setString(const unsigned int index, const string value);
+		void setString(const std::string& name, const std::string value);
+		void setString(const unsigned int index, const std::string value);
 
 		/// set a table from a vector, table must exist
-		void setBoolVector(const string& tableName, vector<bool>& v);
-		void setBoolVector(const unsigned int tableIndex, vector<bool>& v);
+		void setBoolVector(const std::string& tableName, std::vector<bool>& v);
+		void setBoolVector(const unsigned int tableIndex, std::vector<bool>& v);
 		
-		void setNumberVector(const string& tableName, vector<lua_Number>& v);
-		void setNumberVector(const unsigned int tableIndex, vector<lua_Number>& v);
+		void setNumberVector(const std::string& tableName, std::vector<lua_Number>& v);
+		void setNumberVector(const unsigned int tableIndex, std::vector<lua_Number>& v);
 		
-		void setStringVector(const string& tableName, vector<string>& v);
-		void setStringVector(const unsigned int tableIndex, vector<string>& v);
+		void setStringVector(const std::string& tableName, std::vector<std::string>& v);
+		void setStringVector(const unsigned int tableIndex, std::vector<std::string>& v);
 	
 		/// set a variable or table to nil, essentially deleting it from the state
-		void setNil(const string& name);
+		void setNil(const std::string& name);
 		void setNil(const unsigned int index);
 	
 	/// \section Writing to a File
@@ -259,19 +260,19 @@ class ofxLua {
 	
 		/// write the current table to a given file writer
 		void writeTable(ofxLuaFileWriter& writer, bool recursive=true);
-		void writeTable(const string& tableName, ofxLuaFileWriter& writer, bool recursive=true);
+		void writeTable(const std::string& tableName, ofxLuaFileWriter& writer, bool recursive=true);
 		
-		bool writeTableToFile(const string& filename, bool recursive=true);
-		bool writeTableToFile(const string& tableName, const string& filename, bool recursive=true);
+		bool writeTableToFile(const std::string& filename, bool recursive=true);
+		bool writeTableToFile(const std::string& tableName, const std::string& filename, bool recursive=true);
 	
 	/// \section Util
 	
 		/// send a lua error message to any listeners and clear lua state
 		/// if abortOnError is set
-		virtual void errorOccurred(string& msg);
+		virtual void errorOccurred(std::string& msg);
 	
 		/// get the current error message, an alternative to ofxLuaListener
-		string getErrorMessage();
+		std::string getErrorMessage();
 	
 		/// print current stack length and contents
 		/// from left to right, useful for debugging
@@ -313,7 +314,7 @@ class ofxLua {
 		///     lua.pushobject("ofTouchArgEvents", t, true); // true: let lua delete it
 		///     lua_pcall(lua, 1, 0, 0);
 		///
-		bool pushobject(const string &typeName, void *object, bool manageMemory=true);
+		bool pushobject(const std::string &typeName, void *object, bool manageMemory=true);
 	
     protected:
 		
@@ -321,7 +322,7 @@ class ofxLua {
 		static const int LUA_STACK_TOP = -1;
 		
 		/// returns true if an object exists
-		bool exists(const string& name, int type);
+		bool exists(const std::string& name, int type);
 		bool exists(const unsigned int index, int type);
 		
 		/// returns true is an object is of a certain type
@@ -331,26 +332,26 @@ class ofxLua {
 		template <class T> T totype(int stackIndex, int type, T defaultValue);
 	
 		/// read a value from the state
-		template <class T> T read(const string& name, int type, T defaultVal);
+		template <class T> T read(const std::string& name, int type, T defaultVal);
 		template <class T> T read(const unsigned int index, int type, T defaultVal);
 
 		/// read a table into a vector
-		template <class T> void readVector(const string& name, vector<T>& v, int type, T defaultValue);
-		template <class T> void readVector(const unsigned int index, vector<T>& v, int type, T defaultValue);
-		template <class T> void readVectorHelper(vector<T>& v, int type, T defaultValue);
+		template <class T> void readVector(const std::string& name, std::vector<T>& v, int type, T defaultValue);
+		template <class T> void readVector(const unsigned int index, std::vector<T>& v, int type, T defaultValue);
+		template <class T> void readVectorHelper(std::vector<T>& v, int type, T defaultValue);
 	
 		/// set a value of a given type
-		template <class T> void settype(const string& name, int type, T value);
+		template <class T> void settype(const std::string& name, int type, T value);
 		template <class T> void settype(unsigned int index, int type, T value);
 	
 		/// write a value to the state
-		template <class T> void write(const string& name, int type, T value);
+		template <class T> void write(const std::string& name, int type, T value);
 		template <class T> void write(const unsigned int index, int type, T value);
 		
 		/// write a vector into a table
-		template <class T> void writeVector(const string& name, int type, vector<T>& v);
-		template <class T> void writeVector(const unsigned int index, int type, vector<T>& v);
-		template <class T> void writeVectorHelper(int type, vector<T>& v);
+		template <class T> void writeVector(const std::string& name, int type, std::vector<T>& v);
+		template <class T> void writeVector(const unsigned int index, int type, std::vector<T>& v);
+		template <class T> void writeVectorHelper(int type, std::vector<T>& v);
 	
 		/// print a table
 		void printTable(int stackIndex, int numTabs);
@@ -366,19 +367,19 @@ class ofxLua {
 	
 		struct TableIndex {
 			int type;           //< LUA_TSTRING or LUA_TNUMBER
-			string name;        //< name index
+			std::string name;        //< name index
 			unsigned int index; //< number index
-			operator string() {
+			operator std::string() {
 				if(type == LUA_TNUMBER) {
-					return to_string(index);
+					return std::to_string(index);
 				}
 				return name;
 			}
 		};
-		vector<TableIndex> tables;  //< the currently open table stack
+		std::vector<TableIndex> tables;  //< the currently open table stack
 	
-		ofEvent<string> errorEvent; //< error event object, string is error msg
-		string errorMessage = "";   //< current error message
+		ofEvent<std::string> errorEvent; //< error event object, string is error msg
+		std::string errorMessage = "";   //< current error message
 };
 
 // TEMPLATE FUNCTIONS
@@ -389,7 +390,7 @@ template <class T>
 T ofxLua::totype(int stackIndex, int type, T defaultValue) { return defaultValue; }
 
 template <class T>
-void ofxLua::settype(const string& name, int type, T value) {}
+void ofxLua::settype(const std::string& name, int type, T value) {}
 
 template <class T>
 void ofxLua::settype(unsigned int index, int type, T value) {}
@@ -397,7 +398,7 @@ void ofxLua::settype(unsigned int index, int type, T value) {}
 // READ
 
 template <class T>
-T ofxLua::read(const string& name, int type, T defaultValue) {
+T ofxLua::read(const std::string& name, int type, T defaultValue) {
 	if(!isValid()) {
 		return defaultValue;
 	}
@@ -468,7 +469,7 @@ T ofxLua::read(const unsigned int index, int type, T defaultValue) {
 }
 
 template <class T>
-void ofxLua::readVector(const string& name, vector<T>& v, int type, T defaultValue) {
+void ofxLua::readVector(const std::string& name, std::vector<T>& v, int type, T defaultValue) {
 	if(!pushTable(name)) {
 		return;
 	}
@@ -477,7 +478,7 @@ void ofxLua::readVector(const string& name, vector<T>& v, int type, T defaultVal
 }
 
 template <class T>
-void ofxLua::readVector(const unsigned int index, vector<T>& v, int type, T defaultValue) {
+void ofxLua::readVector(const unsigned int index, std::vector<T>& v, int type, T defaultValue) {
 	if(!pushTable(index)) {
 		return;
 	}
@@ -486,7 +487,7 @@ void ofxLua::readVector(const unsigned int index, vector<T>& v, int type, T defa
 }
 
 template <class T>
-void ofxLua::readVectorHelper(vector<T>& v, int type, T defaultValue) {
+void ofxLua::readVectorHelper(std::vector<T>& v, int type, T defaultValue) {
 	if(!isValid()) {
 		return;
 	}
@@ -494,7 +495,7 @@ void ofxLua::readVectorHelper(vector<T>& v, int type, T defaultValue) {
 	v.clear();
 	
 	if(!lua_istable(L, LUA_STACK_TOP)) {
-		string tname = "unknown";
+		std::string tname = "unknown";
 		if(!tables.empty()) {
 			tname = tables.back();
 		}
@@ -513,7 +514,7 @@ void ofxLua::readVectorHelper(vector<T>& v, int type, T defaultValue) {
 			v.push_back(totype(-1, type, defaultValue));
 		}
 		else {
-			string tname = "unknown";
+			std::string tname = "unknown";
 			if(!tables.empty()) {
 				tname = tables.back();
 			}
@@ -529,7 +530,7 @@ void ofxLua::readVectorHelper(vector<T>& v, int type, T defaultValue) {
 // WRITE
 
 template <class T>
-void ofxLua::write(const string& name, int type, T value) {
+void ofxLua::write(const std::string& name, int type, T value) {
 	if(!isValid()) {
 		return;
 	}
@@ -537,7 +538,7 @@ void ofxLua::write(const string& name, int type, T value) {
 	// global variable?
 	if(tables.empty()) {
 		lua_pushglobaltable(L);
-		settype(name, type, value);
+		settype<T>(name, type, value);
 		lua_pop(L, 1);
 	}
 	
@@ -548,7 +549,7 @@ void ofxLua::write(const string& name, int type, T value) {
 				<< ", top of stack is not a table";
 			return;
 		}
-		settype(name, type, value);
+		settype<T>(name, type, value);
 	}
 }
 
@@ -568,11 +569,11 @@ void ofxLua::write(const unsigned int index, int type, T value) {
 		return;
 	}
 	
-	settype(index, type, value);
+	settype<T>(index, type, value);
 }
 
 template <class T>
-void ofxLua::writeVector(const string& name, int type, vector<T>& v) {
+void ofxLua::writeVector(const std::string& name, int type, std::vector<T>& v) {
 	if(!pushTable(name)) {
 		return;
 	}
@@ -581,7 +582,7 @@ void ofxLua::writeVector(const string& name, int type, vector<T>& v) {
 }
 
 template <class T>
-void ofxLua::writeVector(const unsigned int index, int type, vector<T>& v) {
+void ofxLua::writeVector(const unsigned int index, int type, std::vector<T>& v) {
 	if(!pushTable(index)) {
 		return;
 	}
@@ -590,14 +591,14 @@ void ofxLua::writeVector(const unsigned int index, int type, vector<T>& v) {
 }
 
 template <class T>
-void ofxLua::writeVectorHelper(int type, vector<T>& v) {
+void ofxLua::writeVectorHelper(int type, std::vector<T>& v) {
 
 	// global variable?
 	if(tables.empty()) {
 		ofLogWarning("ofxLua") << "Couldn't write table vector, no open tables";
 		return;
 	}
-	string tname = tables.back();
+	std::string tname = tables.back();
 	
 	if(v.empty()) {
 		ofLogWarning("ofxLua") << "Couldn't write table \"" << tname << "\", vector is empty";
@@ -613,6 +614,6 @@ void ofxLua::writeVectorHelper(int type, vector<T>& v) {
 	
 	// add new variables
 	for(size_t i = 0; i < v.size(); ++i) {
-		settype(i+1, type, v[i]);
+		settype<T>(i+1, type, v[i]);
 	}
 }

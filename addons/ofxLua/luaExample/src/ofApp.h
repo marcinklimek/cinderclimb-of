@@ -11,7 +11,6 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "ofxLua.h"
 
 class ofApp : public ofBaseApp, ofxLuaListener {
@@ -26,13 +25,13 @@ class ofApp : public ofBaseApp, ofxLuaListener {
 		
 		// input
 		void keyPressed(int key);
-		void mouseMoved(int x, int y );
+		void mouseMoved(int x, int y);
 		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		
 		// ofxLua error callback
-		void errorReceived(string& msg);
+		void errorReceived(std::string& msg);
 		
 		// a bunch of api tests
 		void runTests();

@@ -93,7 +93,7 @@ namespace ofxCv {
         ofLoadIdentityMatrix();
         
         ofMatrix4x4 lookAt;
-        lookAt.makeLookAtViewMatrix(ofVec3f(0,0,0), ofVec3f(0,0,1), ofVec3f(0,-1,0));
+        lookAt.makeLookAtViewMatrix(glm::vec3(0,0,0), glm::vec3(0,0,1), glm::vec3(0,-1,0));
         ofMultMatrix(lookAt);
     }
     
@@ -125,8 +125,8 @@ namespace ofxCv {
         fs << "distCoeffs" << distCoeffs;
         fs << "reprojectionError" << reprojectionError;
         fs << "features" << "[";
-        for(std::size_t i = 0; i < imagePoints.size(); i++) {
-            fs << "[:" << imagePoints[i] << "]";
+        for(int i = 0; i < (int)imagePoints.size(); i++) {
+            fs << imagePoints[i];
         }
         fs << "]";
     }
@@ -157,6 +157,96 @@ namespace ofxCv {
     }
     
     void Calibration::loadLcp(const std::string& filename, float focalLength, int imageWidth, int imageHeight, bool absolute){
+        imagePoints.clear();
+        
+        // Load the XML
+        ofXml xml;
+        bool loaded = xml.load(ofToDataPath(filename, absolute));
+        if(!loaded){
+            ofLogError()<<"No camera profile file found at "<<filename;
+            return;
+        }
+        
+        
+        // Remove the processing instruction in the top?
+        
+        // Find the camera profiles in the xml
+        auto profiles = xml.find("//rdf:RDF/rdf:Description/photoshop:CameraProfiles/rdf:Seq");
+
+        // Find the best matches of camera profiles
+        // TODO: Not taking focus distance in account
+        int bestMatchLt = -1, bestMatchGt = -1;
+        float bestMatchLtVal, bestMatchGtVal;
+        ofXml bestMatchLtXml, bestMatchGtXml;
+        for(auto& profile : profiles) {
+            int i=0;
+            for(auto& child : profile.getChildren()){
+                float curFocalLength = child.getChild("stCamera:FocalLength").getFloatValue();
+                if(curFocalLength <= focalLength  && (bestMatchLt == -1 || curFocalLength > bestMatchLtVal)){
+                    bestMatchLt = i;
+                    bestMatchLtVal = curFocalLength;
+                    bestMatchLtXml = child;
+                }
+                if(curFocalLength > focalLength && (bestMatchGt == -1 || curFocalLength < bestMatchGtVal)){
+                    bestMatchGt = i;
+                    bestMatchGtVal = curFocalLength;
+                    bestMatchGtXml = child;
+                }
+                i++;
+            }
+        }
+        
+        // Get the values out of the profile
+        float lcpImageWidth; // ImageWidth, pixels
+        float lcpImageHeight; // ImageLength, pixels
+        float cropFactor; // SensorFormatFactor, "focal length multiplier", "crop factor"
+        float principalPointX = 0.5; // ImageXCenter, ratio
+        float principalPointY = 0.5; // ImageYCenter, ratio
+        
+        float interpolation = 0;
+        if(bestMatchGt != -1) {
+            interpolation = ofMap(focalLength, bestMatchLtVal, bestMatchGtVal, 0, 1);
+        }
+        
+        lcpImageWidth = bestMatchLtXml.getChild("stCamera:ImageWidth").getFloatValue();
+        lcpImageHeight = bestMatchLtXml.getChild("stCamera:ImageLength").getFloatValue();
+        cropFactor = bestMatchLtXml.getChild("stCamera:SensorFormatFactor").getFloatValue();
+        
+        float principalPointXLt = bestMatchLtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:ImageXCenter").getFloatValue();
+        float principalPointYLt = bestMatchLtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:ImageYCenter").getFloatValue();
+        float k1Lt = bestMatchLtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:RadialDistortParam1").getFloatValue();
+        float k2Lt = bestMatchLtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:RadialDistortParam2").getFloatValue();
+        float k3Lt = bestMatchLtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:RadialDistortParam3").getFloatValue();
+        
+        float k1 = k1Lt;
+        float k2 = k2Lt;
+        float k3 = k3Lt;
+        
+        if(bestMatchGt != -1){
+            float principalPointXGt = bestMatchGtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:ImageXCenter").getFloatValue() ;
+            float principalPointYGt = bestMatchGtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:ImageYCenter").getFloatValue();
+            float k1Gt = bestMatchGtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:RadialDistortParam1").getFloatValue();
+            float k2Gt = bestMatchGtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:RadialDistortParam2").getFloatValue();
+            float k3Gt = bestMatchGtXml.getChild("stCamera:PerspectiveModel").getChild("stCamera:RadialDistortParam3").getFloatValue();
+            
+            k1 = k1Gt * interpolation + k1Lt * (1-interpolation);
+            k2 = k2Gt * interpolation + k2Lt * (1-interpolation);
+            k3 = k3Gt * interpolation + k3Lt * (1-interpolation);
+        }
+        
+        setDistortionCoefficients(k1, k2, k3, 0);
+        
+        float sensorWidthMM = 35.0 / cropFactor;
+        
+        Intrinsics intrinsics;
+        cv::Size2f sensorSize(sensorWidthMM, sensorWidthMM * lcpImageHeight / lcpImageWidth);
+        
+        if(imageWidth == 0) imageWidth = lcpImageWidth;
+        if(imageHeight == 0) imageHeight = lcpImageHeight;
+        cv::Size imageSize(imageWidth,imageHeight);
+        
+        intrinsics.setup(focalLength, imageSize, sensorSize);
+        setIntrinsics(intrinsics);
     }
     
     
@@ -322,15 +412,15 @@ namespace ofxCv {
         remap(src, dst, undistortMapX, undistortMapY, interpolationMode);
     }
     
-    ofVec2f Calibration::undistort(ofVec2f& src) const {
-        ofVec2f dst;
+    glm::vec2 Calibration::undistort(glm::vec2& src) const {
+        glm::vec2 dst;
         cv::Mat matSrc = cv::Mat(1, 1, CV_32FC2, &src.x);
         cv::Mat matDst = cv::Mat(1, 1, CV_32FC2, &dst.x);;
         undistortPoints(matSrc, matDst, distortedIntrinsics.getCameraMatrix(), distCoeffs);
         return dst;
     }
     
-    void Calibration::undistort(std::vector<ofVec2f>& src, std::vector<ofVec2f>& dst) const {
+    void Calibration::undistort(std::vector<glm::vec2>& src, std::vector<glm::vec2>& dst) const {
         int n = src.size();
         dst.resize(n);
         cv::Mat matSrc = cv::Mat(n, 1, CV_32FC2, &src[0].x);
@@ -407,11 +497,11 @@ namespace ofxCv {
     // this won't work until undistort() is in pixel coordinates
     /*
      void Calibration::drawUndistortion() const {
-     std::vector<ofVec2f> src, dst;
+     std::vector<glm::vec2> src, dst;
      cv::Point2i divisions(32, 24);
      for(int y = 0; y < divisions.y; y++) {
      for(int x = 0; x < divisions.x; x++) {
-     src.push_back(ofVec2f(
+     src.push_back(glm::vec2(
 					ofMap(x, -1, divisions.x, 0, addedImageSize.width),
 					ofMap(y, -1, divisions.y, 0, addedImageSize.height)));
      }
@@ -452,7 +542,7 @@ namespace ofxCv {
         ofMesh mesh;
         mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
         for(std::size_t j = 0; j < objectPoints[i].size(); j++) {
-            ofVec3f cur = toOf(objectPoints[i][j]);
+            glm::vec3 cur = toOf(objectPoints[i][j]);
             mesh.addVertex(cur);
         }
         mesh.draw();

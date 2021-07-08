@@ -9,7 +9,8 @@ class ofAppProjector : public ofBaseApp, ofxLuaListener
 
 public:
     void setup();
-    void update();
+	void listenerFunction(ofAbstractParameter& e);
+	void update();
     void draw();
 	void draw_fbo();
     void exit();
@@ -31,17 +32,14 @@ public:
 
     // script control
     void reloadScript();
-    void nextScript();
-    void prevScript();
 
     std::shared_ptr<ofBaseApp> gui;
     std::shared_ptr<AnalysisThread> analysis;
 
     ofxLua lua;
-    vector<string> scripts;
-    size_t currentScript;
-
+   
 	bool isCalibration = false;
+	shared_ptr<ofSettings> _settings;
 
 
 private:

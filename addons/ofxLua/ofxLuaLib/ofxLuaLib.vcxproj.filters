@@ -15,7 +15,10 @@
     <ClCompile Include="..\src\ofxLuaFileWriter.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\bindings\desktop\ofxLuaBindings.cpp">
+    <ClCompile Include="..\src\bindings\glmBindings.cpp">
+      <Filter>src\bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bindings\desktop\ofBindings.cpp">
       <Filter>src\bindings</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,7 +29,7 @@
     <ClInclude Include="..\src\ofxLuaFileWriter.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\bindings\ofxLuaBindings.h">
+    <ClInclude Include="..\src\bindings\ofBindings.h">
       <Filter>src\bindings</Filter>
     </ClInclude>
   </ItemGroup>

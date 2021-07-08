@@ -9,6 +9,9 @@
 #include "ofSoundUtils.h"
 #include "ofLog.h"
 #include <limits>
+#include "glm/trigonometric.hpp"
+
+using namespace std;
 
 #if !defined(TARGET_ANDROID) && !defined(TARGET_IPHONE) && !defined(TARGET_LINUX_ARM)
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Hermite;
@@ -31,9 +34,9 @@ ofSoundBuffer::ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::si
 	checkSizeAndChannelsConsistency("constructor");
 }
 
-void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int _sampleRate) {
 	this->channels = numChannels;
-	this->samplerate = sampleRate;
+	setSampleRate(_sampleRate);
 	buffer.resize(numFrames * numChannels);
 	for(std::size_t i = 0; i < size(); i++){
 		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
@@ -41,9 +44,9 @@ void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, s
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
-void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int _sampleRate) {
 	this->channels = numChannels;
-	this->samplerate = sampleRate;
+	setSampleRate(_sampleRate);
 	buffer.assign(floatBuffer, floatBuffer + (numFrames * numChannels));
 	checkSizeAndChannelsConsistency("copyFrom");
 }
@@ -183,10 +186,14 @@ void ofSoundBuffer::copyTo(ofSoundBuffer & soundBuffer, std::size_t nFrames, std
 	soundBuffer.resize(nFrames*outChannels);
 	soundBuffer.setNumChannels(outChannels);
 	soundBuffer.setSampleRate(samplerate);
+	soundBuffer.setTickCount(this->getTickCount());
+	soundBuffer.setDeviceID(this->getDeviceID());
 	copyTo(&soundBuffer[0], nFrames, outChannels, fromFrame, loop);
 }
 
 void ofSoundBuffer::copyTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool loop) const{
+	outBuffer.setTickCount(this->getTickCount());
+	outBuffer.setDeviceID(this->getDeviceID());
 	copyTo(&outBuffer[0], outBuffer.getNumFrames(), outBuffer.getNumChannels(), fromFrame, loop);
 }
 
@@ -354,8 +361,8 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 	for(std::size_t i=0;i<to;i++){
 		intPosition *= inChannels;
 		for(std::size_t j=0;j<inChannels;j++){
-			a = buffer[intPosition];
-			b = buffer[intPosition+inChannels];
+			a = buffer[intPosition+j];
+			b = buffer[intPosition+inChannels+j];
 			*resBufferPtr++ = ofLerp(a,b,remainder);
 		}
 		position += increment;
@@ -369,11 +376,10 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromF
 			for(std::size_t i=0;i<to;i++){
 				intPosition *= inChannels;
 				for(std::size_t j=0;j<inChannels;j++){
-					a = buffer[intPosition];
-					b = buffer[intPosition+inChannels];
-					*resBufferPtr++ = (b-a)*remainder+a;
+					a = buffer[intPosition+j];
+					b = buffer[intPosition+inChannels+j];
+					*resBufferPtr++ = ofLerp(a,b,remainder);
 				}
-				resBufferPtr+=inChannels;
 				position += increment;
 				intPosition = position;
 			}
@@ -515,7 +521,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, std::size_t targe
 	resize(inBuffer.getNumFrames() * channels);
 	// copy from inBuffer to targetChannel
 	float * bufferPtr = &this->buffer[targetChannel];
-	const float * inBufferPtr = &(inBuffer[targetChannel]);
+	const float * inBufferPtr = &(inBuffer[0]);
 	for(std::size_t i = 0; i < getNumFrames(); i++){
 		*bufferPtr = *inBufferPtr;
 		bufferPtr += channels;
@@ -597,7 +603,7 @@ void ofSoundBuffer::fillWithNoise(float amplitude){
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
-	float step = TWO_PI*(pitchHz/samplerate);
+	float step = glm::two_pi<float>()*(pitchHz/samplerate);
 	for (std::size_t i=0; i<size()/channels; i++ ) {
 		std::size_t base = i*channels;
 		for (std::size_t j=0; j<channels; j++)

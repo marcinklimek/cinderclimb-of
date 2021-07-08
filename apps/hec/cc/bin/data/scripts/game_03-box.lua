@@ -1,6 +1,5 @@
 Utils = require "Utils"
 
-box2d = require "LuaBox2D"
 uber = UberObj("Kinect")
 
 numX = 32
@@ -11,10 +10,14 @@ border = deltaX*0.1
 
 shapes = {}
 
+colorTimer = 0
+colorR = 255
+colorG = 255
+colorB = 255
 
 local function Shape(x, y, w, h)
-    
-	    -- public 
+
+	    -- public
 	local self = {
 		x = 0,
 		y = 0,
@@ -26,13 +29,16 @@ local function Shape(x, y, w, h)
 		timer = 0,
 		touched = false,
 		back = false,
-		alpha = 255
+		alpha = 255,
+		r = 255,
+		g = 255,
+		b = 255
 	}
 
 	function self.draw()
-	    of.pushStyle()	
+	    of.pushStyle()
 
-		of.setColor(255, 255, 255, self.alpha)
+		of.setColor(self.r, self.g, self.b, self.alpha)
 		of.drawRectangle( self.box )
 
 		of.popStyle()
@@ -44,6 +50,12 @@ local function Shape(x, y, w, h)
 
 	end
 
+	function self.new_color()
+
+
+	end
+
+
 	function self.inside(x, y)
 
 		if self.touched or self.back then
@@ -52,9 +64,9 @@ local function Shape(x, y, w, h)
 
 		--print (x >= self.x , y >= self.y , x <= self.x2 , y <= self.y2)
 		--local p = of.Point(x, y)
-		
+
 		if x >= self.x and y >= self.y and x <= self.x2 and y <= self.y2 then
-		
+
 			self.touched = true
 
 		end
@@ -76,13 +88,18 @@ local function Shape(x, y, w, h)
 		elseif self.wait then
 			self.timer = self.timer + 1
 
-			if self.timer > 240 then
+			if self.timer > 30 then
 				self.timer = 0
 				self.wait = false
 				self.back = true
+
+				self.r = colorR
+				self.g = colorG
+				self.b = colorB
+
 			end
 		elseif self.back then
-			self.alpha = self.alpha + 4
+			self.alpha = self.alpha + 10
 
 			if self.alpha > 255 then
 				self.alpha = 255
@@ -133,14 +150,25 @@ end
 ----------------------------------------------------
 function update()
 
+	colorTimer = colorTimer + 1
+
+	if colorTimer == 120 then
+
+		colorTimer = 0
+
+		colorR = of.random(100, 255)
+		colorG = of.random(100, 255)
+		colorB = of.random(100, 255)
+	end
+
 	for i=1, uber.numBlobs do
 
 		local blob = uber.blob(i)
-		
+
 		if blob then
 
 			of.setColor(255, 0, 0, 128)
-			
+
 			for k, v in pairs(blob) do
 
 				local x = round(v.x / deltaX)
@@ -149,15 +177,15 @@ function update()
 				--for i,shape in ipairs(shapes) do
 				--	shape.inside(x, y)
 				--end
-				local offset = round( x + y*(numX) ) 
+				local offset = round( x + y*(numX) )
 				--print(v.x, v.y, x, y, offset)
-				
-				
+
+
 				if x < numX and y < numY then
 					shapes[offset].touch()
 					--print (numX*numY, v.x, v.y, x, y, offset)
 				end
-				
+
 			end
 
 		end
@@ -177,7 +205,7 @@ end
 function draw()
 	of.pushMatrix()
 	of.pushStyle()
-	
+
 	of.enableAlphaBlending()
 	of.setColor(255, 255, 255, 255)
 
@@ -190,12 +218,12 @@ function draw()
 
 	for i=1, uber.numBlobs do
 		local blob = uber.blob(i)
-		
+
 		if blob then
 
 			of.setColor(255, 0, 0, 128)
 			of.beginShape()
-			
+
 			for k, v in pairs(blob) do
 				of.vertex(v.x, v.y)
 			end
@@ -204,7 +232,7 @@ function draw()
 		end
 	end
 
-	
+
 	of.popStyle()
 	of.popMatrix()
 end

@@ -13,4 +13,6 @@
 #include <type_traits>
 #include <typeinfo>
 
+#include <stdexcept>
+
 #endif
