@@ -19,8 +19,9 @@ bool JsonConfigParser::_parse(const ofJson &config, const string &name, std::str
 
 	if (config.find(name) != config.end()) {
 		ofJson content = config[name];
-		if(content.is_string()){
-			val = content;
+		if(content.is_string())
+		{
+			val = content.get<std::string>();
 			return true;
 		}else {
 			ofLogError("JsonConfigParser::parse") << "Could not parse " << config << " to string.";

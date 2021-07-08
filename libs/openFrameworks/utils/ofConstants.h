@@ -475,7 +475,7 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 	}
 
 	// marcin(08.07.2021) - c++>=17 has already namespace based on boost
-
+	// commented out
 	namespace std {
 		namespace filesystem = boost::filesystem;
 	}

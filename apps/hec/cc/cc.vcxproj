@@ -180,7 +180,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
       <FloatingPointModel>Fast</FloatingPointModel>
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

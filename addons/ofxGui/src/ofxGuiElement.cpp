@@ -250,7 +250,7 @@ void ofxGuiElement::_setConfig(const ofJson &config){
 		if(_config.find("margin") != _config.end()){
 			std::string val = "";
 			if(_config["margin"].is_string()){
-				val = _config["margin"];
+				val = _config["margin"].get<std::string>();
 			}else{
 				val = ofToString(_config["margin"]);
 			}
@@ -298,7 +298,7 @@ void ofxGuiElement::_setConfig(const ofJson &config){
 		if(_config.find("padding") != _config.end()){
 			std::string val = "";
 			if(_config["padding"].is_string()){
-				val = _config["padding"];
+				val = _config["padding"].get<std::string>();
 			}else{
 				val = ofToString(_config["padding"]);
 			}
@@ -365,7 +365,7 @@ void ofxGuiElement::_setConfig(const ofJson &config){
 			if(it.value().is_string() || it.value().is_number() || it.value().is_boolean()){
 				std::string value;
 				if(it.value().is_string()){
-					value = it.value();
+					value = it.value().get<std::string>();
 				}else {
 					value = ofToString(it.value());
 				}
