@@ -412,7 +412,7 @@ function update()
 
 	globalCounter = globalCounter + 1
 
-	if uber.numBodies > 0 then
+	if uber.numBlobs > 0 then
 		
 		if clear_score == 1 then
 			
@@ -478,7 +478,7 @@ function draw()
 		return
 	end
 
-	if uber.numBodies > 0 then
+	if uber.numBlobs > 0 then
 		player.draw()
 		scene.draw()
 	else
