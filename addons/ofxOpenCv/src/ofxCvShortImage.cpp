@@ -17,9 +17,9 @@ ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
     init();
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
-        auto& mom = const_cast<ofxCvShortImage&>(_mom);
-        ofxCvImage::allocate( static_cast<int>(mom.getWidth()), static_cast<int>(mom.getHeight()) );
-        cvCopy( mom.getCvImage(), cvImage, nullptr );
+        ofxCvShortImage& mom = const_cast<ofxCvShortImage&>(_mom);
+        allocate( (int)mom.getWidth(), (int)mom.getHeight() );
+        cvCopy( mom.getCvImage(), cvImage, 0 );
     } else {
         ofLogNotice("ofxCvShortImage") << "copy constructor: source image not allocated";
     }
@@ -29,14 +29,14 @@ ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
 void ofxCvShortImage::init() {
     ipldepth = IPL_DEPTH_16U;
     iplchannels = 1;
-    cvGrayscaleImage = nullptr;
+    cvGrayscaleImage = NULL;
     bShortPixelsDirty = true;
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::clear() {
     if (bAllocated == true){
-        if( cvGrayscaleImage != nullptr ){
+        if( cvGrayscaleImage != NULL ){
             cvReleaseImage( &cvGrayscaleImage );
         }
     }
@@ -106,8 +106,8 @@ void ofxCvShortImage::setFromPixels( const unsigned char* _pixels, int w, int h 
 	}
 	
     if( w == width &&  h == height ) {
-        const ofRectangle lastROI = getROI();
-        if(cvGrayscaleImage == nullptr) {
+        ofRectangle lastROI = getROI();
+        if(cvGrayscaleImage == NULL) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
         resetImageROI(cvGrayscaleImage);
@@ -142,7 +142,7 @@ void ofxCvShortImage::setRoiFromPixels( const unsigned char* _pixels, int w, int
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
 
     if( iRoi.width > 0 && iRoi.height > 0 ) {
-        if(cvGrayscaleImage == nullptr) {
+        if(cvGrayscaleImage == NULL) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
         setImageROI(cvGrayscaleImage, roi);  //make sure ROI is in sync
@@ -204,7 +204,7 @@ void ofxCvShortImage::operator = ( const ofxCvColorImage& _mom ) {
 	}
 	
 	if( matchingROI(getROI(), mom.getROI()) ) {
-        if( cvGrayscaleImage == nullptr ) {
+        if( cvGrayscaleImage == NULL ) {
             cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
         }
         ofRectangle roi = getROI();
@@ -259,7 +259,7 @@ void ofxCvShortImage::operator = ( const ofxCvShortImage& _mom ) {
 		}
 	
         if( matchingROI(getROI(), mom.getROI()) ) {
-            cvCopy( mom.getCvImage(), cvImage, nullptr );
+            cvCopy( mom.getCvImage(), cvImage, 0 );
             flagImageChanged();
         } else {
             ofLogError("ofxCvShortImage") << "operator=: region of interest mismatch";
@@ -291,20 +291,6 @@ void ofxCvShortImage::addWeighted( ofxCvGrayscaleImage& mom, float f ) {
     }
 }
 
-//--------------------------------------------------------------------------------
-void ofxCvShortImage::addWeighted( ofxCvShortImage& mom, float f ) {
-	if( !bAllocated ){
-		ofLogError("ofxCvShortImage") << "addWeighted(): image not allocated";
-		return;	
-	}
-	
-	if( matchingROI(getROI(), mom.getROI()) ) {
-        cvAddWeighted( mom.getCvImage(), f, cvImage, 1.0f-f,0, cvImage );
-        flagImageChanged();
-    } else {
-        ofLogError("ofxCvShortImage") << "addWeighted(): region of interest mismatch";
-    }
-}
 
 
 // Get Pixel Data
@@ -316,7 +302,7 @@ IplImage*  ofxCvShortImage::getCv8BitsImage() {
 	}
 	
 	if(bPixelsDirty) {
-		if( cvGrayscaleImage == nullptr ) {
+		if( cvGrayscaleImage == NULL ) {
 			cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
 		}
 
@@ -336,7 +322,7 @@ IplImage*  ofxCvShortImage::getCv8BitsRoiImage() {
 	}
 	
 	if(bPixelsDirty) {
-		if( cvGrayscaleImage == nullptr ) {
+		if( cvGrayscaleImage == NULL ) {
 			cvGrayscaleImage = cvCreateImage( cvSize(width,height), IPL_DEPTH_8U, 1 );
 		}
 
@@ -360,32 +346,10 @@ void ofxCvShortImage::contrastStretch() {
 	}
 	
 	double minVal, maxVal;
-	cvMinMaxLoc( cvImage, &minVal, &maxVal, nullptr, nullptr, nullptr );
+	cvMinMaxLoc( cvImage, &minVal, &maxVal, NULL, NULL, 0 );
     rangeMap( cvImage, minVal,maxVal, 0,65535 );
     flagImageChanged();
 }
-
-void ofxCvShortImage::contrastStretch(float minVal, float maxVal) {
-	if( !bAllocated ){
-		ofLogError("ofxCvShortImage") << "contrastStretch(): image not allocated";
-		return;	
-	}
-	
-    rangeMap( cvImage, minVal,maxVal, 0, 65535 );
-    flagImageChanged();
-}
-
-//--------------------------------------------------------------------------------
-void ofxCvShortImage::inRange(float min, float max) {
-	if( !bAllocated ){
-		ofLogError("ofxCvShortImage") << "inRange(): image not allocated";
-		return;	
-	}
-
-	cvInRangeS( cvImage, min, max, cvImage);
-    flagImageChanged();
-}
-
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::convertToRange(float min, float max ){
@@ -397,6 +361,7 @@ void ofxCvShortImage::convertToRange(float min, float max ){
     rangeMap( cvImage, 0,65535, min,max);
     flagImageChanged();
 }
+
 
 
 // Image Transformation Operations

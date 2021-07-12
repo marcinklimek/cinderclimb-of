@@ -59,7 +59,6 @@ class ofxCvShortImage : public ofxCvImage {
     // virtual void  operator += ( ofxCvImage& mom );                         //in base class     
 
 	void  addWeighted( ofxCvGrayscaleImage& mom, float f );
-    void  addWeighted( ofxCvShortImage& mom, float f );
 	
 	
 	// Get Pixel Data
@@ -84,8 +83,6 @@ class ofxCvShortImage : public ofxCvImage {
     // Image Filter Operations
     //
     virtual void  contrastStretch();
-    void contrastStretch(float minVal, float maxVal);
-    virtual void inRange(float min, float max);
     virtual void  convertToRange( float min, float max );    
     // virtual void  erode( );                                                 //in base class
     // virtual void  dilate( );                                                //in base class

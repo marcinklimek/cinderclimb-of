@@ -168,7 +168,7 @@ void AnalysisThread::update_frame()
 
     image_processed_ = input_frame_;
     inRange( image_processed_, settings_->nearClipping, settings_->farClipping);
-    image_processed_.contrastStretch(settings_->nearClipping, settings_->farClipping);
+    image_processed_.convertToRange(settings_->nearClipping, settings_->farClipping);
 
     if( settings_->blur_amount > 0 )
 	 {

@@ -19,8 +19,8 @@ class ofxCvContourFinder : public ofBaseDraws {
 
   public:
   
-    vector<ofxCvBlob>  blobs;
-    int                nBlobs;    // DEPRECATED: use blobs.size() instead
+    std::vector<ofxCvBlob>  blobs;
+    int nBlobs;    // DEPRECATED: use blobs.size() instead
       
 
     ofxCvContourFinder();
@@ -38,11 +38,11 @@ class ofxCvContourFinder : public ofBaseDraws {
                                // along a straight line, for example...
 
     virtual void  draw() const { draw(0,0, _width, _height); };
-    void  draw( float x, float y ) const override { draw(x,y, _width, _height); };
-	void  draw( float x, float y, float w, float h ) const override;
-	void  draw(const ofPoint & point) const;
-	void  draw(const ofRectangle & rect) const override;
-	void setAnchorPercent(float xPct, float yPct) override;
+    virtual void  draw( float x, float y ) const { draw(x,y, _width, _height); };
+    virtual void  draw( float x, float y, float w, float h ) const;
+	virtual void  draw(const ofPoint & point) const;
+	virtual void  draw(const ofRectangle & rect) const;
+	virtual void setAnchorPercent(float xPct, float yPct);
     virtual void setAnchorPoint(int x, int y);
 	virtual void resetAnchor();      
     //virtual ofxCvBlob  getBlob(int num);
@@ -57,7 +57,7 @@ class ofxCvContourFinder : public ofBaseDraws {
     CvMemStorage*           contour_storage;
     CvMemStorage*           storage;
     CvMoments*              myMoments;
-    vector<CvSeq*>          cvSeqBlobs;  //these will become blobs
+    std::vector<CvSeq*>     cvSeqBlobs;  //these will become blobs
     
     ofPoint  anchor;
     bool  bAnchorIsPct;      

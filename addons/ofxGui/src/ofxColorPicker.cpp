@@ -268,6 +268,7 @@ ofMesh ofxColorPicker_<ColorType>::getColorScaleBar() {
 
 
 	ofMesh meshColorScaleBar;
+	meshColorScaleBar.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	auto borderColor = ofColor(149, 255);
 	meshColorScaleBar.append(rectangle(rectColorScaleBar, borderColor));
@@ -416,7 +417,7 @@ bool ofxColorPicker_<ColorType>::mouseUpdate(ofMouseEventArgs& mouse){
 				break;
 			}
 			case ChangingWheel:{
-				auto p = mouse - rectColorWheel.position.xy();
+				auto p = mouse - glm::vec2(rectColorWheel.position);
 				auto pc = getPolarCoordinate(p, colorWheelRadius);
 				
 				colorAngle	= pc.angle;

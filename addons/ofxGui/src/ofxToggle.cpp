@@ -34,7 +34,7 @@ ofxToggle * ofxToggle::setup(const std::string& toggleName, bool _bVal, float wi
 
 
 bool ofxToggle::mouseMoved(ofMouseEventArgs & args){
-	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+	if(isGuiDrawing() && b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -50,7 +50,7 @@ bool ofxToggle::mousePressed(ofMouseEventArgs & args){
 }
 
 bool ofxToggle::mouseDragged(ofMouseEventArgs & args){
-	if(bGuiActive && b.inside(ofPoint(args.x,args.y))){
+	if(bGuiActive && b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -60,7 +60,7 @@ bool ofxToggle::mouseDragged(ofMouseEventArgs & args){
 bool ofxToggle::mouseReleased(ofMouseEventArgs & args){
 	bool wasGuiActive = bGuiActive;
 	bGuiActive = false;
-	if(wasGuiActive && b.inside(ofPoint(args.x,args.y))){
+	if(wasGuiActive && b.inside(args)){
 		return true;
 	}else{
 		return false;
@@ -92,7 +92,23 @@ void ofxToggle::generateDraw(){
 	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
 	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
 
-	textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+	std::string name;
+	auto textX = b.x + textPadding + checkboxRect.width;
+	if(getTextBoundingBox(getName(), textX, 0).getMaxX() > b.getMaxX() - textPadding){
+		for(auto c: ofUTF8Iterator(getName())){
+			auto next = name;
+			ofUTF8Append(next, c);
+			if(getTextBoundingBox(next,textX,0).getMaxX() > b.getMaxX() - textPadding){
+				break;
+			}else{
+				name = next;
+			}
+		}
+	}else{
+		name = getName();
+	}
+
+	textMesh = getTextMesh(name, textX, getTextVCenteredInRect(b));
 }
 
 void ofxToggle::render(){

@@ -4,7 +4,7 @@
 //-------------------------------
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 0
+#define OF_VERSION_PATCH 2
 #define OF_VERSION_PRE_RELEASE "master"
 
 // Set to 1 for compatibility with old projects using ofVec instead of glm
@@ -82,6 +82,12 @@ enum ofTargetPlatform{
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
+	#if defined(_MSC_VER)
+		#define TARGET_WINVS
+	#endif
+	#if defined(__MINGW32__) || defined(__MINGW64__)
+		#define TARGET_MINGW
+	#endif
 #elif defined( __APPLE_CC__)
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
@@ -134,9 +140,8 @@ enum ofTargetPlatform{
 		//TODO: Fix this in the code instead of disabling the warnings
 #ifndef _CRT_SECURE_NO_WARNINGS
 		#define _CRT_SECURE_NO_WARNINGS
-#endif
 		#define _WINSOCK_DEPRECATED_NO_WARNINGS
-
+#endif
 		#include <stdint.h>
 		#include <functional>
 		#pragma warning(disable : 4068)		// unknown pragmas
@@ -374,7 +379,7 @@ typedef TESSindex ofIndexType;
 #if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined(TARGET_LINUX)
+  #elif defined(TARGET_LINUX) || defined(TARGET_MINGW)
   	#define OF_SOUND_PLAYER_OPENAL
   #elif defined(TARGET_EMSCRIPTEN)
 	#define OF_SOUND_PLAYER_EMSCRIPTEN
@@ -440,22 +445,24 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 // Remove from here once everything is using std::filesystem::path
 #if OF_USING_STD_FS
 #	if __cplusplus < 201703L
+#       define OF_USE_EXPERIMENTAL_FS 1
 
-		namespace std {
-			namespace experimental{
-				namespace filesystem {
-					namespace v1 {
-						namespace __cxx11 {
-							class path;
-						}
-					}
+    namespace std {
+        namespace experimental{
+            namespace filesystem {
+                namespace v1 {
+                    namespace __cxx11 {
+                        class path;
+                    }
+                }
 
-					using v1::__cxx11::path;
-				}
-			}
-			namespace filesystem = experimental::filesystem;
-		}
+                using v1::__cxx11::path;
+            }
+        }
+        namespace filesystem = experimental::filesystem;
+    }
 #	else
+#       define OF_USE_EXPERIMENTAL_FS 0
 
 	namespace std {
 		namespace filesystem {
@@ -473,9 +480,6 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 			class path;
 		}
 	}
-
-	// marcin(08.07.2021) - c++>=17 has already namespace based on boost
-	// commented out
 	namespace std {
 		namespace filesystem = boost::filesystem;
 	}

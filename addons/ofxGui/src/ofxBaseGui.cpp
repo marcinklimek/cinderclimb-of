@@ -1,14 +1,17 @@
 #include "ofxBaseGui.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
-#ifndef TARGET_EMSCRIPTEN
 #include "ofXml.h"
-#endif
+#include "ofJson.h"
 using namespace std;
 
 
 void ofxGuiSetFont(const string & fontPath, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	ofxBaseGui::loadFont(fontPath, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
+}
+
+void ofxGuiSetFont(const ofTrueTypeFontSettings & fontSettings){
+	ofxBaseGui::loadFont(fontSettings);
 }
 
 void ofxGuiSetBitmapFont(){
@@ -48,8 +51,19 @@ void ofxGuiSetDefaultHeight(int height){
 	ofxBaseGui::setDefaultHeight(height);
 }
 
+void ofxGuiSetDefaultEventsPriority(ofEventOrder eventsPriority){
+	ofxBaseGui::setDefaultEventsPriority(eventsPriority);
+}
+void ofxGuiEnableHiResDisplay(){
+	ofxBaseGui::enableHiDpi();
+}
+void ofxGuiDisableHiResDisplay(){
+	ofxBaseGui::disableHiDpi();
+}
+
+
 ofColor
-ofxBaseGui::headerBackgroundColor(64),
+ofxBaseGui::headerBackgroundColor(80),
 ofxBaseGui::backgroundColor(0),
 ofxBaseGui::borderColor(120, 100),
 ofxBaseGui::textColor(255),
@@ -63,14 +77,13 @@ ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
+ofEventOrder ofxBaseGui::defaultEventsPriority = OF_EVENT_ORDER_BEFORE_APP;
+
+float ofxBaseGui::hiDpiScale =1;
 
 ofxBaseGui::ofxBaseGui(){
 	parent = nullptr;
 	currentFrame = ofGetFrameNum();
-#ifndef TARGET_EMSCRIPTEN
-    serializer = std::make_shared<ofXml>();
-#endif
-
 	thisHeaderBackgroundColor = headerBackgroundColor;
 	thisBackgroundColor = backgroundColor;
 	thisBorderColor = borderColor;
@@ -93,6 +106,12 @@ void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAnti
 	useTTF = true;
 }
 
+void ofxBaseGui::loadFont(const ofTrueTypeFontSettings & fontSettings){
+	font.load(fontSettings);
+	fontLoaded = true;
+	useTTF = true;
+}
+
 void ofxBaseGui::setUseTTF(bool bUseTTF){
 	if(bUseTTF && !fontLoaded){
 		loadFont(OF_TTF_MONO, 10, true, true);
@@ -109,18 +128,29 @@ void ofxBaseGui::registerMouseEvents(){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofRegisterMouseEvents(this, defaultEventsPriority);
 }
 
 void ofxBaseGui::unregisterMouseEvents(){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+	ofUnregisterMouseEvents(this, defaultEventsPriority);
 	bRegisteredForMouseEvents = false;
 }
-
+void ofxBaseGui::setEvents(ofCoreEvents & _events){
+	if(&_events != events){
+		bool wasMouseInputEnabled = bRegisteredForMouseEvents;// || !events;
+		unregisterMouseEvents();
+		events = &_events;
+		if (wasMouseInputEnabled) {
+			// note: this will set bMouseInputEnabled to true as a side-effect.
+			registerMouseEvents();
+		}
+	}
+}
 void ofxBaseGui::draw(){
+	setEvents(ofEvents());
 	if(needsRedraw){
 		generateDraw();
 		needsRedraw = false;
@@ -158,7 +188,15 @@ ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
 		return font.getStringMesh(text, x, y);
 	}else{
-		return bitmapFont.getMesh(text, x, y);
+		auto m = bitmapFont.getMesh(text, x, y);
+		if(isHiDpiEnabled()){
+			auto bb = getTextBoundingBox(text, x, y);
+			bb.standardize();
+			for(auto& v: m.getVertices()){
+				v = (v - bb.getPosition())*hiDpiScale + bb.getPosition();
+			}
+		}
+		return m;
 	}
 }
 
@@ -166,41 +204,63 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y
 	if(useTTF){
 		return font.getStringBoundingBox(text, x, y);
 	}else{
-		return bitmapFont.getBoundingBox(text, x, y);
+		auto r = bitmapFont.getBoundingBox(text, x, y);
+		if(isHiDpiEnabled()){
+			r.width *= hiDpiScale;
+			r.height *= hiDpiScale;
+		}
+		return r;
+	}
+}
+float ofxBaseGui::getTextVCenteredInRect(const ofRectangle& container){
+		
+	if(useTTF){
+		return container.getCenter().y  + (font.getAscenderHeight()  + font.getDescenderHeight()) *0.5;
+	}else{
+		// The bitmap font does not provide a getAscenderHeight() method.
+		// However,it can be found by calling `getTextBoundingBox(" ",0,0)` 
+		// which returns the ascender value in the rectangle's Y as a negative value. 
+		// It does not matter which string is passed to it, the value will be always the same.
+		// Fix. It centers the text properly with `getTextBoundingBox(" ",0,0)` as it takes into account the screen pixel scaling.
+		auto bb = getTextBoundingBox(" ",0,0);
+		return container.getCenter().y - bb.height*0.5 - bb.y;
 	}
 }
 
+
 void ofxBaseGui::saveToFile(const std::string& filename){
-	if(serializer){
-		serializer->load(filename);
-		saveTo(*serializer);
-		serializer->save(filename);
+	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+	if(extension == "xml"){
+		ofXml xml;
+		if(ofFile(filename, ofFile::Reference).exists()){
+			xml.load(filename);
+		}
+		saveTo(xml);
+		xml.save(filename);
+    }else
+    if(extension == "json"){
+        ofJson json = ofLoadJson(filename);
+		saveTo(json);
+        ofSavePrettyJson(filename, json);
 	}else{
-		ofLogError("ofxGui") << "element has no serializer to save to";
+		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
 }
 
 void ofxBaseGui::loadFromFile(const std::string& filename){
-	if(serializer){
-		serializer->load(filename);
-		loadFrom(*serializer);
+	auto extension = ofToLower(ofFilePath::getFileExt(filename));
+	if(extension == "xml"){
+		ofXml xml;
+		xml.load(filename);
+		loadFrom(xml);
+    }else
+    if(extension == "json"){
+		ofFile jsonFile(filename);
+		ofJson json = ofLoadJson(jsonFile);
+		loadFrom(json);
 	}else{
-		ofLogError("ofxGui") << "element has no serializer to load from";
+		ofLogError("ofxGui") << extension << " not recognized, only .xml and .json supported by now";
 	}
-}
-
-
-void ofxBaseGui::saveTo(ofBaseSerializer & serializer){
-	serializer.serialize(getParameter());
-}
-
-void ofxBaseGui::loadFrom(ofBaseSerializer & serializer){
-	serializer.deserialize(getParameter());
-}
-
-
-void ofxBaseGui::setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> _serializer){
-	serializer = _serializer;
 }
 
 string ofxBaseGui::getName(){
@@ -209,9 +269,10 @@ string ofxBaseGui::getName(){
 
 void ofxBaseGui::setName(const std::string& _name){
 	getParameter().setName(_name);
+	setNeedsRedraw();
 }
 
-void ofxBaseGui::setPosition(const ofPoint & p){
+void ofxBaseGui::setPosition(const glm::vec3 & p){
 	setPosition(p.x, p.y);
 }
 
@@ -236,9 +297,16 @@ void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x, y, w, h);
 	sizeChangedCB();
 }
-
-ofPoint ofxBaseGui::getPosition() const {
-	return ofPoint(b.x, b.y);
+void ofxBaseGui::setShapeNoNotification(const ofRectangle& r){
+	b = r;
+	setNeedsRedraw();
+}
+void ofxBaseGui::setShapeNoNotification(float x, float y, float w, float h){
+	b.set(x, y, w, h);
+	setNeedsRedraw();
+}
+glm::vec3 ofxBaseGui::getPosition() const {
+	return glm::vec3(b.x, b.y, 0);
 }
 
 ofRectangle ofxBaseGui::getShape() const {
@@ -330,6 +398,10 @@ void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
 }
 
+void ofxBaseGui::setDefaultEventsPriority(ofEventOrder eventsPriority){
+	defaultEventsPriority = eventsPriority;
+}
+
 void ofxBaseGui::sizeChangedCB(){
 	if(parent){
 		parent->sizeChangedCB();
@@ -393,4 +465,21 @@ void ofxBaseGui::setParent(ofxBaseGui * parent){
 
 ofxBaseGui * ofxBaseGui::getParent(){
 	return parent;
+}
+void ofxBaseGui::enableHiDpi(){
+	
+	ofxBaseGui::hiDpiScale = 2;
+	ofxBaseGui::textPadding = 8;
+	ofxBaseGui::defaultWidth = 400;
+	ofxBaseGui::defaultHeight = 36;
+
+}
+void ofxBaseGui::disableHiDpi(){
+	ofxBaseGui::hiDpiScale = 1;
+	ofxBaseGui::textPadding = 4;
+	ofxBaseGui::defaultWidth = 200;
+	ofxBaseGui::defaultHeight = 18;
+}
+bool ofxBaseGui::isHiDpiEnabled(){
+	return hiDpiScale == 2;
 }

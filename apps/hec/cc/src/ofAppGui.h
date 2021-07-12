@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "Settings.h"
 #include "Analysis.h"
-#include "ofxGui/src/ofxGuiExtended.h"
+#include "ofxGuiExtended/src/ofxGuiExtended.h"
 #include "ofxXmlSettings/src/ofxXmlSettings.h"
 
 class ofAppGui : public ofBaseApp
