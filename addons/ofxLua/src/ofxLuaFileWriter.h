@@ -108,7 +108,7 @@ class ofxLuaFileWriter {
 		};
 		std::vector<TableIndex> tables; //< the currently open table stack
 	
-		bool bCommentBlock;  //< currently in a comment block?
+		bool commentBlock;        ///< currently in a comment block?
 		std::stringstream buffer; //< string buffer
 };
 

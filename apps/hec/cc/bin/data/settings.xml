@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <Parameters>
-	<colormap>42</colormap>
-	<tolerance>0.0020098</tolerance>
-	<smoothing>4</smoothing>
-	<blur_amount>1</blur_amount>
-	<erosion_open>1</erosion_open>
-	<erosion_close>1</erosion_close>
-	<dillate>1</dillate>
-	<blur_amount_2>1</blur_amount_2>
-	<erosion_open_2>4</erosion_open_2>
-	<erosion_close_2>4</erosion_close_2>
-	<dillate_2>4</dillate_2>
+	<colormap>117</colormap>
+	<tolerance>0.0006</tolerance>
+	<smoothing>7</smoothing>
+	<blur_amount>0</blur_amount>
+	<erosion_open>0</erosion_open>
+	<erosion_close>0</erosion_close>
+	<dillate>0</dillate>
+	<blur_amount_2>0</blur_amount_2>
+	<erosion_open_2>1</erosion_open_2>
+	<erosion_close_2>0</erosion_close_2>
+	<dillate_2>0</dillate_2>
 	<area_min>500</area_min>
 	<area_max>5e+06</area_max>
 	<use_convex>0</use_convex>
-	<near>705</near>
-	<far>1647</far>
+	<near>0</near>
+	<far>8000</far>
 	<Reset_Background>0</Reset_Background>
 	<Learning_Time>30</Learning_Time>
-	<Threshold_Value>6.25</Threshold_Value>
+	<Threshold_Value>10</Threshold_Value>
 	<Parameters />
 	<learing_rate>0.99</learing_rate>
 	<reset_Background>0</reset_Background>
 	<reset_Background_time>5</reset_Background_time>
 	<epsilon>100</epsilon>
-	<script>1</script>
+	<script>0</script>
 </Parameters>

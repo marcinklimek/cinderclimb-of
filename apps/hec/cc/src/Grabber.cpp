@@ -143,7 +143,7 @@ void ofGrabber::update()
    //      {
    //          const auto v = depthPixRaw[index];
 	  //       const auto& value = depthLookupTable[v];
-			// depthColor.getPixels().setColor(x, y, value);
+			// depth_pix_ref.getPixels()[index] = value;
    //
 			// index++;
    //      }

@@ -24,36 +24,57 @@ public:
 		period(0),
 		lastTime(0),
 		ticks(0),
-		useBuffer(false) {
-	};
-	void setFramerate(float framerate) {
+		useBuffer(false)
+	{	};
+	
+	void setFramerate(float framerate)
+	{
 		period = 1 / framerate;
 	}
-	void setPeriod(float period) {
+	
+	void setPeriod(float period)
+	{
 		this->period = period;
-        ticks = 0;
+		ticks = 0;
 	}
-	float getPeriod() {
+	
+	float getPeriod()
+	{
 		return period;
 	}
-	void setUseBuffer(bool useBuffer) {
+
+	void setUseBuffer(bool useBuffer)
+	{
 		this->useBuffer = useBuffer;
 	}
-	bool tick() {
-		float curTime = ofGetElapsedTimef();
-		int curTicks = (int) (curTime / period);
-		int lastTicks = (int) (lastTime / period);
+	
+	bool tick()
+	{
+		if (period == 0)
+			return false;
+
+		const auto curTime = ofGetElapsedTimef();
+
+		const auto curTicks = static_cast<int>(curTime / period);
+		const auto lastTicks = static_cast<int>(lastTime / period);
+
 		lastTime = curTime;
 		ticks += curTicks - lastTicks;
-		if(ticks > 0) {
-			if(useBuffer) {
+
+		if (ticks > 0)
+		{
+			if (useBuffer)
+			{
 				ticks--;
-			} else {
+			}
+			else 
+			{
 				ticks = 0;
 			}
+
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 };

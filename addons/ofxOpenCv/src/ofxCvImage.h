@@ -108,6 +108,7 @@ class ofxCvImage : public ofBaseImage {
     virtual void  erode( );                     // based on 3x3 shape
     virtual void  dilate( );                    // based on 3x3 shape
     virtual void  blur( int value=3 );          // value = x*2+1, where x is an integer
+    void smooth(int value, SmoothMethod_c t);
     virtual void  blurGaussian( int value=3 );  // value = x*2+1, where x is an integer
     virtual void  invert();
     virtual void  contrastStretch() = 0;

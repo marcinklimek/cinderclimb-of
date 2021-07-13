@@ -22,16 +22,16 @@ touchSound:load("sounds/balloon.wav")
 local function player_add_score(value)
 
 	if game_time > 0 then
-		score = score + 1	
-	end	
+		score = score + 1
+	end
 
 end
 
 local function ground_add_score(value)
 
 	if game_time > 0 then
-		score_ground = score_ground + 1	
-	end	
+		score_ground = score_ground + 1
+	end
 
 end
 
@@ -47,12 +47,12 @@ function generate_pos(ball, bounds)
 		ball.x = ball.x - 2*ball.r
 	end
 
-	ball.y = of.random(-2, -0.5)		
+	ball.y = of.random(-2, -0.5)
 end
 
 local function Ball(world, bounds)
-    
-	    -- public 
+
+	    -- public
 	local self = {
 		name = "ball",
 	    r = of.random(0.2, 0.5),
@@ -62,14 +62,14 @@ local function Ball(world, bounds)
 	}
 
 	self.ballAnim = Sprite.Atlas(15, false)
-	self.ballAnim.add("images/explosion_01.png")
-	self.ballAnim.add("images/explosion_02.png")
-	self.ballAnim.add("images/explosion_03.png")
-	self.ballAnim.add("images/explosion_04.png")
-	self.ballAnim.add("images/explosion_05.png")
+	self.ballAnim.add("images/catching/explosion_01.png")
+	self.ballAnim.add("images/catching/explosion_02.png")
+	self.ballAnim.add("images/catching/explosion_03.png")
+	self.ballAnim.add("images/catching/explosion_04.png")
+	self.ballAnim.add("images/catching/explosion_05.png")
 
 	self.bomb = of.Image()
-	self.bomb:load("images/gold_1.png")
+	self.bomb:load("images/catching/bomb.png")
 
 	generate_pos(self, bounds)
 
@@ -83,7 +83,7 @@ local function Ball(world, bounds)
 
 	local circleShape = box2d.CircleShape()
 	circleShape.radius = self.r
-	
+
 	local fixtureDef = box2d.FixtureDef()
 	fixtureDef.shape = circleShape
 	fixtureDef.density = 1
@@ -95,9 +95,10 @@ local function Ball(world, bounds)
 	body.angularVelocity = of.random(-25, 25)
 
 	function self.draw()
-	    
-	    of.pushStyle()	
+
+	    of.pushStyle()
 	    of.pushMatrix()
+
 	    of.translate(body.position.x, body.position.y, 0 )
 		of.rotate(body.angle, 0, 0, 1)
 
@@ -105,7 +106,7 @@ local function Ball(world, bounds)
 		local ly = -self.r
 		local lw = 2*self.r
 		local lh = 2*self.r
-	    	
+
 		of.setColor(255, 255, 255)
 
 		if self.state == 0 then
@@ -200,10 +201,10 @@ local function Player(world)
 
 		for i=1, uber.numBlobs do
 			local blob = uber.blob(i)
-			
+
 			if blob then
 				of.beginShape()
-				
+
 				for k, v in pairs(blob) do
 					of.vertex(v.x, v.y)
 				end
@@ -234,7 +235,7 @@ local function Scene()
 
 	self.balls = {}
 	self.world = box2d.World(box2d.Vec2(0, 0.78), true)
-	
+
 	local bodyDef = box2d.BodyDef()
 	bodyDef.type = 'static'
 	bodyDef.position = box2d.Vec2(-100, 7.78)
@@ -245,13 +246,13 @@ local function Scene()
 
 	local groundBox = box2d.PolygonShape()
 	groundBox.setAsBox(200, 0.1)
-	
+
 	local groundFixture = groundBody.createFixture(groundBox, 0)
 
 	self.counter = 0
 
 	local function checkContact()
-		
+
 		local contact = self.world.contact
 
 		while contact do
@@ -265,13 +266,13 @@ local function Scene()
 			if obj ~= nil then
 				obj.contact(contact.fixtureA.body.userData)
 			end
-			
+
 			contact = contact.next
 		end
 	end
 
 	function self.updateBoundingBox(rect)
-	
+
 		if self.blob_rect.min_x > rect.min_x then
 			self.blob_rect.min_x = rect.min_x
 		end
@@ -286,7 +287,7 @@ local function Scene()
 
 		if self.blob_rect.max_y < rect.max_y then
 			self.blob_rect.max_y = rect.max_y
-		end	
+		end
 
 		if self.blob_rect.min_x < 0 then
 			self.blob_rect.min_x = 0
@@ -316,21 +317,21 @@ local function Scene()
 		of.setPolyMode(of.POLY_WINDING_ODD)
 		of.setColor(255, 0, 0)
 		of.beginShape()
-		
+
 		local n = groundBox.vertexCount
 		for i=1,n do
-			local vtx = groundBox.vertex(i) 
+			local vtx = groundBox.vertex(i)
 			of.vertex(vtx.x, vtx.y)
 		end
-			
-		of.endShape(true)	
+
+		of.endShape(true)
 
 		of.popMatrix()
 		of.popStyle()
 
 		for index, ball in ipairs(self.balls) do
 			ball.draw()
-		end		
+		end
 	end
 
 	function self.update()
@@ -347,7 +348,7 @@ local function Scene()
 
 		for index, ball in ipairs(self.balls) do
 			ball.update( self.blob_rect )
-		end		
+		end
 
 		if self.counter > 100 then
 			self.counter = 0
@@ -373,7 +374,7 @@ local function Scene()
 	function self.addBall()
 
 		if Utils.table_length(self.balls) < 7 then
-			table.insert(self.balls, Ball(self.world, self.blob_rect) )	
+			table.insert(self.balls, Ball(self.world, self.blob_rect) )
 		end
 
 	end
@@ -392,7 +393,7 @@ end
 -- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function setup()
-	
+
 	of.setFrameRate(60)
 	of.setWindowTitle("projektor")
 	of.setWindowPosition(1920 , 0) -- (1920 + 1680,0)
@@ -405,7 +406,7 @@ end
 ----------------------------------------------------
 
 function update()
-	
+
 	if startCounter > 0 then
 		startCounter = startCounter - 1
 	end
@@ -413,9 +414,9 @@ function update()
 	globalCounter = globalCounter + 1
 
 	if uber.numBlobs > 0 then
-		
+
 		if clear_score == 1 then
-			
+
 			level = 1
 			score = 0
 			score_ground = 0
@@ -427,7 +428,7 @@ function update()
 
 		if globalCounter > 60 then
 			globalCounter = 0
-			
+
 			game_time = game_time - 1
 
 			if game_time < 0 then
@@ -439,7 +440,7 @@ function update()
 			end
 
 		end
-	
+
 	else   -- no player
 
 		game_time = 60
@@ -454,7 +455,7 @@ function keyPressed(key)
 		level = level + 1
 		if level > 40 then
 			level = 40
-		end		
+		end
 	end
 
 	if key == 359 then  -- dn
@@ -464,7 +465,7 @@ function keyPressed(key)
 			level = 0
 		end
 
-	end	
+	end
 end
 
 
@@ -488,15 +489,15 @@ function draw()
 	of.pushMatrix()
 	of.scale(0.01, 0.01, 0.01)
 	of.setHexColor(0xFFFFFF)
-	
+
 	str = "Punkty: " .. tostring(score) .. "/" .. tostring(score_ground)
 	Utils.drawText( str, 30, 690, true)
 
-	str = "Poziom: " .. tostring(level) 
-	Utils.drawText( str, 32, 650, false)  
+	str = "Poziom: " .. tostring(level)
+	Utils.drawText( str, 32, 650, false)
 
 	str = "Czas: " .. tostring(game_time) .. "s"
-	Utils.drawText( str, 820, 690, true)  
+	Utils.drawText( str, 820, 690, true)
 
 	of.popMatrix()
 

@@ -96,9 +96,8 @@ struct ofTime{
 	uint64_t getAsMicroseconds() const;
 	uint64_t getAsNanoseconds() const;
 	double getAsSeconds() const;
-#ifndef TARGET_WIN32
 	timespec getAsTimespec() const;
-#endif
+
 
 	std::chrono::time_point<std::chrono::nanoseconds> getAsTimePoint() const;
 	std::chrono::nanoseconds operator-(const ofTime&) const;

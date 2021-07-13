@@ -533,6 +533,20 @@ void ofxCvImage::blur( int value ) {
 }
 
 //--------------------------------------------------------------------------------
+void ofxCvImage::smooth( int value, SmoothMethod_c t ) {
+	if( !bAllocated ){
+		ofLogError("ofxCvImage") << "blurGaussian(): image not allocated";
+		return;		
+	}
+    if( value % 2 == 0 ) {
+        ofLogNotice("ofxCvImage") << "blurGaussian(): value " << value << " not odd, adding 1";
+        value++;
+    }
+	cvSmooth( cvImage, cvImageTemp, t ,value );
+	swapTemp();
+    flagImageChanged();
+}
+
 void ofxCvImage::blurGaussian( int value ) {
 	if( !bAllocated ){
 		ofLogError("ofxCvImage") << "blurGaussian(): image not allocated";

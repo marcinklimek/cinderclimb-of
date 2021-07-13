@@ -236,14 +236,12 @@ double ofTime::getAsSeconds() const{
 	return seconds + nanoseconds / 1000000000.;
 }
 
-#ifndef TARGET_WIN32
 timespec ofTime::getAsTimespec() const{
 	timespec ret;
 	ret.tv_sec = seconds;
 	ret.tv_nsec = nanoseconds;
 	return ret;
 }
-#endif
 
 //--------------------------------------
 std::chrono::time_point<std::chrono::nanoseconds> ofTime::getAsTimePoint() const{

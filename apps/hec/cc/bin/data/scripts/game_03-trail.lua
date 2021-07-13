@@ -23,7 +23,7 @@ local function Player(world)
 
 		of.enableAlphaBlending()
 		of.setColor(250, 250, 250, 250)
-		--of.noFill()
+
 		of.fill()
 
 		for i=1, uber.numBlobs do

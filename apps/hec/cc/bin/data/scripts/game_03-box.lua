@@ -182,8 +182,11 @@ function update()
 
 
 				if x < numX and y < numY then
-					shapes[offset].touch()
-					--print (numX*numY, v.x, v.y, x, y, offset)
+					local one = shapes[offset]
+
+					if one ~= nil then
+						one.touch()
+					end
 				end
 
 			end

@@ -23,7 +23,10 @@ AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mo
     averageTimer = settings_->resetBackgroundTime;
 
     fps_timer.setPeriod(1);
-    backgroundModel_timer.setPeriod(settings_->resetBackgroundTime);
+
+    backgroundModel_set = true;
+	backgroundModel_timer.setFramerate(30.0f);
+    backgroundModel_timer.setPeriod(10);
 
     startThread();
 }
@@ -114,7 +117,7 @@ void AnalysisThread::average(ofxCvShortImage& image_input_a, ofxCvShortImage& im
         const auto v = std::min(v1, v2);
         
         if (v > 0)
-            input_a[i] = v;
+            input_a[i] = v-1;
     });
 }
 
@@ -125,7 +128,7 @@ void AnalysisThread::inRange(ofxCvShortImage& image_input_a,  float min, float m
     concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
     {
         const auto v = input_a[i];
-        
+
         if (v > min && v < max)
             input_a[i] = v;
         else
@@ -152,9 +155,10 @@ void AnalysisThread::foreground(ofxCvShortImage& image_input_a,  ofxCvShortImage
 
 void AnalysisThread::resetChanged(bool& state)
 {
-    if (state)
+    if (state && backgroundModel_set==false)
     {
         backgroundModel_set = true;
+    	backgroundModel_timer.setFramerate(30.0f);
         backgroundModel_timer.setPeriod( settings_->resetBackgroundTime);
         backgroundModel_.set(UINT16_MAX);
     }
@@ -166,16 +170,20 @@ void AnalysisThread::update_frame()
     if (input_frame_.getWidth() == 0 || input_frame_.getHeight() == 0)
         return;
 
+	input_frame_.smooth(1, CV_MEDIAN);
+	
     image_processed_ = input_frame_;
+	
     inRange( image_processed_, settings_->nearClipping, settings_->farClipping);
-    image_processed_.convertToRange(settings_->nearClipping, settings_->farClipping);
-
+    image_processed_.contrastStretch();
+    
+	
     if( settings_->blur_amount > 0 )
 	 {
 	 	if( settings_->blur_amount % 2 == 0 )
 	 		settings_->blur_amount += 1;
  
-	     image_processed_.blurGaussian(settings_->blur_amount);
+	    image_processed_.smooth(settings_->blur_amount, CV_BLUR);
 	 }
  
     for(auto i=0; i<settings_->erode_open_count; i++)
@@ -194,12 +202,15 @@ void AnalysisThread::update_frame()
         
         if ( backgroundModel_timer.tick() )
         {
+            backgroundModel_timer.setPeriod(0);
+        	
             backgroundModel_set = false;
             settings_->resetBackground = false;
         }
 
         return;
 	}
+
 
     image_foreground_ = image_processed_;
 
@@ -223,6 +234,9 @@ void AnalysisThread::update_frame()
     for (auto i = 0; i<settings_->erode_close_count2; i++)
         image_foreground_.erode();
 
+
+	image_foreground_.contrastStretch();
+	
 	//
     ofxCvGrayscaleImage temp;
     temp.allocate(image_foreground_.width, image_foreground_.height);

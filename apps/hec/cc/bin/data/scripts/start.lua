@@ -1,243 +1,128 @@
-Utils = require "Utils"
 uber = UberObj("Kinect")
 
-numX = 32
-numY = 16
-deltaX = 10.24/numX
-deltaY = 7.68/numY
-border = deltaX*0.1
+images = {}
 
-shapes = {}
+-- create new images
 
-colorTimer = 0
-colorR = 255
-colorG = 255
-colorB = 255
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
+table.insert(images, of.Image())
 
-local function Shape(x, y, w, h)
+images[1]:load("images/start/bz.jpg")
+images[2]:load("images/start/bz_1.jpg")
+images[3]:load("images/start/bz_2.jpg")
+images[4]:load("images/start/bz_3.jpg")
+images[5]:load("images/start/bz_4.jpg")
+images[6]:load("images/start/bz_5.jpg")
+images[7]:load("images/start/bz_6.jpg")
+images[8]:load("images/start/bz_7.jpg")
+images[9]:load("images/start/bz_8.jpg")
+images[10]:load("images/start/bz_9.jpg")
+images[11]:load("images/start/bz_10.jpg")
+images[12]:load("images/start/bz_11.jpg")
 
-	    -- public
-	local self = {
-		x = 0,
-		y = 0,
-		w = 1,
-		h = 1,
-		x2 = x + w,
-		y2 = y + h,
-		box = of.Rectangle(x, y, w, h),
-		timer = 0,
-		touched = false,
-		back = false,
-		alpha = 255,
-		r = 255,
-		g = 255,
-		b = 255
-	}
+bikeIcon = of.Image()
+globalCounter = 0
+index = 1
+start = 1
 
-	function self.draw()
-	    of.pushStyle()
-
-		of.setColor(self.r, self.g, self.b, self.alpha)
-		of.drawRectangle( self.box )
-
-		of.popStyle()
-	end
-
-	function self.touch()
-
-		self.touched = true
-
-	end
-
-	function self.new_color()
-
-
-	end
-
-
-	function self.inside(x, y)
-
-		if self.touched or self.back then
-			return
-		end
-
-		--print (x >= self.x , y >= self.y , x <= self.x2 , y <= self.y2)
-		--local p = of.Point(x, y)
-
-		if x >= self.x and y >= self.y and x <= self.x2 and y <= self.y2 then
-
-			self.touched = true
-
-		end
-
-		return self.touched
-	end
-
-	function self.update()
-
-		if self.touched then
-
-			self.alpha = self.alpha - 4
-
-			if self.alpha < 0 then
-				self.alpha = 0
-				self.touched = false
-				self.wait = true
-			end
-		elseif self.wait then
-			self.timer = self.timer + 1
-
-			if self.timer > 30 then
-				self.timer = 0
-				self.wait = false
-				self.back = true
-
-				self.r = colorR
-				self.g = colorG
-				self.b = colorB
-
-			end
-		elseif self.back then
-			self.alpha = self.alpha + 10
-
-			if self.alpha > 255 then
-				self.alpha = 255
-				self.touched = false
-				self.back = false
-			end
-		end
-
-	end
-
-    return self
-end
-
-
-function add_shape(x,y,w,h)
-	--print(x,y,w,h)
-	table.insert(shapes, Shape(x,y,w,h))
-end
-
-
+----------------------------------------------------
 function setup()
 
-	of.clear(0, 0, 0, 0)
-
+	of.setWindowTitle("start")
 	of.setFrameRate(60)
-	of.setWindowTitle("projektor")
-	--of.setWindowPosition(1920 , 0) -- (1920 + 1680,0)
 
-	for y=0,numY-1 do
-		for x=0,numX-1 do
-
-			local xx = deltaX * x + border
-			local yy = deltaY * y + border
-			local ww = deltaX - 2*border
-			local hh = deltaY - 2*border
-
-			add_shape(xx, yy, ww, hh)
-		end
-
-	end
-
-end
-
-function round(x)
-  return x>=0 and math.floor(x+0.5) or math.ceil(x-0.5)
+	bikeIcon:load("images/start/bike_icon.png")
+	bikeIcon:setImageType(of.IMAGE_GRAYSCALE)
 end
 
 ----------------------------------------------------
 function update()
 
-	colorTimer = colorTimer + 1
+	of.background(0)
+	globalCounter = globalCounter + 1
 
-	if colorTimer == 120 then
+	if globalCounter > 240 then
 
-		colorTimer = 0
+		globalCounter = 0
 
-		colorR = of.random(100, 255)
-		colorG = of.random(100, 255)
-		colorB = of.random(100, 255)
-	end
+		index = index + 1
 
-	for i=1, uber.numBlobs do
-
-		local blob = uber.blob(i)
-
-		if blob then
-
-			of.setColor(255, 0, 0, 128)
-
-			for k, v in pairs(blob) do
-
-				local x = round(v.x / deltaX)
-				local y = round(v.y / deltaY)
-
-				--for i,shape in ipairs(shapes) do
-				--	shape.inside(x, y)
-				--end
-				local offset = round( x + y*numX )
-				--print(v.x, v.y, x, y, offset)
-
-
-				if x < numX and y < numY then
-					local one = shapes[offset]
-
-					if one ~= nil then
-						one.touch()
-					end
-				end
-
-			end
-
+		if index > 12 then
+			index = 1
 		end
-	end
 
-	for i,shape in ipairs(shapes) do
-		shape.update()
 	end
 
 end
 
-
-function keyPressed(key)
-	print("key pressed")
-end
+counter = 1
 
 ----------------------------------------------------
 function draw()
+
+	of.scale(0.01, 0.01, 0.01)
+
 	of.pushMatrix()
-	of.pushStyle()
+	of.setColor(255)
+
+	local scl = 1.1 + math.sin(of.getElapsedTimef()) / 10
+	of.scale(scl, scl, scl)
 
 	of.enableAlphaBlending()
-	of.setColor(255, 255, 255, 255)
+	images[index]:draw(0,0)
 
-	of.fill()
+	of.popMatrix()
 
-	for i,shape in ipairs(shapes) do
-		shape.draw()
+	local ofsX = (math.cos(of.getElapsedTimef()) * 200) + 480
+	local ofsY = 590
+
+	-- getting the ofColors from an image,
+	-- using the brightness to draw circles
+	local w = bikeIcon:getWidth()
+	local h = bikeIcon:getHeight()
+	local diameter = 10
+	of.setColor(255, 0, 0)
+	for y=1,h-1 do
+		for x=1,w-1 do
+			local cur = bikeIcon:getColor(x, y)
+			local size = 1-(cur:getBrightness() / 256)
+			if size * diameter / 2 > 0 then
+				of.drawCircle(ofsX + x * diameter, ofsY + y * diameter,
+			  	            size * diameter / 2)
+			end
+		end
 	end
 
-
-	for i=1, uber.numBlobs do
+	of.scale(100, 100, 100)
+		
+		for i=1, uber.numBlobs do
 		local blob = uber.blob(i)
 
 		if blob then
 
-			of.setColor(255, 0, 0, 128)
+			of.setColor(128, 128, 128, 255)
+
 			of.beginShape()
+			of.fill()
+			of.enableBlendMode(of.BLENDMODE_ADD)
 
 			for k, v in pairs(blob) do
 				of.vertex(v.x, v.y)
 			end
-
 			of.endShape()
 		end
 	end
-
-
-	of.popStyle()
-	of.popMatrix()
+		
 end
 
 ----------------------------------------------------

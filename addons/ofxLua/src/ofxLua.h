@@ -19,6 +19,13 @@
 #include "ofConstants.h"
 #include "ofEvents.h"
 
+#if defined(OF_TARGET_ANDROID) && defined(LUA_USE_ANDROID)
+#include <android/log.h>
+#define lua_getlocaledecpoint()   '.'
+#define lua_writestring(s,l)      __android_log_write(ANDROID_LOG_DEBUG, "LUA_PRINT", (s))
+#define lua_writeline()           __android_log_write(ANDROID_LOG_DEBUG, "LUA_PRINT", "\n")
+#define lua_writestringerror(s,p) __android_log_print(ANDROID_LOG_ERROR, "LUA_PRINT", (s), (p))
+#endif
 #include "lua.hpp"
 #include "ofxLuaFileWriter.h"
 
@@ -33,7 +40,7 @@ class ofxLuaListener {
 
 	public :
 	
-		virtual void errorReceived(std::string& msg) = 0;
+		virtual void errorReceived(std::string& message) = 0;
 };
 
 ///	a Lua interpreter instance
@@ -99,6 +106,7 @@ class ofxLua {
 		
 		/// remove a listener
 		void removeListener(ofxLuaListener* listener);
+		void setErrorCallback(std::function<void(std::string& message)> const &callback);
 		
 	/// \section Script Callbacks
 		
@@ -378,6 +386,7 @@ class ofxLua {
 		};
 		std::vector<TableIndex> tables;  //< the currently open table stack
 	
+		std::function<void(std::string& message)> errorCallback = nullptr;
 		ofEvent<std::string> errorEvent; //< error event object, string is error msg
 		std::string errorMessage = "";   //< current error message
 };

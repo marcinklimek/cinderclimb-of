@@ -123,6 +123,10 @@ void ofAppProjector::keyPressed(int key)
 
     case 'c':
 		isCalibration = !isCalibration;
+
+    	if ( !isCalibration )
+			reloadScript();
+    	
         break;
 
     case OF_KEY_LEFT:
@@ -136,10 +140,12 @@ void ofAppProjector::keyPressed(int key)
 			++_settings->currentScript;
 
         break;
-    default: ;
+
+    default: 
+		break;
     }
 
-    lua.scriptKeyPressed(key);
+	lua.scriptKeyPressed(key);	
 }
 
 //--------------------------------------------------------------

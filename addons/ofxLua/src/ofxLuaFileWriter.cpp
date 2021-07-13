@@ -14,7 +14,7 @@
 
 //------------------------------------------------------------------------------
 ofxLuaFileWriter::ofxLuaFileWriter() {
-	bCommentBlock = false;
+	commentBlock = false;
 }
 
 //------------------------------------------------------------------------------
@@ -42,20 +42,20 @@ void ofxLuaFileWriter::writeComment(const std::string& comment) {
 }
 
 void ofxLuaFileWriter::beginCommentBlock() {
-	if(bCommentBlock) {
+	if(commentBlock) {
 		ofLogWarning("ofxLua") << "Comment block already begun";
 		return;
 	}
-	bCommentBlock = true;
+	commentBlock = true;
 	buffer << "--[[" << std::endl;
 }
 
 void ofxLuaFileWriter::endCommentBlock() {
-	if(!bCommentBlock) {
+	if(!commentBlock) {
 		ofLogWarning("ofxLua") << "Comment block not begun";
 		return;
 	}
-	bCommentBlock = false;
+	commentBlock = false;
 	buffer << "--]]" << std::endl;
 }
 

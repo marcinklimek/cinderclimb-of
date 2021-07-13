@@ -17,7 +17,7 @@
 #include "ofxLua.h"
 
 #include "ofUtils.h"
-
+#include "ofBindings.h"
 
 // macro for chdir() as Windows uses a protected variant
 #ifdef TARGET_WIN32
@@ -28,11 +28,10 @@
 #endif
 #include <errno.h>
 
-#include "ofBindings.h"
-
 // declare the wrapped modules
 extern "C" {
 	int luaopen_of(lua_State* L);
+	int luaopen_glm(lua_State* L);
 }
 
 // local pointer for static functions
@@ -68,6 +67,7 @@ bool ofxLua::init(bool abortOnError, bool openLibs, bool ofBindings) {
 	}
 	if(ofBindings) {
 		luaopen_of(L);
+		luaopen_glm(L);
 	}
 	
 	// clear stack since opening libs leaves tables on the stack
@@ -108,15 +108,15 @@ void ofxLua::setAbortOnError(bool abort) {
 bool ofxLua::doString(const std::string& text) {
 	
 	if(!isValid()) {
-		ofLogError("ofxLua") << "Cannot do string, lua state not inited!";
+		ofLogError("ofxLua") << "Cannot do std::string, lua state not inited!";
 		return false;
 	}
 
 	if(text.length() < 10) {
-		ofLogVerbose("ofxLua") << "Doing string: \"" << text << "\"";
+		ofLogVerbose("ofxLua") << "Doing std::string: \"" << text << "\"";
 	}
 	else {
-		ofLogVerbose("ofxLua") << "Doing string: \"" << text.substr(0,10) << "..." << "\"";
+		ofLogVerbose("ofxLua") << "Doing std::string: \"" << text.substr(0,10) << "..." << "\"";
 	}
 	
 	// load the string
@@ -231,6 +231,9 @@ void ofxLua::removeListener(ofxLuaListener* listener) {
 	ofRemoveListener(errorEvent, listener, &ofxLuaListener::errorReceived);
 }
 
+void ofxLua::setErrorCallback(std::function<void(std::string& message)> const &callback) {
+	errorCallback = callback;
+}
 //--------------------------------------------------------------------
 void ofxLua::scriptSetup() {
 	if(L == NULL || !isFunction("setup")) {
@@ -238,7 +241,8 @@ void ofxLua::scriptSetup() {
 	}
 	lua_getglobal(L, "setup");
 	if(lua_pcall(L, 0, 0, 0) != 0) {
-		std::string msg = "Error running setup(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running setup(): "
+		                  + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -249,7 +253,8 @@ void ofxLua::scriptUpdate() {
 	}
 	lua_getglobal(L, "update");
 	if(lua_pcall(L, 0, 0, 0) != 0) {
-		std::string msg = "Error running update(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running update(): "
+		                  + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -260,7 +265,9 @@ void ofxLua::scriptDraw() {
 	}
 	lua_getglobal(L, "draw");
 	if(lua_pcall(L, 0, 0, 0) != 0) {			
-		std::string msg = "Error running draw(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running draw(): "
+
+		                  + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -294,7 +301,8 @@ void ofxLua::scriptExit() {
 	}
 	lua_getglobal(L, "exit");
 	if(lua_pcall(L, 0, 0, 0) != 0) {
-		std::string msg = "Error running exit(): " + (std::string) lua_tostring(L, LUA_STACK_TOP);
+		std::string msg = "Error running exit(): "
+		                  + (std::string) lua_tostring(L, LUA_STACK_TOP);
 		errorOccurred(msg);
 	}
 }
@@ -685,6 +693,9 @@ void ofxLua::popTable() {
 
 
 void ofxLua::popAllTables() {
+	if(!isValid()) {
+		return;
+	}
 	while(!tables.empty()) {
 		popTable();
 	}
@@ -1000,12 +1011,15 @@ bool ofxLua::writeTableToFile(const std::string& tableName, const std::string& f
 }
 
 //------------------------------------------------------------------------------
-void ofxLua::errorOccurred(std::string& msg) {
+void ofxLua::errorOccurred(std::string& message) {
 	
-	errorMessage = msg;
+	errorMessage = message;
 	
 	// send to listeners
-	ofNotifyEvent(errorEvent, msg, this);
+	ofNotifyEvent(errorEvent, message, this);
+	if(errorCallback) {
+		errorCallback(message);
+	}
 	
 	// close the state?
 	if(abortOnError) {
@@ -1312,7 +1326,7 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 						writer.writeBool((std::string) lua_tostring(L, -1), (bool)lua_toboolean(L, -2));
 					}
 					else {
-						ofLogWarning("ofxLua") << "unknown key type when writing table";
+						ofLogWarning("ofxLua") << "Unknown key type when writing table";
 					}
 					break;
 				case LUA_TNUMBER:
@@ -1323,7 +1337,7 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 						writer.writeNumber((std::string) lua_tostring(L, -1), lua_tonumber(L, -2));
 					}
 					else {
-						ofLogWarning("ofxLua") << "unknown key type when writing table";
+						ofLogWarning("ofxLua") << "Unknown key type when writing table";
 					}
 					break;
 				case LUA_TSTRING:
@@ -1334,7 +1348,7 @@ void ofxLua::writeTable(int stackIndex, ofxLuaFileWriter& writer, bool recursive
 						writer.writeString((std::string) lua_tostring(L, -1), lua_tostring(L, -2));
 					}
 					else {
-						ofLogWarning("ofxLua") << "unknown key type when writing table";
+						ofLogWarning("ofxLua") << "Unknown key type when writing table";
 					}
 					break;
 				default:

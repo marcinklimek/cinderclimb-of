@@ -21,7 +21,7 @@ void ofAppGui::setup_gui()
 
 	ofxGuiPanel* panel = gui.addPanel(_settings->get_gui_parameters());
 	panel->loadTheme("theme_default.json", true);    
-
+    panel->setPosition(0,0);
     //gui.setup(_settings->get_gui_parameters());
     //gui.setPosition(spacing + _settings->image_size_W + 5*spacing, spacing + _settings->image_size_H);
 
@@ -97,26 +97,26 @@ void ofAppGui::keyPressed(int key)
 //--------------------------------------------------------------
 void ofAppGui::keyReleased(int key)
 {
-     switch (key)
-     {
-         case 'f': return;
-         case 'r': return;
+    switch (key)
+    {
+    case 'f': return;
+    case 'r': return;
 
     case OF_KEY_LEFT:
-		if ( _settings->currentScript - 1 >= 0 )
-			--_settings->currentScript;
+        if (_settings->currentScript - 1 >= 0)
+            --_settings->currentScript;
 
         break;
 
     case OF_KEY_RIGHT:
-        if ( ( _settings->currentScript + 1 ) < _settings->scripts.size() )
-			++_settings->currentScript;
+        if ((_settings->currentScript + 1) < _settings->scripts.size())
+            ++_settings->currentScript;
 
-     	default: 
-     		break;
-     }
-
-	//projector_app->keyReleased(key);
+    default:
+        
+        break;
+    }
+    //projector_app->keyReleased(key);
 }
 
 //--------------------------------------------------------------
