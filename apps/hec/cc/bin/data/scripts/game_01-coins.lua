@@ -100,7 +100,7 @@ local function Ball(world, bounds)
 	    of.pushMatrix()
 
 	    of.translate(body.position.x, body.position.y, 0 )
-		of.rotate(body.angle, 0, 0, 1)
+		of.rotateDeg(body.angle, 0, 0, 1)
 
 		local lx = -self.r
 		local ly = -self.r
