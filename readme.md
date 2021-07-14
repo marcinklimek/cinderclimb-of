@@ -1,82 +1,185 @@
-[openFrameworks](http://openframeworks.cc/)
+http://jaesik.info/publications/depthups/index.html
+http://jaesik.info/publications/depthups/tip14_paper.pdf
+
+TODO
+====
+
+Rodzaje aktywności, dla osób niepełnosprawnych:
+- gaszenie punktów w pionie, ruch liniowy jednostronny oraz naprzemienny
+- gaszenie segmentów wyświetlanego obrazu, poruszanie się po całej ścianie
+- porządkowanie elementów wg kategorii (rosnąco, malejąco) – wersja na ekran
+- ćwiczenie zegarowe – podążanie rękami na wzór wskazówek zegara (dodatkowo wersja na ekran)
+
+Rodzaje aktywności, dla osób zdrowych:
+
+- woda i ogień - uciekanie przed zalewająca nas wodą od dołu i/lub ogniem od góry
+- wymazywanie obrazu własnym ciałem
+- łapanie jajeczek, im wyżej tym więcej pkt.
+- rozmazywanie obrazów całym ciałem – efekt rozmazywania farbami plakatowymi, dla dzieci które dopiero zaczynają się wspinać. Pierwsze kroki we wspinaczce, obycie się z chwytami
+- wyświetlenie kształtu na ścianie - musisz się ustawić zgodnie z nim i wytrwać chwilę
+- skacząca żabka - widać tylko jeden chwyt i uczestnik skacze na kolejny chwyt
+
+
+Interesting libs
 ================
 
-openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
-
-[![Slack Status](https://ofslack.herokuapp.com/badge.svg)](https://ofslack.herokuapp.com)
-
-## Build status
-
-* The **master** branch contains the newest, most recently updated code. This code is packaged and available for download in the "Nightly Builds" section of [openframeworks.cc/download](https://openframeworks.cc/download/).
-* The **stable** branch contains the code corresponding to the last stable openFrameworks release. This stable code is packaged and available for download at [openframeworks.cc/download](https://openframeworks.cc/download/).
-
-Platform                     | Master branch  | Stable branch
------------------------------|:---------|:---------
-Windows MSYS2        | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-msys2/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-msys2/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-Windows Visual Studio  | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-vs/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Build status](https://github.com/openframeworks/openFrameworks/workflows/build-vs/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-Linux 64 & Arm                    | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Linux Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-linux64-and-arm/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-Emscripten                   | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Emscripten Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-emscripten/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions) 
-macos                        | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![macos Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-macos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-iOS & iOS                         | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![iOS tvOS Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-ios-tvos/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
-Android Arm7                 | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg)](https://github.com/openframeworks/openFrameworks/actions) | [![Android Build Status](https://github.com/openframeworks/openFrameworks/workflows/build-android/badge.svg?branch=stable)](https://github.com/openframeworks/openFrameworks/actions)
+- http://web.cmb.usc.edu/people/alber/Software/tomominer/docs/cpp/files.html
 
 
+Other
+=====
 
-## folder structure
+Must read
+---------
 
-This release of OF comes with several folders:
+https://github.com/luarocks/lua-style-guide
+http://lua-users.org/wiki/LuaStyleGuide
+https://www.lua.org/gems/sample.pdf
+http://notebook.kulchenko.com/programming/lua-good-different-bad-and-ugly-parts
 
-* addons
-* apps
-* docs
-* examples
-* export (on some systems)
-* libs
-* other
-* scripts
-* projectGenerator
+Todo in lua
+-----------
+
+https://github.com/mpeterv/luacheck
+https://github.com/danoli3/ofxTexturePacker
+
+Tools
+-----
+
+https://www.defold.com
 
 
-`docs` has some documentation around OF usage, per platform things to consider, etc. You should definitely take a look in there; for example, if you are on OSX, read the osx.md.   `apps` and `examples` are where projects go -- `examples` contains a variety of projects that show you how to use OF, and `apps` is where your own projects will go.  `libs` contains the libraries that OF uses, including the openframeworks core itself.  `addons` are for additional functionality that's not part of the core.  `export` is for DLLs and dylibs that need to be put in each compiled project.  The `scripts` folder has the templates and small scripts for automating OF per platform. `project generator` is a GUI based tool for making new projects - this folder is only there in packaged releases.  
 
-One idea that's important is that OF releases are designed to be self-contained.  You can put them anywhere on your hard drive, but it's not possible to mix different releases of OF together, so please keep each release (0.8.0, 0.8.1) separate.  Projects may generally work from release to release, but this is not guaranteed.  Because OF is self-contained, there's extensive use of local file paths (ie, ../../../) throughout OF.  It's important to be aware of how directories are structured.  A common error is to take a project and move it so that it's a level below or above where it used to be compared to the root of OF.  This means that links such as ../../../libs will break.  
+Compile under VS
+---------------
 
-## Get involved
+https://www.youtube.com/results?search_query=automatic+camera+calibration+geometry
+http://unanancyowen.com/en/kinect-v2-coordinate-system-mapping/
+https://github.com/LightBuzz/Vitruvius
+https://github.com/labatrockwell/openTSPS
 
-The openframeworks forum:
+https://mediatech.aalto.fi/~rakajast/Publs/kajastila_paper_chi_wip_2014_camera_ready.pdf
+http://www.augmentedclimbing.com/
 
-[http://forum.openframeworks.cc/](http://forum.openframeworks.cc/)
+https://vimeo.com/123021654
+https://vimeo.com/127154814
+https://vimeo.com/89390488
 
-is a warm and friendly place.  Please ask or answer a question.  The most important part of this project is that it's a community, more than just a tool, so please join us!  Also, this is free software, and we learn so much about what is hard, what doesn't make sense, what is useful, etc. The most basic questions are acceptable here!  Don't worry, just join the conversation.  Learning in OF is social, it's hard to do it alone, but together we can get far!
 
-Our GitHub site is active:
+https://github.com/gumbykid/Climbing-Games
 
-[https://github.com/openframeworks/openFrameworks](https://github.com/openframeworks/openFrameworks)
+https://www.reddit.com/r/climbing/comments/3npg5m/speed_bouldering_game_with_a_projector/
 
-if you have bugs or feature requests, consider opening an issue.  If you are a developer and want to help, pull requests are warmly welcome.  Please read the contributing guide for guidelines:
 
-[https://github.com/openframeworks/openFrameworks/blob/master/CONTRIBUTING.md](https://github.com/openframeworks/openFrameworks/blob/master/CONTRIBUTING.md
-)
+https://forum.processing.org/one/topic/new-blob-detection-and-analysis-image-labelling-and-segmentation-library-for-processing.html
 
-We also have a developer's mailing list, which is useful for discussing issues around the development and future of OF.
+https://www.youtube.com/watch?v=VKLDGCppInw&t=2946s
 
-## Developers
+scoring
+https://github.com/search?p=7&q=Climbing&type=Repositories&utf8=%E2%9C%93
 
-To grab a copy of openFrameworks for your platform, check the [download page](http://openframeworks.cc/download) on the main site.  
 
-If you are working with the Git repository, the `stable` branch of the OF repository corresponds to the most recent release, with a few important differences:  
+Gry na sciane:
 
-1. The release includes a simple openFrameworks project generator.
-2. This GitHub repository contains code and libs for all the platforms, but the releases are done on a per-platform basis.
-3. This GitHub repository has no project files for the different examples. They are generated automatically for each release using a tool in `apps/projectGenerator/`.
-4. There are no external dependencies in this repository, you can download them using the download_libs.sh script for each platform in the particular platform folder inside scripts.
+1) powodz
+    http://www.patrickmatte.com/stuff/physicsLiquid/
+    http://gamedevelopment.tutsplus.com/tutorials/make-a-splash-with-dynamic-2d-water-effects--gamedev-236
+    https://sourceforge.net/projects/syfluid/
+    sprawdzić: https://bitbucket.org/quilime/cindertop
 
-If you want to work with the openFrameworks GitHub repository, you need to download the external dependencies and you should use the project generator to create project files for all the code in `examples/`.  To generate the project files with the project generator enable the 'Advanced Options' in the settings tab, then use 'Update Multiple' to update the projects for the `examples/` folder path in the repo.
+2) wymazywanie tla
+3) kolejny wspinacz dokłada do problemu 2 przechwyty
+4) jajeczka
+5) złap kolory (duże kolorowe plamy do łapania)
+6) rozmazywanie zdjecia na bazie Fluid2DTexture
+7) wyświetlenie kształtu na ścianie, musisz się ustawić zgodnie z nim i wytrwać chwilę (http://phylopic.org/image/browse/)
 
-To set up the project generator submodule within the OF repo, use the command `git submodule init` then `git submodule update` whilst inside the openFrameworks repo.
+8) skaczaca zabka - widac tylko jeden chwyt i zabka skacze na kolejny chwyt
 
-For more info on working with the Project Generator, for per-platform readmes, and more information, see the [documentation](docs/table_of_contents.md).
+Inspiracje:
+https://www.youtube.com/watch?v=OGoZktCzMS4   https://github.com/smmankad/float
+https://www.youtube.com/watch?v=O8tT0GXTOPo
 
-## Versioning
 
-openFrameworks uses [Semantic Versioning](http://semver.org/), although strict adherence will only come into effect at version 1.0.0.
+Komputer
+
+HP Elite 8300 Core i5-3470 3.20GHz 4GB 120GB SSD DVD-RW WIN 7 PROFESSIONAL
+
+
+Body center of mass
+-------------------
+https://www.reddit.com/r/dataisbeautiful/comments/4rup10/i_did_a_simple_mechanical_analysis_of_that/
+
+http://stackoverflow.com/questions/21973582/calculating-center-of-mass-of-body-being-tracked-using-kinect
+
+
+
+R&D
+---
+
+https://www.researchgate.net/publication/256822482_Part-based_motion_descriptor_image_for_human_action_recognition
+https://www.researchgate.net/publication/222182932_Duygulu_P_Histogram_of_Oriented_Rectangles_A_New_Pose_Descriptor_for_Human_Action_Recognition_Image_and_Vision_Computing_2710_1515-1526
+http://answers.opencv.org/question/35912/how-to-detect-individual-body-parts-in-an-image/
+https://people.eecs.berkeley.edu/~rbg/latent/
+https://github.com/rbgirshick/voc-dpm
+http://www.robots.ox.ac.uk/~vgg/data/stickmen/
+http://vision.ucsd.edu/sites/default/files/dollarBMVC09ChnFtrs_0.pdf  !! ciekawe
+http://www.ics.uci.edu/~dramanan/papers/pose_pami.pdf - sciagniete
+https://www.mpi-inf.mpg.de/departments/computer-vision-and-multimodal-computing/research/people-detection-pose-estimation-and-tracking/pictorial-structures-revisited-people-dectection-and-articulated-pose-estimation/
+https://www.researchgate.net/publication/308960836_Video_Pose_Estimation_with_Global_Motion_Cues
+
+
+
+Camera
+------
+
+http://www.wumpus-cave.net/2015/11/06/low-latency-fpv-streaming-with-the-raspberry-pi/
+https://dev.px4.io
+
+https://pixhawk.org/peripherals/rangefinder  - lidar, ale https://www.parallax.com/product/28057
+
+
+Problems
+========
+
+GLM
+---
+
+After the update of GLM lib, the templated function
+
+		template<typename genType>
+		GLM_FUNC_QUALIFIER genType fma(genType const& a, genType const& b, genType const& c)
+		{
+			return a * b + c;
+		}
+
+has to be enabled, otherwise unresolved symbols will appear.
+
+
+ofxLuaBind
+----------
+
+Before generating bindings with SWIG, In the file ofUtils.h:
+
+template <typename VAList>
+auto  ofVAArgsToString(const char * format, VAList args)
+    -> typename std::enable_if<std::is_same<va_list, VAList>::value, std::string>::type
+{
+    return ofVAListToString(format, args);
+}
+
+comment it out. Otherwise SWIG will fail
+
+
+Generating the bindings:
+
+-gen.bat-
+rem choco install swig
+
+swig -v -c++ -lua -O -Ic:/workspace/climbing/of/libs/openFrameworks -DMODULE_NAME=of -DOF_SWIG_RENAME -o lua/desktop/ofBindings.cpp openFrameworks.i
+swig -v -c++ -lua -O -debug-lsymbols -Ic:/workspace/climbing/of/libs/openFrameworks -DMODULE_NAME=of -DOF_SWIG_RENAME -o lua/desktop/ofBindings.cpp openFrameworks.i >of_symbols.txt
+
+swig -v -c++ -lua -O -Ic:\workspace\climbing\of\libs\glm\include\glm -DMODULE_NAME=of -DOF_SWIG_RENAME -o lua/glmBindings.cpp glm.i
+swig -v -c++ -lua -O -debug-lsymbols -Ic:\workspace\climbing\of\libs\glm\include\glm -DMODULE_NAME=of -DOF_SWIG_RENAME -o lua/desktop/glmBindings.cpp glm.i >glm_symbols.txt
+
+swig -v -c++ -lua -external-runtime lua/desktop/ofBindings.h
