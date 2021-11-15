@@ -6,6 +6,22 @@ This is an environment for programming climbing wall activities but you can use 
 Activities are programmed in an internal Lua scripting language.
 
 
+Cinder Climb
+------------
+
+(Cinder Climb)[https://klimek.link/blog/cc/]
+
+My project for a climbing wall. Although in principle a climbing wall is not necessary.
+The first recorded tests took place on March 11, 2016. A very simple and reasonably effective solution.
+
+
+[![First version](https://img.youtube.com/vi/0wNuXHkMRwQ/0.jpg)](http://www.youtube.com/watch?v=0wNuXHkMRwQ)
+
+
+Latest version. OpenFrameworks based solution. Activities programmed in Lua.
+
+[![OpenFrameworks version](https://img.youtube.com/vi/f2_wTw7pFhY/0.jpg)](http://www.youtube.com/watch?v=f2_wTw7pFhY)
+
 TODO
 ====
 
