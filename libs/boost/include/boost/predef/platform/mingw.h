@@ -60,6 +60,8 @@ Version number available as major, minor, and patch.
 
 #endif
 
+#endif
+
 #include <boost/predef/detail/test.h>
 BOOST_PREDEF_DECLARE_TEST(BOOST_PLAT_MINGW,BOOST_PLAT_MINGW_NAME)
 
