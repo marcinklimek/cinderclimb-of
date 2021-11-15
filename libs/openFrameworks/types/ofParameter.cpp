@@ -152,9 +152,6 @@ void ofParameter<void>::trigger(const void * sender){
     }
 }
 
-void ofParameter<void>::trigger(const void * sender){
-	ofNotifyEvent(obj->changedE,sender);
-}
 
 void ofParameter<void>::enableEvents(){
 	obj->changedE.enable();
