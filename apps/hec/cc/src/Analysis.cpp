@@ -13,7 +13,7 @@
 
 
 AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mouse_x(0), mouse_y(0), quit_(false),
-                                                                       settings_ (settings), grabber_(settings), fps_(0), backgroundModel_set(true)
+                                                                       settings_ (settings), grabber_(settings), fps_(0), backgroundModel_set(true), counter(0)
 
 {
     const concurrency::SchedulerPolicy policy(2, concurrency::MinConcurrency, 16, concurrency::MaxConcurrency, 32);
@@ -28,6 +28,8 @@ AnalysisThread::AnalysisThread(const std::shared_ptr<ofSettings>& settings) : mo
 	backgroundModel_timer.setFramerate(30.0f);
     backgroundModel_timer.setPeriod(10);
 
+    mog2.enableShadowDetection(true);
+	
     startThread();
 }
 
@@ -47,7 +49,7 @@ void AnalysisThread::setup()
     input_frame_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_processed_.allocate(settings_->image_size_W, settings_->image_size_H);
 	backgroundModel_.allocate(settings_->image_size_W, settings_->image_size_H);
-    backgroundModel_.set(UINT16_MAX);
+    backgroundModel_.set(65535.0f);
     backgroundModel_public_.allocate(settings_->image_size_W, settings_->image_size_H);
 
     image_foreground_.allocate(settings_->image_size_W, settings_->image_size_H);
@@ -57,6 +59,9 @@ void AnalysisThread::setup()
     image_processed_public_.allocate(settings_->image_size_W, settings_->image_size_H);
     image_foreground_public_.allocate(settings_->image_size_W, settings_->image_size_H);
     color_frame_public_.allocate(settings_->image_size_W, settings_->image_size_H);
+
+
+	
 }
 
 bool AnalysisThread::update_public()
@@ -65,8 +70,6 @@ bool AnalysisThread::update_public()
 
 	joints_public_ = joints_;
 	blobs_path_public_ = blobs_path_;
-
-    input_frame_.contrastStretch();
 
     input_frame_public_ = input_frame_;
     image_processed_public_ = image_processed_;
@@ -107,25 +110,25 @@ void AnalysisThread::threadedFunction()
 void AnalysisThread::average(ofxCvShortImage& image_input_a, ofxCvShortImage& image_input_b) const
 {
     auto& input_a = image_input_a.getShortPixelsRef();
-    const auto input_b = image_input_b.getShortPixelsRef();
+    const auto& input_b = image_input_b.getShortPixelsRef();
 
-    concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
+    //concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
+	for(auto i=0; i<DEPTH_SIZE; i++)
     {
-        const long v1 = input_a[i];
-        const long v2 = input_b[i];
+        const auto v1 = input_a[i];
+        const auto v2 = input_b[i];
 
-        const auto v = std::min(v1, v2);
-        
-        if (v > 0)
-            input_a[i] = v-1;
-    });
+        input_a[i] = std::min(v1, v2);
+    }
+    //);
 }
 
 void AnalysisThread::inRange(ofxCvShortImage& image_input_a,  float min, float max) const
 {
     auto& input_a = image_input_a.getShortPixelsRef();
 
-    concurrency::parallel_for(0, DEPTH_SIZE, [&](int i)
+    //concurrency::parallel_for(0, DEPTH_SIZE, [&](const int i)
+    for(auto i=0; i<DEPTH_SIZE; i++)
     {
         const auto v = input_a[i];
 
@@ -133,7 +136,8 @@ void AnalysisThread::inRange(ofxCvShortImage& image_input_a,  float min, float m
             input_a[i] = v;
         else
             input_a[i] = 0;
-    });
+    }
+	//);
 }
 
 void AnalysisThread::foreground(ofxCvShortImage& image_input_a,  ofxCvShortImage& image_mask) const
@@ -141,26 +145,37 @@ void AnalysisThread::foreground(ofxCvShortImage& image_input_a,  ofxCvShortImage
     auto& input_a = image_input_a.getShortPixelsRef();
     const auto input_mask = image_mask.getShortPixelsRef();
 
-    concurrency::parallel_for(0, DEPTH_SIZE, [&](int i) 
+    //concurrency::parallel_for(0, DEPTH_SIZE, [&](int i) 
+    for(auto i=0; i<DEPTH_SIZE; i++)
     {
         const auto v = input_a[i];
-        const auto m = input_mask[i] - settings_->epsilon;
-        
-        if (v < m)
-            input_a[i] = v;
-        else
-            input_a[i] = 0;
-    });
+        const auto m = input_mask[i];
+		int pix = m;
+    	if (pix < 0)
+            pix = 0;
+
+    	input_a[i] = pix;
+    	
+        //if ( (m - v) < settings_->epsilon )
+        //    input_a[i] = 0;
+        //else
+        //    input_a[i] = 65535.0f;
+    }
+     
+	
+	//);
 }
 
 void AnalysisThread::resetChanged(bool& state)
 {
-    if (state && backgroundModel_set==false)
+    if (state && backgroundModel_set == false)
     {
         backgroundModel_set = true;
     	backgroundModel_timer.setFramerate(30.0f);
         backgroundModel_timer.setPeriod( settings_->resetBackgroundTime);
-        backgroundModel_.set(UINT16_MAX);
+        backgroundModel_.set(65535.0f);
+    	
+    	mog2.reset();
     }
 }
 
@@ -170,13 +185,11 @@ void AnalysisThread::update_frame()
     if (input_frame_.getWidth() == 0 || input_frame_.getHeight() == 0)
         return;
 
-	input_frame_.smooth(1, CV_MEDIAN);
-	
-    image_processed_ = input_frame_;
+	//input_frame_.smooth(1, CV_MEDIAN);
+    image_processed_.setFromPixels(input_frame_.getPixels().getData(), input_frame_.getWidth(), input_frame_.getHeight());
 	
     inRange( image_processed_, settings_->nearClipping, settings_->farClipping);
-    image_processed_.contrastStretch();
-    
+    image_processed_.contrastStretch(settings_->nearClipping, settings_->farClipping);
 	
     if( settings_->blur_amount > 0 )
 	 {
@@ -198,7 +211,7 @@ void AnalysisThread::update_frame()
 
 	if (backgroundModel_set)
 	{
-		average(backgroundModel_, image_processed_);
+		//average(backgroundModel_, image_processed_);
         
         if ( backgroundModel_timer.tick() )
         {
@@ -211,36 +224,49 @@ void AnalysisThread::update_frame()
         return;
 	}
 
-
     image_foreground_ = image_processed_;
 
-    foreground(image_foreground_, backgroundModel_);
-    
-
-    if( settings_->blur_amount2 > 0 )
-    {
-	    if( settings_->blur_amount2 % 2 == 0 )
-		    settings_->blur_amount2 += 1;
+    ofxCvGrayscaleImage temp_fg;
+    temp_fg.allocate(image_foreground_.width, image_foreground_.height);
+    temp_fg = image_foreground_;
 	
-	    image_foreground_.blur(settings_->blur_amount2);
-    }
+        mog2.update(ofxCv::toCv(temp_fg), backgroundModel_set);
+        ofxCv::toOf(mog2.getForegroundMask(), imgFg);
+        ofxCv::toOf(mog2.getShadowLessMask(), imgShadowLess);
+        ofxCv::toOf(mog2.getShadowMask(), imgShadow);
+        imgFg.update();
+        imgShadowLess.update();
+        imgShadow.update();
 
-    for(auto i=0; i<settings_->erode_open_count2; i++)
-        image_foreground_.erode();
+	backgroundModel_.setFromPixels( imgFg.getPixels().getData(), imgFg.getWidth(), imgFg.getHeight());
+	
+    foreground(image_foreground_, backgroundModel_);
+    //
 
-    for (auto i = 0; i<settings_->dillate_count2; i++)
-        image_foreground_.dilate();
+    //if( settings_->blur_amount2 > 0 )
+    //{
+	   // if( settings_->blur_amount2 % 2 == 0 )
+		  //  settings_->blur_amount2 += 1;
+	
+	   // image_foreground_.blur(settings_->blur_amount2);
+    //}
+
+    //for(auto i=0; i<settings_->erode_open_count2; i++)
+    //    image_foreground_.erode();
+
+    //for (auto i = 0; i<settings_->dillate_count2; i++)
+    //    image_foreground_.dilate();
+    //
+    //for (auto i = 0; i<settings_->erode_close_count2; i++)
+    //    image_foreground_.erode();
+
     
-    for (auto i = 0; i<settings_->erode_close_count2; i++)
-        image_foreground_.erode();
-
-
-	image_foreground_.contrastStretch();
+	//image_foreground_.contrastStretch();
 	
 	//
     ofxCvGrayscaleImage temp;
     temp.allocate(image_foreground_.width, image_foreground_.height);
-    temp = image_foreground_;
+    temp = imgFg;
 
     contour_finder_.findContours(temp, settings_->area_min, settings_->area_max, 10, true); // find holes
 	
@@ -268,6 +294,12 @@ void AnalysisThread::update_frame()
 
     color_frame_ = grabber_.colorIndex;
 	color_frame_.mirror(false, true);
+
+	if (counter < 100)
+	{
+	    //ofSaveImage(input_frame_public_.getPixels(), "e:\\tmp\\image_" + std::to_string(counter) +".png");
+		counter++;
+    }
 }
 
 
@@ -282,6 +314,9 @@ void AnalysisThread::draw()
     image_foreground_public_.draw(	spacing + (preview_W + spacing) * 2,   spacing                            , preview_W, preview_H);
     backgroundModel_public_.draw(	spacing + (preview_W + spacing) * 3,   spacing                            , preview_W, preview_H);
 
+	
+    
+	
     color_frame_public_.draw( settings_->color_preview_pos );
 
     ofPushMatrix();

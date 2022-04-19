@@ -42,4 +42,6 @@ public:
     int numBodies() const { return numBodiesTracked; }
 
 	ofxKFW2::Device kinect;
+
+	unsigned long counter;
 };

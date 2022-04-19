@@ -112,7 +112,6 @@ void ofAppProjector::keyPressed(int key)
 	{
 
 	case 'f':
-
 		ofToggleFullscreen();
 		return;
 
@@ -223,6 +222,3 @@ void ofAppProjector::reloadScript()
     lua.doScript(_settings->get_script(), true);
     lua.scriptSetup();
 }
-
-
-

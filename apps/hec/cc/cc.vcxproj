@@ -178,7 +178,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
@@ -260,7 +260,6 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\libs\tinyxmlparser.cpp" />
     <ClCompile Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.cpp" />
     <ClCompile Include="src\Analysis.cpp" />
-    <ClCompile Include="src\bgsubcnt\bgsubcnt.cpp" />
     <ClCompile Include="src\Calibrator.cpp" />
     <ClCompile Include="src\convexHull\ofxConvexHull.cpp" />
     <ClCompile Include="src\Grabber.cpp" />
@@ -288,6 +287,7 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClCompile Include="src\ofAppGui.cpp" />
     <ClCompile Include="src\ofAppProjector.cpp" />
     <ClCompile Include="src\ofSensingWindow.cpp" />
+    <ClCompile Include="src\ofxCvMOG2\ofxCvMOG2.cpp" />
     <ClCompile Include="src\Recorder.cpp" />
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\Uber.cpp" />
@@ -523,13 +523,13 @@ copy /Y "$(OF_ROOT)build\bin\luaBox2D_$(Platform)_$(Configuration)"
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\libs\tinyxml.h" />
     <ClInclude Include="..\..\..\addons\ofxXmlSettings\src\ofxXmlSettings.h" />
     <ClInclude Include="src\Analysis.h" />
-    <ClInclude Include="src\bgsubcnt\bgsubcnt.h" />
     <ClInclude Include="src\Calibrator.h" />
     <ClInclude Include="src\convexHull\ofxConvexHull.h" />
     <ClInclude Include="src\Grabber.h" />
     <ClInclude Include="src\ofAppGui.h" />
     <ClInclude Include="src\ofAppProjector.h" />
     <ClInclude Include="src\ofSensingWindow.h" />
+    <ClInclude Include="src\ofxCvMOG2\ofxCvMOG2.h" />
     <ClInclude Include="src\ofxHomography.h" />
     <ClInclude Include="src\Recorder.h" />
     <ClInclude Include="src\Settings.h" />

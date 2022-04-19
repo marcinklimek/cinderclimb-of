@@ -4,6 +4,7 @@
 #include "Settings.h"
 #include "ofxCvColorImage.h"
 #include "Grabber.h"
+
 #include "convexHull/ofxConvexHull.h"
 #include "ofxKinectForWindows2/src/ofxKinectForWindows2.h"
 #include "ofxHomography.h"
@@ -11,6 +12,7 @@
 #include "ofSensingWindow.h"
 #include "ofxTiming/src/DelayTimer.h"
 
+#include "ofxCvMOG2/ofxCvMOG2.h"
 
 class AnalysisThread  : public ofThread
 {
@@ -66,6 +68,7 @@ public:
 
 private:
 
+	unsigned long counter;
 	bool quit_;
 
     void update_frame();
@@ -109,4 +112,8 @@ private:
 
 	bool update_public();
 
+    ofxCvMOG2 mog2;
+    ofImage imgFg;
+    ofImage imgShadowLess;
+    ofImage imgShadow;	
 };

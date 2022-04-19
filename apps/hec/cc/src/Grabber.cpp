@@ -1,10 +1,12 @@
 ﻿#include "Grabber.h"
 #include "ofxColorMap/src/ofxColorMap.h"
+#include <ofxCv.h>
+
+#include "ofxCvGrayscaleImage.h"
 
 
-ofGrabber::ofGrabber(std::shared_ptr<ofSettings> settings) 
+ofGrabber::ofGrabber(std::shared_ptr<ofSettings> settings) : counter(0), _settings(settings)
 {
-	_settings = settings;
     kinect.open();
 
     if ( !kinect.isOpen() )
@@ -29,7 +31,6 @@ ofGrabber::ofGrabber(std::shared_ptr<ofSettings> settings)
     haveAllStreams = false;
 
     depthIndex.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
-
     colorIndex.allocate(DEPTH_WIDTH, DEPTH_HEIGHT);
 
 	nearClipping  = settings->nearClipping;
@@ -52,10 +53,11 @@ bool ofGrabber::get(ofxCvShortImage& frame)
         if (depthIndex.getWidth() == 0 || depthIndex.getHeight() == 0)
             return false;
 
+
+    	
         frame = depthIndex;
         
-
-        return depthIndex.getPixels().size();
+        return depthIndex.getPixels().size() != 0;
     }
 
     return false;
@@ -66,11 +68,17 @@ void ofGrabber::update()
 {
     kinect.update();
 
+    if ( !kinect.isFrameNew() )
+        return;
+
+
     // Get pixel data
 	const auto depthPixRaw = kinect.getDepthSource()->getPixels().getData();
 	auto& depthPix = kinect.getDepthSource()->getPixels();
-    
-    
+
+	//ofxCvGrayscaleImage grayDepth;
+	//grayDepth.setFromPixels(depthPix, DEPTH_WIDTH, DEPTH_HEIGHT);
+	    
     const auto colorPixRaw = kinect.getColorSource()->getPixels().getData();
     auto& colorPix = kinect.getColorSource()->getPixels();
 
@@ -105,14 +113,13 @@ void ofGrabber::update()
     }
 
     colorIndex.set(0);
-    const auto color_index_raw = colorIndex.getPixels().getData();
+    auto* const color_index_raw = colorIndex.getPixels().getData();
 
     std::vector<DepthSpacePoint> depthSpacePoints( COLOR_SIZE );
     kinect.getDepthSource()->getDepthInColorFrameMapping(depthSpacePoints);
 
     auto dsp_pos = 0;
     auto color_pos = 0;
-
 
     for (auto i = 0; i < COLOR_SIZE; i++) 
     {
@@ -136,6 +143,19 @@ void ofGrabber::update()
     auto& depth_pix_ref = depthIndex.getShortPixelsRef();
     depth_pix_ref.setFromPixels(depthPixRaw, DEPTH_WIDTH, DEPTH_HEIGHT, 1);
     
+    const double scale = 65535.0/6000.0;
+    cvConvertScale( depthIndex.getCvImage(), depthIndex.getCvImage(), scale, 0);	
+    depthIndex.flagImageChanged();
+    depthIndex.invert();
+	
+	if (counter < 100)
+	{
+	    //ofSaveImage(depthIndex.getShortPixelsRef(), "e:\\tmp\\depth_pix_ref_" + std::to_string(counter) +".png");
+		counter++;
+    }
+	
+    //depth_pix_ref.
+	
    //  auto index = 0;
    //  for (auto y = 0; y < DEPTH_HEIGHT; y++) 
    //  {
